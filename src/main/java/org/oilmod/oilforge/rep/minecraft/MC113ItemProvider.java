@@ -1,9 +1,7 @@
 package org.oilmod.oilforge.rep.minecraft;
 
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemBlock;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.registry.IRegistry;
 import net.minecraftforge.registries.IForgeRegistry;
 import org.apache.commons.lang3.Validate;
 import org.oilmod.api.rep.item.ItemStateRep;

@@ -4,7 +4,6 @@ import org.oilmod.api.inventory.ItemFilter;
 import org.oilmod.api.items.OilBukkitItemStack;
 import org.oilmod.api.items.OilItemStack;
 import org.oilmod.api.rep.itemstack.ItemStackRep;
-import org.oilmod.api.rep.stdimpl.world.Test;
 
 public class PortableInventoryFilter implements ItemFilter {
     public final static PortableInventoryFilter INSTANCE = new PortableInventoryFilter();

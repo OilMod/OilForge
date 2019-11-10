@@ -7,7 +7,6 @@ import org.oilmod.api.rep.block.BlockFaceRep;
 import org.oilmod.api.rep.block.BlockStateRep;
 import org.oilmod.api.rep.entity.EntityHumanRep;
 import org.oilmod.api.rep.providers.minecraft.MinecraftBlock;
-import org.oilmod.api.rep.providers.minecraft.MinecraftItem;
 import org.oilmod.api.rep.world.LocationBlockRep;
 import org.oilmod.api.util.InteractionResult;
 import org.oilmod.api.util.OilKey;

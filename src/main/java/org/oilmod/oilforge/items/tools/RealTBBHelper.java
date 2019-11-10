@@ -1,14 +1,12 @@
 package org.oilmod.oilforge.items.tools;
 
 import org.oilmod.api.blocks.BlockType;
-import org.oilmod.api.blocks.IBlockState;
 import org.oilmod.api.items.OilItemStack;
 import org.oilmod.api.items.type.IToolBlockBreaking;
 import org.oilmod.api.items.type.ImplementationProvider;
 import org.oilmod.api.items.type.TBBType;
 import org.oilmod.api.rep.block.BlockFaceRep;
 import org.oilmod.api.rep.block.BlockStateRep;
-import org.oilmod.api.rep.entity.EntityHumanRep;
 import org.oilmod.api.rep.entity.EntityLivingRep;
 import org.oilmod.api.rep.world.LocationBlockRep;
 import org.oilmod.api.util.InteractionResult;

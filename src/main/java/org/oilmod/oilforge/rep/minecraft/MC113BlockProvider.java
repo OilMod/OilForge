@@ -1,14 +1,11 @@
 package org.oilmod.oilforge.rep.minecraft;
 
-import com.google.common.base.Optional;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.server.*;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.registry.IRegistry;
 import org.apache.commons.lang3.Validate;
 import org.oilmod.api.rep.block.BlockStateRep;
-import org.oilmod.api.rep.providers.minecraft.MC112BlockReq;
 import org.oilmod.api.rep.providers.minecraft.MC113BlockReq;
 import org.oilmod.api.rep.providers.minecraft.MinecraftBlock;
 import org.oilmod.api.rep.providers.minecraft.MinecraftBlockProvider;

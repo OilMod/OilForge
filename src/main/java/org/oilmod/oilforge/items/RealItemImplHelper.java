@@ -18,7 +18,6 @@ import org.oilmod.api.items.NMSItem;
 import org.oilmod.api.items.OilItem;
 import org.oilmod.api.items.type.IToolBlockBreaking;
 import org.oilmod.oilforge.config.nbttag.NBTCompound;
-import org.oilmod.oilforge.rep.block.BlockStateFR;
 import org.oilmod.oilforge.rep.item.ItemFR;
 import org.oilmod.oilforge.rep.itemstack.ItemStackFR;
 

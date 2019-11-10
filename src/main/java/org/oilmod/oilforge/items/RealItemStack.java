@@ -6,12 +6,9 @@ import org.oilmod.api.config.Compound;
 import org.oilmod.api.data.IData;
 import org.oilmod.api.items.NMSItemStack;
 import org.oilmod.api.items.OilItemStack;
-import org.oilmod.api.rep.itemstack.ItemStackRep;
 import org.oilmod.oilforge.rep.itemstack.OilModItemStackFR;
 
 import java.util.Map;
-
-import static org.oilmod.oilforge.Util.toOil;
 
 public class RealItemStack implements NMSItemStack {
     private final ItemStack itemStack;

@@ -3,11 +3,8 @@ package org.oilmod.oilforge.rep.block;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
-import org.apache.commons.lang3.NotImplementedException;
 import org.oilmod.api.rep.block.BlockRep;
-import org.oilmod.api.rep.block.BlockStateRep;
 import org.oilmod.api.rep.item.BlockItemRep;
-import org.oilmod.api.rep.item.ItemRep;
 import org.oilmod.oilforge.rep.item.BlockItemFR;
 
 public class BlockFR implements BlockRep {

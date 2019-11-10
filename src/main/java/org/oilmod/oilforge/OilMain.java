@@ -9,7 +9,6 @@ import org.oilmod.api.items.internal.ItemFactory;
 import org.oilmod.api.items.type.ImplementationProvider;
 import org.oilmod.api.items.type.TBBType;
 import org.oilmod.api.rep.RepAPI;
-import org.oilmod.api.rep.stdimpl.world.LocFactoryImpl;
 import org.oilmod.api.util.OilUtil;
 import org.oilmod.oilforge.inventory.RealInventoryFactory;
 import org.oilmod.oilforge.items.RealIPHelper;
@@ -19,7 +18,6 @@ import org.oilmod.oilforge.items.RealItemRegistryHelper;
 import org.oilmod.oilforge.items.tools.RealTBBHelper;
 import org.oilmod.oilforge.modloader.RealModHelper;
 import org.oilmod.oilforge.rep.RepAPIImpl;
-import org.oilmod.oilforge.rep.location.LocFactoryFR;
 
 public class OilMain {
     public static OilMod ModMinecraft;

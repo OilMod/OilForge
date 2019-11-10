@@ -8,7 +8,6 @@ import org.oilmod.api.rep.block.BlockStateRep;
 import org.oilmod.api.rep.providers.BlockStateProvider;
 import org.oilmod.api.rep.world.LocationBlockRep;
 import org.oilmod.oilforge.rep.location.LocationBlockFR;
-import org.oilmod.oilforge.rep.location.WorldFR;
 
 public abstract class BlockStateBase implements BlockStateRep {
     public abstract IBlockState getForge();

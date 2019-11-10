@@ -21,7 +21,6 @@ import org.oilmod.api.rep.world.LocationEntityRep;
 import org.oilmod.api.rep.world.LocationRep;
 import org.oilmod.api.rep.world.VectorRep;
 import org.oilmod.api.util.InteractionResult;
-import org.oilmod.oilforge.block.RealOilBlockState;
 import org.oilmod.oilforge.rep.block.BlockFR;
 import org.oilmod.oilforge.rep.block.BlockStateFR;
 import org.oilmod.oilforge.rep.entity.EntityFR;
