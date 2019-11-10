@@ -1,18 +1,10 @@
 package org.oilmod.oilforge.inventory;
 
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.InventoryPlayer;
-import net.minecraft.inventory.Container;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ITickable;
-import net.minecraft.util.NonNullList;
 import net.minecraft.world.IInteractionObject;
-import org.apache.commons.lang3.NotImplementedException;
-import org.oilmod.api.config.Compound;
 import org.oilmod.api.config.CompoundSerializable;
-import org.oilmod.api.config.DataList;
-import org.oilmod.api.config.DataType;
 import org.oilmod.api.inventory.ModInventoryObjectBase;
 import org.oilmod.api.inventory.ModNMSIInventory;
 import org.oilmod.api.rep.inventory.InventoryRep;
@@ -63,7 +55,7 @@ public interface OilIInventory<APIObject extends ModInventoryObjectBase> extends
         return false;
     }
 
-    @Override
+    //@Override
     default InventoryRep getBukkitInventory() {
         return toOil(this);
     }

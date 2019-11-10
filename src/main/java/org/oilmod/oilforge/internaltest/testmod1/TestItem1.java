@@ -2,7 +2,6 @@ package org.oilmod.oilforge.internaltest.testmod1;
 
 import net.minecraft.init.Items;
 import org.oilmod.api.items.OilItem;
-import org.oilmod.api.rep.item.ItemRep;
 import org.oilmod.api.util.OilKey;
 
 import static org.oilmod.oilforge.Util.toOil;

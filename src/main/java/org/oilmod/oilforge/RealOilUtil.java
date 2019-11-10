@@ -1,16 +1,16 @@
 package org.oilmod.oilforge;
 
-import jdk.nashorn.internal.ir.Block;
 import net.minecraft.util.ResourceLocation;
 import org.apache.commons.lang3.NotImplementedException;
 import org.oilmod.api.OilMod;
-import org.oilmod.api.blocks.IBlockState;
 import org.oilmod.api.entity.NMSEntity;
+import org.oilmod.api.rep.block.BlockStateRep;
 import org.oilmod.api.rep.entity.EntityHumanRep;
 import org.oilmod.api.rep.entity.EntityLivingRep;
 import org.oilmod.api.rep.entity.EntityRep;
 import org.oilmod.api.rep.item.ItemRep;
 import org.oilmod.api.rep.itemstack.ItemStackRep;
+import org.oilmod.api.rep.world.LocationBlockRep;
 import org.oilmod.api.rep.world.LocationRep;
 import org.oilmod.api.rep.world.WorldRep;
 import org.oilmod.api.util.ITicker;
@@ -24,17 +24,17 @@ import java.util.Random;
 
 public class RealOilUtil  extends OilUtil.UtilImpl {
     @Override
-    protected ItemStackRep[] getDrops(Block block) {
+    protected ItemStackRep[] getDrops(WorldRep worldRep, BlockStateRep blockStateRep) {
         throw new NotImplementedException("soon");
     }
 
     @Override
-    protected ItemStackRep[] getDropsSilktouch(Block block) {
+    protected ItemStackRep[] getDropsSilktouch(WorldRep worldRep, BlockStateRep blockStateRep) {
         throw new NotImplementedException("soon");
     }
 
     @Override
-    protected ItemStackRep[] getDropsFortune(Block block, int i) {
+    protected ItemStackRep[] getDropsFortune(WorldRep worldRep, BlockStateRep blockStateRep, int i) {
         throw new NotImplementedException("soon");
     }
 
@@ -44,18 +44,18 @@ public class RealOilUtil  extends OilUtil.UtilImpl {
     }
 
     @Override
-    protected boolean canBreak(EntityHumanRep entityHumanRep, Block block) {
-        return true; //for events
+    protected boolean canBreak(EntityHumanRep entityHumanRep, LocationBlockRep locationBlockRep, BlockStateRep blockStateRep) {
+        return true; //todo for events
     }
 
     @Override
-    protected boolean canPlace(EntityHumanRep entityHumanRep, Block block, IBlockState iBlockState, Block block1, ItemStackRep itemStackRep) {
-        return true;
+    protected boolean canPlace(EntityHumanRep entityHumanRep, LocationBlockRep locationBlockRep, BlockStateRep blockStateRep, LocationBlockRep locationBlockRep1, ItemStackRep itemStackRep) {
+        return true; //todo for events
     }
 
     @Override
-    protected boolean canMultiPlace(EntityHumanRep entityHumanRep, List<IBlockState> list, Block block, ItemStackRep itemStackRep) {
-        return true;
+    protected boolean canMultiPlace(EntityHumanRep entityHumanRep, List<BlockStateRep> list, LocationBlockRep locationBlockRep, ItemStackRep itemStackRep) {
+        return true; //todo for events
     }
 
     @Override

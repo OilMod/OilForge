@@ -9,7 +9,6 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.function.Consumer;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
 
 public class OilModLanguageProvider implements IModLanguageProvider {
     //TODO: get inspired by FMLJavaModLanguageProvider

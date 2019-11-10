@@ -13,4 +13,17 @@ public class RealModHelper extends OilMod.ModHelper {
     protected void unregister(OilMod mod) {
         super.unregister(mod);
     }
+
+
+    public static void initialiseAll() {
+        for (OilMod mod:OilMod.getAll()) {
+            OilMod.ModHelper.initialise(mod);
+        }
+    }
+
+    public static void invokeRegisterItemsAll() {
+        for (OilMod mod:OilMod.getAll()) {
+            OilMod.ModHelper.invokeRegisterItems(mod);
+        }
+    }
 }

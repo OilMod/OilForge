@@ -23,21 +23,23 @@ import org.oilmod.api.rep.world.VectorRep;
 import org.oilmod.api.util.InteractionResult;
 import org.oilmod.oilforge.block.RealOilBlockState;
 import org.oilmod.oilforge.rep.block.BlockFR;
+import org.oilmod.oilforge.rep.block.BlockStateFR;
 import org.oilmod.oilforge.rep.entity.EntityFR;
 import org.oilmod.oilforge.rep.entity.EntityHumanFR;
 import org.oilmod.oilforge.rep.entity.EntityLivingFR;
 import org.oilmod.oilforge.rep.inventory.InventoryFR;
 import org.oilmod.oilforge.rep.item.ItemFR;
 import org.oilmod.oilforge.rep.itemstack.ItemStackFR;
+import org.oilmod.oilforge.rep.itemstack.RealItemStackFactory;
 import org.oilmod.oilforge.rep.location.WorldFR;
 
 public final class Util {
-
+    //todo use mixins
     public static ItemFR toOil(Item item) {
         return new ItemFR(item);
     }
     public static ItemStackFR toOil(ItemStack stack) {
-        return new ItemStackFR(stack);
+        return RealItemStackFactory.INSTANCE.create(stack);
     }
 
     public static InteractionResult toOil(EnumActionResult nms) {
@@ -74,19 +76,19 @@ public final class Util {
     }
 
     public static LocationRep toOil(Vec3d vec, World w) {
-        return LocFactoryImpl.INSTANCE.createLocation(vec.x, vec.y, vec.z, toOil(w));
+        return LocFactoryImpl.getInstance().createLocation(vec.x, vec.y, vec.z, toOil(w));
     }
 
     public static VectorRep toOil(Vec3d vec) {
-        return LocFactoryImpl.INSTANCE.createVector(vec.x, vec.y, vec.z);
+        return LocFactoryImpl.getInstance().createVector(vec.x, vec.y, vec.z);
     }
 
     public static LocationBlockRep toOil(BlockPos pos, World w) {
-        return LocFactoryImpl.INSTANCE.createBlockLocation(pos.getX(), pos.getY(), pos.getZ(), toOil(w));
+        return LocFactoryImpl.getInstance().createBlockLocation(pos.getX(), pos.getY(), pos.getZ(), toOil(w));
     }
 
     public static LocationEntityRep toOil(Vec3d vec, double yaw, double pitch,  World w) {
-        return LocFactoryImpl.INSTANCE.createEntityLocation(vec.x, vec.y, vec.z, yaw, pitch, toOil(w));
+        return LocFactoryImpl.getInstance().createEntityLocation(vec.x, vec.y, vec.z, yaw, pitch, toOil(w));
     }
 
 
@@ -106,8 +108,8 @@ public final class Util {
     public static BlockFR toOil(Block block) {
         return new BlockFR(block);
     }
-    public static RealOilBlockState toOil(IBlockState state) {
-        return new RealOilBlockState(state);
+    public static BlockStateFR toOil(IBlockState state) {
+        return new BlockStateFR(state);
     }
 
     public static BlockFaceRep toOil(EnumFacing notch) {

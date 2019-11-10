@@ -1,10 +1,8 @@
 package org.oilmod.oilforge.internaltest.testmod1;
 
-import net.minecraft.inventory.InventoryHelper;
 import org.oilmod.api.inventory.InventoryFactory;
 import org.oilmod.api.inventory.ModInventoryObject;
 import org.oilmod.api.items.NMSItemStack;
-import org.oilmod.api.items.OilBukkitItemStack;
 import org.oilmod.api.items.OilItem;
 import org.oilmod.api.items.OilItemStack;
 

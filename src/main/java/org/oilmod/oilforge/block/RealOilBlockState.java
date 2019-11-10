@@ -1,9 +1,9 @@
 package org.oilmod.oilforge.block;
 
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.math.BlockPos;
 import org.apache.commons.lang3.NotImplementedException;
 import org.oilmod.api.blocks.BlockType;
-import net.minecraft.block.state.IBlockState;
 import org.oilmod.api.rep.block.BlockRep;
 import org.oilmod.api.rep.world.LocationBlockRep;
 import org.oilmod.oilforge.rep.location.WorldFR;

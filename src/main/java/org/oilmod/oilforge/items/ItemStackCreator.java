@@ -1,13 +1,10 @@
 package org.oilmod.oilforge.items;
 
 
-
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import org.oilmod.api.config.Compound;
-
-import java.util.Map;
 
 public interface ItemStackCreator {
     public ItemStack createStack(Compound compound);

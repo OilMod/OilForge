@@ -1,8 +1,6 @@
 package org.oilmod.oilforge.dirtyhacks;
 
 import net.minecraft.item.ItemStack;
-import org.oilmod.api.items.OilItemStack;
-import org.oilmod.oilforge.items.RealItem;
 import org.oilmod.oilforge.items.RealItemStack;
 
 import java.util.WeakHashMap;
@@ -23,5 +21,9 @@ public final class RealItemStackHelper {
             return result;
         }
         return map.get(stack);
+    }
+
+    public static boolean hasReal(ItemStack stack) {
+        return map.containsKey(stack);
     }
 }

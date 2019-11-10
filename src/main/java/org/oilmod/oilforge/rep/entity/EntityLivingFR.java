@@ -1,12 +1,6 @@
 package org.oilmod.oilforge.rep.entity;
 
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
-import net.minecraft.entity.EntityLivingBase;
-import org.apache.commons.lang3.NotImplementedException;
-import org.oilmod.api.rep.entity.EntityLivingRep;
-
-import java.lang.reflect.Field;
 
 public class EntityLivingFR extends EntityLivingBaseFR {
     public EntityLivingFR(EntityLiving forge) {

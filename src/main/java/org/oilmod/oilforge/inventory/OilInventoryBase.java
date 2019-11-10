@@ -12,6 +12,7 @@ import org.oilmod.api.rep.inventory.InventoryHolderRep;
 import org.oilmod.api.userinterface.IInteractableUIElement;
 import org.oilmod.api.util.ITicker;
 import org.oilmod.oilforge.items.TempRealItemHelper;
+import org.oilmod.oilforge.rep.inventory.InventoryFR;
 
 import java.lang.ref.WeakReference;
 import java.util.Collections;
@@ -29,6 +30,7 @@ public abstract class OilInventoryBase<APIObject extends ModInventoryObjectBase>
     private ITicker ticker;
     private final boolean needsOwner;
     private World world;
+    private final InventoryFR inventoryRep;
 
 
     public OilInventoryBase(InventoryHolderRep owner, String title, int size, ITicker ticker, IItemFilter itemFilter, boolean needsOwner) {
@@ -36,6 +38,7 @@ public abstract class OilInventoryBase<APIObject extends ModInventoryObjectBase>
         this.items = initItems(size);
         this.itemsReadOnly = Collections.unmodifiableList(this.items);
         this.owner = new WeakReference<>(owner);
+        this.inventoryRep = new InventoryFR(this);
         this.itemFilter = itemFilter==null?new NoItemFilter():itemFilter;
         this.ticker = ticker;
         this.needsOwner = needsOwner;
@@ -104,5 +107,10 @@ public abstract class OilInventoryBase<APIObject extends ModInventoryObjectBase>
     @Override
     public void setTitle(String s) {
         super.setCustomName(new TextComponentString(s));
+    }
+
+    @Override
+    public InventoryFR getInventoryRep() {
+        return inventoryRep;
     }
 }

@@ -39,7 +39,7 @@ public class EntityFR implements EntityRep {
 
     @Override
     public VectorRep getVelocityRep() {
-        return LocFactoryImpl.INSTANCE.createVector(forge.motionX, forge.motionY, forge.motionZ);
+        return LocFactoryImpl.getInstance().createVector(forge.motionX, forge.motionY, forge.motionZ);
     }
 
     @Override

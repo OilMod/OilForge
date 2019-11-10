@@ -7,6 +7,7 @@ import org.oilmod.api.items.type.IToolBlockBreaking;
 import org.oilmod.api.items.type.ImplementationProvider;
 import org.oilmod.api.items.type.TBBType;
 import org.oilmod.api.rep.block.BlockFaceRep;
+import org.oilmod.api.rep.block.BlockStateRep;
 import org.oilmod.api.rep.entity.EntityHumanRep;
 import org.oilmod.api.rep.entity.EntityLivingRep;
 import org.oilmod.api.rep.world.LocationBlockRep;
@@ -17,13 +18,15 @@ public class TBBPickaxe extends TBBType {
         super(tbbEnum);
     }
 
+    //todo
+
     @Override
-    protected boolean canHarvestBlock(IToolBlockBreaking iToolBlockBreaking, IBlockState iBlockState, BlockType blockType) {
+    protected boolean canHarvestBlock(IToolBlockBreaking iToolBlockBreaking, OilItemStack oilItemStack, BlockStateRep blockStateRep, BlockType blockType) {
         return false;
     }
 
     @Override
-    protected float getDestroySpeed(IToolBlockBreaking iToolBlockBreaking, OilItemStack oilItemStack, IBlockState iBlockState, BlockType blockType) {
+    protected float getDestroySpeed(IToolBlockBreaking iToolBlockBreaking, OilItemStack oilItemStack, BlockStateRep blockStateRep, BlockType blockType) {
         return 0;
     }
 
@@ -33,12 +36,12 @@ public class TBBPickaxe extends TBBType {
     }
 
     @Override
-    protected boolean onBlockDestroyed(IToolBlockBreaking iToolBlockBreaking, OilItemStack oilItemStack, IBlockState iBlockState, LocationBlockRep locationBlockRep, EntityLivingRep entityLivingRep) {
+    protected boolean onBlockDestroyed(IToolBlockBreaking iToolBlockBreaking, OilItemStack oilItemStack, BlockStateRep blockStateRep, LocationBlockRep locationBlockRep, EntityLivingRep entityLivingRep) {
         return false;
     }
 
     @Override
-    protected InteractionResult onItemUseOnBlock(IToolBlockBreaking iToolBlockBreaking, OilItemStack oilItemStack, EntityHumanRep entityHumanRep, LocationBlockRep locationBlockRep, boolean b, BlockFaceRep blockFaceRep, float v, float v1, float v2) {
+    protected InteractionResult onItemUseOnBlock(IToolBlockBreaking iToolBlockBreaking, OilItemStack oilItemStack, EntityLivingRep entityLivingRep, LocationBlockRep locationBlockRep, boolean b, BlockFaceRep blockFaceRep, float v, float v1, float v2) {
         return null;
     }
 

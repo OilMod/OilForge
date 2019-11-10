@@ -1,14 +1,13 @@
 package org.oilmod.oilforge.items;
 
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
-import org.apache.commons.lang3.Validate;
 import org.oilmod.api.config.Compound;
 import org.oilmod.api.data.IData;
 import org.oilmod.api.items.NMSItemStack;
 import org.oilmod.api.items.OilItemStack;
 import org.oilmod.api.rep.itemstack.ItemStackRep;
+import org.oilmod.oilforge.rep.itemstack.OilModItemStackFR;
 
 import java.util.Map;
 
@@ -17,19 +16,25 @@ import static org.oilmod.oilforge.Util.toOil;
 public class RealItemStack implements NMSItemStack {
     private final ItemStack itemStack;
     private final OilItemStack oilItemStack;
+    private final OilModItemStackFR itemStackRep;
 
     public RealItemStack(ItemStack itemStack) {
         this.itemStack = itemStack;
         this.oilItemStack = getItem().getApiItem().createOilStack(this);
+        this.itemStackRep = new OilModItemStackFR(this);
     }
 
     public RealItemImplHelper getItem() {
         return (RealItemImplHelper) itemStack.getItem();
     }
 
+    public ItemStack getForgeItemStack() {
+        return itemStack;
+    }
+
     @Override
-    public ItemStackRep asBukkitItemStack() {
-        return toOil(itemStack);
+    public OilModItemStackFR asItemStackRep() {
+        return itemStackRep;
     }
 
     @Override

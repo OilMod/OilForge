@@ -1,12 +1,8 @@
 package org.oilmod.oilforge.items;
 
-import mcp.MethodsReturnNonnullByDefault;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.SoundEvents;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
@@ -14,31 +10,17 @@ import net.minecraft.item.ItemUseContext;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.EnumActionResult;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import org.oilmod.api.items.ItemInteractionResult;
 import org.oilmod.api.items.NMSItem;
 import org.oilmod.api.items.OilItem;
 import org.oilmod.api.items.type.IDurable;
-import org.oilmod.api.items.type.IToolBlockBreaking;
-import org.oilmod.api.items.type.IVDAdapter;
 import org.oilmod.oilforge.NMSKeyImpl;
-import org.oilmod.oilforge.block.RealOilBlockState;
-import org.oilmod.oilforge.config.nbttag.NBTCompound;
 import org.oilmod.oilforge.rep.item.ItemFR;
-import org.oilmod.oilforge.rep.itemstack.ItemStackFR;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.Collection;
-
-import static org.oilmod.oilforge.Util.toForge;
-import static org.oilmod.oilforge.Util.toOil;
-import static org.oilmod.oilforge.dirtyhacks.RealItemStackHelper.toReal;
 
 public class RealItem extends Item implements NMSItem, RealItemImplHelper {
     private final OilItem apiItem;

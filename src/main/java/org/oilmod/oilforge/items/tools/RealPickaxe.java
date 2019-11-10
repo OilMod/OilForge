@@ -4,8 +4,6 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.IItemTier;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemPickaxe;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemUseContext;
@@ -16,13 +14,13 @@ import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.common.ToolType;
 import org.oilmod.api.items.OilItem;
 import org.oilmod.api.items.type.IDurable;
 import org.oilmod.api.items.type.IPickaxe;
 import org.oilmod.api.items.type.IToolBlockBreaking;
 import org.oilmod.oilforge.NMSKeyImpl;
 import org.oilmod.oilforge.items.RealItemImplHelper;
-import org.oilmod.oilforge.rep.item.ItemFR;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -66,7 +64,7 @@ public class RealPickaxe extends ItemPickaxe implements RealItemImplHelper {
             public Ingredient getRepairMaterial() {
                 return null;
             }
-        }, 0, 1, createBuilder(oilItem).addToolType());
+        }, 0, 1, createBuilder(oilItem).addToolType(ToolType.PICKAXE, (oilItem instanceof IPickaxe)?((IPickaxe)oilItem).getPickaxeStrength():0));
         this.apiItem = oilItem;
         setRegistryName(((NMSKeyImpl) apiItem.getOilKey().getNmsKey()).resourceLocation);
     }

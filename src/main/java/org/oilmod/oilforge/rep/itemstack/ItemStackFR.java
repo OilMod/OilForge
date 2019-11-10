@@ -1,19 +1,17 @@
 package org.oilmod.oilforge.rep.itemstack;
 
-import net.minecraft.enchantment.Enchantment;
-import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.item.ItemStack;
-import org.oilmod.api.rep.enchant.EnchantmentRep;
 import org.oilmod.api.rep.item.ItemRep;
 import org.oilmod.api.rep.itemstack.ItemStackRep;
-import org.oilmod.oilforge.rep.enchantment.EnchantmentFR;
+import org.oilmod.api.rep.itemstack.state.ItemStackStateRep;
 import org.oilmod.oilforge.rep.item.ItemFR;
 
 import static org.oilmod.oilforge.Util.toOil;
 
 public class ItemStackFR implements ItemStackRep {
     private final ItemStack forge;
-    private final ItemRep item;
+    private final ItemRep item; //tmp until itemrep is saved with mixin
+    private final ItemStackStateFR state;
 
     public ItemStack getForge() {
         return forge;
@@ -22,11 +20,24 @@ public class ItemStackFR implements ItemStackRep {
     public ItemStackFR(ItemStack forge) {
         this.forge = forge;
         this.item = toOil(forge.getItem());
+        this.state = new ItemStackStateFR(forge);
+    }
+
+    protected ItemStackFR(ItemFR item, ItemStackStateFR state, int amount) {
+        this.forge  = new ItemStack(item.getForge(), amount);
+        if (state != null)state.applyTo(this);
+        this.item = toOil(forge.getItem()); //might have changed so need to get it from stack
+        this.state = new ItemStackStateFR(this.forge);
     }
 
     @Override
     public ItemRep getItem() {
         return item;
+    }
+
+    @Override
+    public ItemStackStateRep getItemStackState() {
+        return state;
     }
 
     @Override
@@ -39,7 +50,7 @@ public class ItemStackFR implements ItemStackRep {
         forge.setCount(i);
     }
 
-    @Override
+    /*@Override
     public void setDurability(short i) {
         forge.setDamage(i);
     }
@@ -47,7 +58,7 @@ public class ItemStackFR implements ItemStackRep {
     @Override
     public short getDurability() {
         return (short) forge.getDamage(); //TODO why is this short?!
-    }
+    }*/
 
     @Override
     public int getMaxStackSize() {
@@ -56,7 +67,13 @@ public class ItemStackFR implements ItemStackRep {
 
     @Override
     public boolean isSimilar(ItemStackRep itemStackRep) {
-        return forge.getItem().equals((ItemFR)itemStackRep.getItem()) && (!forge.getItem().isDamageable() || itemStackRep.getDurability() == getDurability());
+        ItemStack forge2 = ((ItemStackFR)itemStackRep).forge;
+        return ItemStack.areItemsEqual(forge, forge2);
+    }
+
+    @Override
+    public ItemStackRep copy() {
+        return null;
     }
 
     @Override
@@ -73,7 +90,7 @@ public class ItemStackFR implements ItemStackRep {
         return toOil(forge.copy());
     }
 
-    @Override
+    /*@Override
     public int getEnchantmentLevel(EnchantmentRep enchantmentRep) {
         return EnchantmentHelper.getEnchantmentLevel(((EnchantmentFR)enchantmentRep).getForge(), getForge());
     }
@@ -89,7 +106,7 @@ public class ItemStackFR implements ItemStackRep {
         int result = getEnchantmentLevel(enchantmentRep); //todo is this really needed, make nicer
         forge.addEnchantment(((EnchantmentFR)enchantmentRep).getForge(), 0);
         return result;
-    }
+    }*/
 
     @Override
     public boolean isEmpty() {

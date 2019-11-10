@@ -7,7 +7,6 @@ import org.oilmod.api.items.OilItem;
 import org.oilmod.api.items.OilItemStack;
 import org.oilmod.api.items.type.IUnique;
 import org.oilmod.api.rep.entity.EntityHumanRep;
-import org.oilmod.api.rep.item.ItemRep;
 import org.oilmod.api.rep.world.WorldRep;
 import org.oilmod.api.util.InteractionResult;
 import org.oilmod.api.util.OilKey;

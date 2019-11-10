@@ -2,17 +2,14 @@ package org.oilmod.oilforge;
 
 
 import org.oilmod.api.OilMod;
-import org.oilmod.api.blocks.BlockType;
 import org.oilmod.api.inventory.InventoryFactory;
-import org.oilmod.api.items.EnchantmentType;
 import org.oilmod.api.items.ItemRegistry;
 import org.oilmod.api.items.internal.ItemClassMap;
-import org.oilmod.api.items.internal.ItemCraftingFactory;
 import org.oilmod.api.items.internal.ItemFactory;
 import org.oilmod.api.items.type.ImplementationProvider;
-import org.oilmod.api.items.type.ItemTypeHelper;
 import org.oilmod.api.items.type.TBBType;
-import org.oilmod.api.userinterface.internal.UIHelper;
+import org.oilmod.api.rep.RepAPI;
+import org.oilmod.api.rep.stdimpl.world.LocFactoryImpl;
 import org.oilmod.api.util.OilUtil;
 import org.oilmod.oilforge.inventory.RealInventoryFactory;
 import org.oilmod.oilforge.items.RealIPHelper;
@@ -20,6 +17,9 @@ import org.oilmod.oilforge.items.RealItemClassMap;
 import org.oilmod.oilforge.items.RealItemFactory;
 import org.oilmod.oilforge.items.RealItemRegistryHelper;
 import org.oilmod.oilforge.items.tools.RealTBBHelper;
+import org.oilmod.oilforge.modloader.RealModHelper;
+import org.oilmod.oilforge.rep.RepAPIImpl;
+import org.oilmod.oilforge.rep.location.LocFactoryFR;
 
 public class OilMain {
     public static OilMod ModMinecraft;
@@ -27,7 +27,9 @@ public class OilMain {
     public static RealItemRegistryHelper realItemRegistryHelper;
 
     public static void init() {
-        OilMod.ModHelper.setInstance(new OilMod.ModHelper()); //no modification needed for now
+        RepAPI.installImplementation(new RepAPIImpl());
+
+        OilMod.ModHelper.setInstance(new RealModHelper());
         ModMinecraft  =  new OilMod("minecraft", "Minecraft");
         ModOilMod  =  new OilMod("oilmod", "OilMod");
         ItemFactory.setInstance(new RealItemFactory());

@@ -1,17 +1,12 @@
 package org.oilmod.oilforge.rep.entity;
 
-import net.minecraft.entity.EntityLiving;
-import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.inventory.IInventory;
-import net.minecraft.world.IInteractionObject;
 import org.apache.commons.lang3.NotImplementedException;
 import org.oilmod.api.rep.entity.EntityHumanRep;
 import org.oilmod.api.rep.inventory.InventoryRep;
 import org.oilmod.api.rep.inventory.InventoryUIRep;
 import org.oilmod.api.rep.itemstack.ItemStackRep;
-import org.oilmod.oilforge.modloader.OilModLoaderMod;
 import org.oilmod.oilforge.rep.inventory.InventoryFR;
 
 import static org.oilmod.oilforge.Util.toOil;

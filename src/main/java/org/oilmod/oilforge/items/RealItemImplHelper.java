@@ -18,6 +18,7 @@ import org.oilmod.api.items.NMSItem;
 import org.oilmod.api.items.OilItem;
 import org.oilmod.api.items.type.IToolBlockBreaking;
 import org.oilmod.oilforge.config.nbttag.NBTCompound;
+import org.oilmod.oilforge.rep.block.BlockStateFR;
 import org.oilmod.oilforge.rep.item.ItemFR;
 import org.oilmod.oilforge.rep.itemstack.ItemStackFR;
 
@@ -42,7 +43,7 @@ public interface RealItemImplHelper extends NMSItem {
     //NMS
     default boolean canHarvestBlock(ItemStack stack, IBlockState state) { //todo generify to consider itemstack
         if (getApiItem() instanceof IToolBlockBreaking) {
-            return ((IToolBlockBreaking)getApiItem()).canHarvestBlock(toOil(state), null); //TODO FIX -> state.getMaterial().getOilBlockType());
+            return ((IToolBlockBreaking)getApiItem()).canHarvestBlock(toReal(stack).getOilItemStack(), toOil(state), null); //TODO FIX -> state.getMaterial().getOilBlockType());
         }
         return false; //return super
     }

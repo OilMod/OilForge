@@ -1,6 +1,5 @@
 package org.oilmod.oilforge.rep.entity;
 
-import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
 import org.apache.commons.lang3.NotImplementedException;
 import org.oilmod.api.rep.entity.EntityLivingRep;

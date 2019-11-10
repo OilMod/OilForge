@@ -1,10 +1,6 @@
 package org.oilmod.oilforge.config;
 
-import org.oilmod.api.config.Compound;
-import org.oilmod.api.config.CompoundCreator;
-import org.oilmod.api.config.DataIndexedEntry;
-import org.oilmod.api.config.DataKeyedEntry;
-import org.oilmod.api.config.DataList;
+import org.oilmod.api.config.*;
 
 /**
  * Created by sirati97 on 25.06.2016 for spigot.
