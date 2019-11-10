@@ -1,6 +1,7 @@
 package org.oilmod.oilforge;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
@@ -14,6 +15,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
+import org.oilmod.api.blocks.BlockType;
 import org.oilmod.api.items.OilItemStack;
 import org.oilmod.api.rep.block.BlockFaceRep;
 import org.oilmod.api.rep.entity.EntityLivingRep;
@@ -24,6 +26,8 @@ import org.oilmod.api.rep.world.LocationEntityRep;
 import org.oilmod.api.rep.world.LocationRep;
 import org.oilmod.api.rep.world.VectorRep;
 import org.oilmod.api.util.InteractionResult;
+import org.oilmod.oilforge.block.RealBlockType;
+import org.oilmod.oilforge.block.RealBlockTypeHelper;
 import org.oilmod.oilforge.items.RealItemStack;
 import org.oilmod.oilforge.rep.block.BlockFR;
 import org.oilmod.oilforge.rep.block.BlockStateFR;
@@ -115,6 +119,10 @@ public final class Util {
     }
     public static BlockStateFR toOil(IBlockState state) {
         return new BlockStateFR(state);
+    }
+
+    public static BlockType toOil(Material mat) {
+        return ((RealBlockTypeHelper)BlockType.BlockTypeHelper.getInstance()).get(mat);
     }
 
     public static BlockFaceRep toOil(EnumFacing notch) {

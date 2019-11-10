@@ -43,7 +43,7 @@ public interface RealItemImplHelper extends NMSItem {
     //NMS
     default boolean canHarvestBlock(ItemStack stack, IBlockState state) { //todo generify to consider itemstack
         if (getApiItem() instanceof IToolBlockBreaking) {
-            return ((IToolBlockBreaking)getApiItem()).canHarvestBlock(toReal(stack).getOilItemStack(), toOil(state), null); //TODO FIX -> state.getMaterial().getOilBlockType());
+            return ((IToolBlockBreaking)getApiItem()).canHarvestBlock(toReal(stack).getOilItemStack(), toOil(state), toOil(state.getMaterial()));
         }
         return false; //return super
     }
@@ -53,7 +53,7 @@ public interface RealItemImplHelper extends NMSItem {
 
     default float getDestroySpeed(ItemStack stack, IBlockState state) {
         if (getApiItem() instanceof IToolBlockBreaking) {
-            return ((IToolBlockBreaking)getApiItem()).getDestroySpeed(toReal(stack).getOilItemStack(), toOil(state), null); //TODO FIX -> state.getMaterial().getOilBlockType());
+            return ((IToolBlockBreaking)getApiItem()).getDestroySpeed(toReal(stack).getOilItemStack(), toOil(state), toOil(state.getMaterial()));
         }
         return 1.0F;//return super
     }
@@ -64,7 +64,7 @@ public interface RealItemImplHelper extends NMSItem {
         EntityPlayer player = context.getPlayer();
 
         RealItemStack itemstack = toReal(context.getItem());
-        return toForge(getApiItem().onItemUseOnBlock(itemstack.getOilItemStack(), toOil(player), toOil(blockpos, world), player.getHeldItemOffhand()==context.getItem(), toOil(context.getFace()), 0.5f, 0.5f, 0.5f)); //todo: calculate hit point, or change api to to is lazily
+        return toForge(getApiItem().onItemUseOnBlock(itemstack.getOilItemStack(), toOil(player), toOil(blockpos, world), player.getHeldItemOffhand()==context.getItem(), toOil(context.getFace()), context.getHitX(), context.getHitY(), context.getHitZ()));
     }
 
     /*

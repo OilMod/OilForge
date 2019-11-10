@@ -2,6 +2,7 @@ package org.oilmod.oilforge;
 
 
 import org.oilmod.api.OilMod;
+import org.oilmod.api.blocks.BlockType;
 import org.oilmod.api.inventory.InventoryFactory;
 import org.oilmod.api.items.ItemRegistry;
 import org.oilmod.api.items.internal.ItemClassMap;
@@ -11,6 +12,7 @@ import org.oilmod.api.items.type.ItemTypeHelper;
 import org.oilmod.api.items.type.TBBType;
 import org.oilmod.api.rep.RepAPI;
 import org.oilmod.api.util.OilUtil;
+import org.oilmod.oilforge.block.RealBlockTypeHelper;
 import org.oilmod.oilforge.inventory.RealInventoryFactory;
 import org.oilmod.oilforge.items.*;
 import org.oilmod.oilforge.items.tools.RealTBBHelper;
@@ -36,9 +38,9 @@ public class OilMain {
         InventoryFactory.setInstance(new RealInventoryFactory());
         ImplementationProvider.IPHelper.setInstance(new RealIPHelper());
         /*UIHelper.setInstance(new RealUIHelper());
-        ItemCraftingFactory.setInstance(new RealItemCraftingFactory());
+        ItemCraftingFactory.setInstance(new RealItemCraftingFactory());*/
         BlockType.BlockTypeHelper.setInstance(new RealBlockTypeHelper());
-        EnchantmentType.EnchantmentTypeHelper.setInstance(new RealEnchantmentTypeHelper());*/
+        /*EnchantmentType.EnchantmentTypeHelper.setInstance(new RealEnchantmentTypeHelper());*/
         ItemTypeHelper.setInstance(new RealItemTypeHelper());
         TBBType.TBBHelper.setInstance(new RealTBBHelper());
         initReflection();

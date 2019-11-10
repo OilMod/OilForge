@@ -16,7 +16,7 @@ public class TestShovel extends OilItem implements IShovel, IDurable {
 
     @Override
     public float getDestroySpeed(OilItemStack itemStack) {
-        return 1;
+        return 30;
     }
 
     @Override

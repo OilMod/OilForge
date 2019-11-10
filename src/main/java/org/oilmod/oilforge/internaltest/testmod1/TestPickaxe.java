@@ -24,7 +24,7 @@ public class TestPickaxe extends OilItem implements IPickaxe, IDurable {
 
     @Override
     public float getDestroySpeed(OilItemStack itemStack) {
-        return 1;
+        return 10;
     }
 
     @Override
