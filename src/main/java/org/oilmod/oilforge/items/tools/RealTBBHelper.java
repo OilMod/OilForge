@@ -26,8 +26,10 @@ public class RealTBBHelper extends TBBType.TBBHelper {
     protected TBBType getVanilla(TBBType.TBBEnum tbbEnum) {
         switch (tbbEnum) {
             case PICKAXE:
-            case AXE:
+                return new TBBPickaxe();
             case SHOVEL:
+                return new TBBShovel();
+            case AXE:
             case SHEARS:
             case SWORD:
             case CUSTOM:
@@ -61,7 +63,7 @@ public class RealTBBHelper extends TBBType.TBBHelper {
 
                         @Override
                         protected ImplementationProvider getImplementationProvider() {
-                            return ImplementationProvider.PICKAXE;
+                            return ImplementationProvider.TOOL_CUSTOM;
                         }
                     };
         }

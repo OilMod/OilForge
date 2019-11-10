@@ -16,6 +16,7 @@ import net.minecraft.world.World;
 import org.oilmod.api.items.ItemInteractionResult;
 import org.oilmod.api.items.NMSItem;
 import org.oilmod.api.items.OilItem;
+import org.oilmod.api.items.OilItemStack;
 import org.oilmod.api.items.type.IToolBlockBreaking;
 import org.oilmod.oilforge.config.nbttag.NBTCompound;
 import org.oilmod.oilforge.rep.item.ItemFR;
@@ -97,4 +98,10 @@ public interface RealItemImplHelper extends NMSItem {
     default void readShareTag(ItemStack stack, @Nullable NBTTagCompound nbt) {
         toReal(stack).loadModData(new NBTCompound(nbt));
     }
+
+    default boolean getIsRepairable(ItemStack toRepair, ItemStack repair) {
+        OilItemStack oil = toReal(toRepair).getOilItemStack();
+        return oil.getItem().isRepairable(oil, toOil(repair));
+    }
+
 }

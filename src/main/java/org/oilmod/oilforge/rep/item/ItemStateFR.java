@@ -2,18 +2,18 @@ package org.oilmod.oilforge.rep.item;
 
 import net.minecraft.item.Item;
 import org.oilmod.api.rep.item.ItemStateRep;
+import org.oilmod.api.rep.providers.ItemStateProvider;
 
-public class ItemStateFR implements ItemStateRep {
-    private ItemFR item;
-    private short data;
+public class ItemStateFR extends ItemStateBase {
+    private int data;
 
 
-    public ItemStateFR(ItemFR item, short data) {
-        this.item = item;
+    public ItemStateFR(ItemFR item, int data) {
+        super(item);
         this.data = data;
     }
 
-    public ItemStateFR(Item i, short data) {
+    public ItemStateFR(Item i, int data) {
         this(new ItemFR(i), data); //todo mixins store ItemFR
     }
 
@@ -23,12 +23,13 @@ public class ItemStateFR implements ItemStateRep {
     }
 
     @Override
-    public ItemStateFR copy() {
-        return new ItemStateFR(item, data);
+    public int getNMS() {
+        return data;
     }
 
     @Override
-    public ItemFR getItem() {
-        return item;
+    public ItemStateFR copy() {
+        return new ItemStateFR(getItem(), data);
     }
+
 }

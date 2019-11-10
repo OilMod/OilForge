@@ -7,14 +7,12 @@ import org.oilmod.api.items.ItemRegistry;
 import org.oilmod.api.items.internal.ItemClassMap;
 import org.oilmod.api.items.internal.ItemFactory;
 import org.oilmod.api.items.type.ImplementationProvider;
+import org.oilmod.api.items.type.ItemTypeHelper;
 import org.oilmod.api.items.type.TBBType;
 import org.oilmod.api.rep.RepAPI;
 import org.oilmod.api.util.OilUtil;
 import org.oilmod.oilforge.inventory.RealInventoryFactory;
-import org.oilmod.oilforge.items.RealIPHelper;
-import org.oilmod.oilforge.items.RealItemClassMap;
-import org.oilmod.oilforge.items.RealItemFactory;
-import org.oilmod.oilforge.items.RealItemRegistryHelper;
+import org.oilmod.oilforge.items.*;
 import org.oilmod.oilforge.items.tools.RealTBBHelper;
 import org.oilmod.oilforge.modloader.RealModHelper;
 import org.oilmod.oilforge.rep.RepAPIImpl;
@@ -40,8 +38,8 @@ public class OilMain {
         /*UIHelper.setInstance(new RealUIHelper());
         ItemCraftingFactory.setInstance(new RealItemCraftingFactory());
         BlockType.BlockTypeHelper.setInstance(new RealBlockTypeHelper());
-        EnchantmentType.EnchantmentTypeHelper.setInstance(new RealEnchantmentTypeHelper());
-        ItemTypeHelper.setInstance(new RealItemTypeHelper());*/
+        EnchantmentType.EnchantmentTypeHelper.setInstance(new RealEnchantmentTypeHelper());*/
+        ItemTypeHelper.setInstance(new RealItemTypeHelper());
         TBBType.TBBHelper.setInstance(new RealTBBHelper());
         initReflection();
         //YBase.registerYAMLClasses();

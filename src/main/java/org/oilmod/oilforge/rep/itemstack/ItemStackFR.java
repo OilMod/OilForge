@@ -4,6 +4,7 @@ import net.minecraft.item.ItemStack;
 import org.oilmod.api.rep.item.ItemRep;
 import org.oilmod.api.rep.itemstack.ItemStackRep;
 import org.oilmod.api.rep.itemstack.state.ItemStackStateRep;
+import org.oilmod.api.rep.providers.ItemStackStateProvider;
 import org.oilmod.oilforge.rep.item.ItemFR;
 
 import static org.oilmod.oilforge.Util.toOil;
@@ -66,8 +67,9 @@ public class ItemStackFR implements ItemStackRep {
     }
 
     @Override
-    public boolean isSimilar(ItemStackRep itemStackRep) {
-        ItemStack forge2 = ((ItemStackFR)itemStackRep).forge;
+    public boolean isSimilar(ItemStackStateProvider stack) {
+        ItemStackStateFR state = (ItemStackStateFR)stack.getProvidedItemStackState();
+        ItemStack forge2 = state.getForgeState();
         return ItemStack.areItemsEqual(forge, forge2);
     }
 

@@ -10,20 +10,26 @@ import org.apache.commons.lang3.NotImplementedException;
 import org.oilmod.api.rep.enchant.EnchantmentRep;
 import org.oilmod.api.rep.item.ItemStateRep;
 import org.oilmod.api.rep.itemstack.state.ItemStackStateRep;
+import org.oilmod.api.rep.providers.ItemStackStateProvider;
 import org.oilmod.api.util.ConvertedReadSet;
 import org.oilmod.api.util.ReadSet;
 import org.oilmod.oilforge.rep.enchantment.EnchantmentFR;
+import org.oilmod.oilforge.rep.item.ItemStateFR;
 
 public class ItemStackStateFR implements ItemStackStateRep {
-    private final ItemStack stack;
+    private final ItemStack forgeState;
 
-    public ItemStackStateFR(ItemStack stack) {
-        this.stack = stack;
+    public ItemStackStateFR(ItemStack forgeState) {
+        this.forgeState = forgeState;
+    }
+
+    public ItemStack getForgeState() {
+        return forgeState;
     }
 
     @Override
     public ItemStateRep getItemState() {
-        throw new NotImplementedException("todo"); //todo
+        return new ItemStateFR(forgeState.getItem(), forgeState.getDamage());
     }
 
     @Override
@@ -38,30 +44,30 @@ public class ItemStackStateFR implements ItemStackStateRep {
 
     @Override
     public void setItemDamage(int itemDamage) {
-        stack.setDamage(itemDamage);
+        forgeState.setDamage(itemDamage);
     }
 
     public int getItemDamage() {
-        return stack.getDamage();
+        return forgeState.getDamage();
     }
 
     @Override
     public int getEnchantmentLevel(EnchantmentRep ench) {
-        return EnchantmentHelper.getEnchantmentLevel(((EnchantmentFR)ench).getForge(), stack);
+        return EnchantmentHelper.getEnchantmentLevel(((EnchantmentFR)ench).getForge(), forgeState);
     }
 
     @Override
     public void addEnchantment(EnchantmentRep ench, int level, boolean force) {
-        stack.addEnchantment(((EnchantmentFR)ench).getForge(), level); //todo consider checking validity or remobing force altogether, seems like a weird choice anyway
+        forgeState.addEnchantment(((EnchantmentFR)ench).getForge(), level); //todo consider checking validity or remobing force altogether, seems like a weird choice anyway
     }
 
     @Override
     public int removeEnchantment(EnchantmentRep enchRep) {
-        if (!stack.isEnchanted())return 0;
+        if (!forgeState.isEnchanted())return 0;
         Enchantment ench = ((EnchantmentFR)enchRep).getForge();
         String id = String.valueOf((Object) IRegistry.field_212628_q.getKey(ench));
 
-        NBTTagList nbttaglist = stack.getEnchantmentTagList();
+        NBTTagList nbttaglist = forgeState.getEnchantmentTagList();
         for (int i = 0; i < nbttaglist.size(); ++i) {
             NBTTagCompound nbttagcompound = (NBTTagCompound) nbttaglist.get(i);
             if (nbttagcompound.getString("id").equals(id)) {
@@ -74,8 +80,15 @@ public class ItemStackStateFR implements ItemStackStateRep {
     }
 
     @Override
+    public boolean isSimilar(ItemStackStateProvider state) {
+        ItemStackStateFR stateFR = (ItemStackStateFR)state.getProvidedItemStackState();
+        ItemStack forge2 = stateFR.getForgeState();
+        return ItemStack.areItemsEqual(forgeState, forge2);
+    }
+
+    @Override
     public ReadSet<EnchantmentFR> getEnchantments() {
         //todo mixins store EnchantmentFR (dont use EnchantmentFR::new)
-        return new ConvertedReadSet<>(EnchantmentHelper.getEnchantments(stack).keySet(), EnchantmentFR::new, EnchantmentFR::getForge);
+        return new ConvertedReadSet<>(EnchantmentHelper.getEnchantments(forgeState).keySet(), EnchantmentFR::new, EnchantmentFR::getForge);
     }
 }

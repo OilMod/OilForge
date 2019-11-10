@@ -30,7 +30,7 @@ public class RealItem extends Item implements NMSItem, RealItemImplHelper {
         if (oilItem instanceof IDurable) {
             b.defaultMaxDamage(((IDurable) oilItem).getMaxDurability());
         }
-        b.group(ItemGroup.FOOD);
+        b.group(ItemGroup.TRANSPORTATION);
         b.setTEISR(() -> () -> ((ItemFR)oilItem.getVanillaItem(null)).getForge().getTileEntityItemStackRenderer());
         return b;
     }
@@ -84,5 +84,15 @@ public class RealItem extends Item implements NMSItem, RealItemImplHelper {
 
     public void readShareTag(ItemStack stack, @Nullable NBTTagCompound nbt) {
         RealItemImplHelper.super.readShareTag(stack, nbt);
+    }
+
+    @Override
+    public boolean getIsRepairable(ItemStack toRepair, ItemStack repair) {
+        return RealItemImplHelper.super.getIsRepairable(toRepair, repair);
+    }
+
+    @Override
+    public boolean isRepairable() {
+        return super.isRepairable();
     }
 }

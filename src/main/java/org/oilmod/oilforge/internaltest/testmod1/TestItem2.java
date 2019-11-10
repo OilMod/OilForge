@@ -6,6 +6,7 @@ import org.oilmod.api.items.OilItemStack;
 import org.oilmod.api.items.type.IUnique;
 import org.oilmod.api.rep.block.BlockFaceRep;
 import org.oilmod.api.rep.entity.EntityHumanRep;
+import org.oilmod.api.rep.providers.minecraft.MinecraftItem;
 import org.oilmod.api.rep.world.LocationBlockRep;
 import org.oilmod.api.util.InteractionResult;
 import org.oilmod.api.util.OilKey;
@@ -14,7 +15,7 @@ import static org.oilmod.oilforge.Util.toOil;
 
 public class TestItem2 extends OilItem implements IUnique {
     public TestItem2(OilKey key) {
-        super(key, toOil(Items.APPLE), "Test Item 2");
+        super(key, MinecraftItem.APPLE, "Test Item 2");
     }
 
     @Override

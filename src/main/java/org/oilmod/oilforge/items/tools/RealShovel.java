@@ -3,10 +3,7 @@ package org.oilmod.oilforge.items.tools;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.IItemTier;
-import net.minecraft.item.ItemPickaxe;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.ItemUseContext;
+import net.minecraft.item.*;
 import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ActionResult;
@@ -28,13 +25,13 @@ import javax.annotation.Nullable;
 
 import static org.oilmod.oilforge.items.RealItem.createBuilder;
 
-public class RealPickaxe extends ItemPickaxe implements RealItemImplHelper {
+public class RealShovel extends ItemSpade implements RealItemImplHelper {
 
     private final OilItem apiItem;
 
 
 
-    public RealPickaxe(OilItem oilItem) {
+    public RealShovel(OilItem oilItem) {
         super(new IItemTier() {
             @Override
             public int getMaxUses() {
@@ -65,7 +62,8 @@ public class RealPickaxe extends ItemPickaxe implements RealItemImplHelper {
             public Ingredient getRepairMaterial() {
                 return null;
             }
-        }, 0, 1, createBuilder(oilItem).addToolType(ToolType.PICKAXE, (oilItem instanceof IPickaxe)?((IPickaxe)oilItem).getPickaxeStrength():0));
+        }, 0, 1, createBuilder(oilItem).addToolType(ToolType.SHOVEL, 0));
+        //forge knows harvest levels for all kinda of tools! consider
         this.apiItem = oilItem;
         setRegistryName(((NMSKeyImpl) apiItem.getOilKey().getNmsKey()).resourceLocation);
     }

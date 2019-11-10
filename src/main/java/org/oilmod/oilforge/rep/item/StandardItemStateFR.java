@@ -6,7 +6,7 @@ public class StandardItemStateFR extends ItemStateBase {
     }
 
     @Override
-    public short getNMS() {
+    public int getNMS() {
         return 0;
     }
 
