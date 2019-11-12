@@ -20,6 +20,7 @@ import org.oilmod.api.items.OilItemStack;
 import org.oilmod.api.rep.block.BlockFaceRep;
 import org.oilmod.api.rep.entity.EntityLivingRep;
 import org.oilmod.api.rep.inventory.InventoryRep;
+import org.oilmod.api.rep.itemstack.ItemStackRep;
 import org.oilmod.api.rep.stdimpl.world.LocFactoryImpl;
 import org.oilmod.api.rep.world.LocationBlockRep;
 import org.oilmod.api.rep.world.LocationEntityRep;
@@ -42,8 +43,31 @@ import org.oilmod.oilforge.rep.itemstack.RealItemStackFactory;
 import org.oilmod.oilforge.rep.location.LocationBlockFR;
 import org.oilmod.oilforge.rep.location.WorldFR;
 
+import java.util.List;
+
 public final class Util {
     //todo use mixins
+
+
+
+    //ItemStack
+    public static ItemStack toForge(OilItemStack stack) {
+        return ((RealItemStack)stack.getNmsItemStack()).getForgeItemStack();
+    }
+
+    public static ItemStack toForge(ItemStackRep stack) {
+        return ((ItemStackFR)stack).getForge();
+    }
+
+    public static ItemStackRep[] toOil(List<ItemStack> stacks) {
+        ItemStackRep[] result = new ItemStackRep[stacks.size()];
+        for (int i = 0; i < result.length; i++) {
+            result[i] = toOil(stacks.get(i));
+        }
+        return result;
+    }
+
+
     public static ItemFR toOil(Item item) {
         return new ItemFR(item);
     }
@@ -149,9 +173,7 @@ public final class Util {
         return new InventoryFR(inv);
     }
 
-    public static ItemStack toForge(OilItemStack stack) {
-        return ((RealItemStack)stack.getNmsItemStack()).getForgeItemStack();
-    }
+
 
     public static EntityLivingBase toForge(EntityLivingRep entity) {
         return ((EntityLivingBaseFR)entity).getForge();
