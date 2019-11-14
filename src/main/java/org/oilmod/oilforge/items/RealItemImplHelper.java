@@ -1,9 +1,12 @@
 package org.oilmod.oilforge.items;
 
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.enchantment.Enchantment;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemUseContext;
@@ -13,12 +16,15 @@ import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.common.capabilities.ICapabilityProvider;
+import net.minecraftforge.common.extensions.IForgeItem;
 import org.oilmod.api.items.ItemInteractionResult;
 import org.oilmod.api.items.NMSItem;
 import org.oilmod.api.items.OilItem;
 import org.oilmod.api.items.OilItemStack;
-import org.oilmod.api.items.type.IToolBlockBreaking;
+import org.oilmod.api.items.type.*;
 import org.oilmod.oilforge.config.nbttag.NBTCompound;
+import org.oilmod.oilforge.items.capability.OilItemStackProvider;
 import org.oilmod.oilforge.rep.item.ItemFR;
 import org.oilmod.oilforge.rep.itemstack.ItemStackFR;
 
@@ -26,9 +32,9 @@ import javax.annotation.Nullable;
 
 import static org.oilmod.oilforge.Util.toForge;
 import static org.oilmod.oilforge.Util.toOil;
-import static org.oilmod.oilforge.dirtyhacks.RealItemStackHelper.toReal;
+import static org.oilmod.oilforge.Util.toReal;
 
-public interface RealItemImplHelper extends NMSItem {
+public interface RealItemImplHelper extends NMSItem, IForgeItem {
 
 
     //Oil
@@ -41,13 +47,15 @@ public interface RealItemImplHelper extends NMSItem {
     OilItem getApiItem();
 
     //NMS
+    @Override
     default boolean canHarvestBlock(ItemStack stack, IBlockState state) { //todo generify to consider itemstack
         if (getApiItem() instanceof IToolBlockBreaking) {
             return ((IToolBlockBreaking)getApiItem()).canHarvestBlock(toReal(stack).getOilItemStack(), toOil(state), toOil(state.getMaterial()));
         }
         return false; //return super
     }
-    default int getItemEnchantability() {
+    @Override
+    default int getItemEnchantability(ItemStack stack) {
         return getApiItem().getItemEnchantability();
     }
 
@@ -89,13 +97,16 @@ public interface RealItemImplHelper extends NMSItem {
     }
 
     @Nullable
+    @Override
     default NBTTagCompound getShareTag(ItemStack stack) {
         NBTTagCompound result = new NBTTagCompound();
         toReal(stack).saveModData(new NBTCompound(result));
         return result;
     }
 
+    @Override
     default void readShareTag(ItemStack stack, @Nullable NBTTagCompound nbt) {
+        //todo this is only for the client receiving stuff wrong method
         toReal(stack).loadModData(new NBTCompound(nbt));
     }
 
@@ -103,5 +114,61 @@ public interface RealItemImplHelper extends NMSItem {
         OilItemStack oil = toReal(toRepair).getOilItemStack();
         return oil.getItem().isRepairable(oil, toOil(repair));
     }
+
+    @Nullable
+    @Override
+    default String getCreatorModId(ItemStack itemStack) {
+        return getApiItem().getOilKey().getMod().getInternalName();
+    }
+
+    @Override
+    default double getDurabilityForDisplay(ItemStack stack) {
+        return getApiItem() instanceof IDurable?((IDurable) getApiItem()).getDurabilityForDisplay(toReal(stack).getOilItemStack()):IForgeItem.super.getDurabilityForDisplay(stack);
+    }
+
+    @Override
+    default String getHighlightTip(ItemStack item, String displayName) {
+        System.out.println("Highlight tip is: " + displayName);
+        return displayName + " this was added";
+    }
+
+    @Override
+    default boolean canEquip(ItemStack stack, EntityEquipmentSlot armorType, Entity entity) {
+        switch (armorType) {
+            case FEET:
+                if (getApiItem() instanceof IShoes) return true;
+                break;
+            case LEGS:
+                if (getApiItem() instanceof ILeggings) return true;
+                break;
+            case CHEST:
+                if (getApiItem() instanceof IChestplate) return true;
+                break;
+            case HEAD:
+                if (getApiItem() instanceof IHelmet) return true;
+                break;
+        }
+        return IForgeItem.super.canEquip(stack, armorType, entity);
+    }
+
+    @Nullable
+    @Override
+    default ICapabilityProvider initCapabilities(ItemStack stack, @Nullable NBTTagCompound nbt) {
+        System.out.println("created realitemstack for " + getApiItem().getOilKey().toString());
+        if (nbt != null)System.out.println(nbt.toFormattedComponent(" ", 2).getFormattedText());
+        RealItemStack realItemStack = new RealItemStack(stack, getApiItem());
+
+        return new OilItemStackProvider(realItemStack);
+    }
+
+
+
+
+    //todo damn make use of this
+    @Override
+    default boolean canApplyAtEnchantingTable(ItemStack stack, Enchantment enchantment) {
+        return IForgeItem.super.canApplyAtEnchantingTable(stack, enchantment);
+    }
+
 
 }

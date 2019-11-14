@@ -1,4 +1,4 @@
-package org.oilmod.oilforge.rep.itemstack;
+package org.oilmod.oilforge.rep.itemstack.state;
 
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
@@ -51,33 +51,6 @@ public class ItemStackStateFR implements ItemStackStateRep {
         return forgeState.getDamage();
     }
 
-    @Override
-    public int getEnchantmentLevel(EnchantmentRep ench) {
-        return EnchantmentHelper.getEnchantmentLevel(((EnchantmentFR)ench).getForge(), forgeState);
-    }
-
-    @Override
-    public void addEnchantment(EnchantmentRep ench, int level, boolean force) {
-        forgeState.addEnchantment(((EnchantmentFR)ench).getForge(), level); //todo consider checking validity or remobing force altogether, seems like a weird choice anyway
-    }
-
-    @Override
-    public int removeEnchantment(EnchantmentRep enchRep) {
-        if (!forgeState.isEnchanted())return 0;
-        Enchantment ench = ((EnchantmentFR)enchRep).getForge();
-        String id = String.valueOf((Object) IRegistry.field_212628_q.getKey(ench));
-
-        NBTTagList nbttaglist = forgeState.getEnchantmentTagList();
-        for (int i = 0; i < nbttaglist.size(); ++i) {
-            NBTTagCompound nbttagcompound = (NBTTagCompound) nbttaglist.get(i);
-            if (nbttagcompound.getString("id").equals(id)) {
-                short short0 = nbttagcompound.getShort("lvl");
-                nbttaglist.remove(i);
-                return short0;
-            }
-        }
-        return 0;
-    }
 
     @Override
     public boolean isSimilar(ItemStackStateProvider state) {
@@ -86,9 +59,4 @@ public class ItemStackStateFR implements ItemStackStateRep {
         return ItemStack.areItemsEqual(forgeState, forge2);
     }
 
-    @Override
-    public ReadSet<EnchantmentFR> getEnchantments() {
-        //todo mixins store EnchantmentFR (dont use EnchantmentFR::new)
-        return new ConvertedReadSet<>(EnchantmentHelper.getEnchantments(forgeState).keySet(), EnchantmentFR::new, EnchantmentFR::getForge);
-    }
 }

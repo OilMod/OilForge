@@ -27,7 +27,7 @@ public class NBTDataList<Type> implements DataList<Type> {
 
     public NBTDataList(NBTTagList parent) {
         this.parent = parent;
-        this.type = DataType.getByNbtId(parent.getId());
+        this.type = DataType.getByNbtId(parent.getTagType());
         //noinspection unchecked
         this.javaType = (Class<Type>) type.getJavaClass();
     }

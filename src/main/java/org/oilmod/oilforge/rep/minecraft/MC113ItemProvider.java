@@ -32,7 +32,6 @@ public class MC113ItemProvider extends MinecraftItemProvider {
 
             ResourceLocation key = getKey(req);
 
-            System.out.println("key is: " + key.toString());
             Item i = itemRegistry.getValue(key);
             Validate.notNull(i, "No item with name {%s} found", key);
             ResourceLocation mcKey = itemRegistry.getKey(i);

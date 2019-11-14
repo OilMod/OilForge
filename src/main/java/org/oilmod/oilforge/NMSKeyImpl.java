@@ -20,4 +20,9 @@ public class NMSKeyImpl implements NMSKey, IKey { //todo get rid of this with mi
     public String getKeyString() {
         return resourceLocation.getPath();
     }
+
+    @Override
+    public String toString() {
+        return getNamespace().toString() + ":" + getKeyString();
+    }
 }

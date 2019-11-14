@@ -9,8 +9,9 @@ import org.oilmod.api.rep.item.ItemStateRep;
 import org.oilmod.api.rep.itemstack.ItemStackFactory;
 import org.oilmod.api.rep.itemstack.ItemStackRep;
 import org.oilmod.api.rep.itemstack.state.ItemStackStateRep;
-import org.oilmod.oilforge.dirtyhacks.RealItemStackHelper;
+import org.oilmod.oilforge.Util;
 import org.oilmod.oilforge.rep.item.ItemFR;
+import org.oilmod.oilforge.rep.itemstack.state.ItemStackStateFR;
 
 public class RealItemStackFactory extends ItemStackFactory {
     public static RealItemStackFactory INSTANCE;
@@ -23,7 +24,7 @@ public class RealItemStackFactory extends ItemStackFactory {
 
 
     public ItemStackFR create(ItemStack stack) {
-        return RealItemStackHelper.hasReal(stack)?RealItemStackHelper.toReal(stack).asItemStackRep():new ItemStackFR(stack);
+        return Util.isModStack(stack)? Util.toReal(stack).asItemStackRep():new ItemStackFR(stack);
         //todo fix dirty hacks
         //return stack instanceof RealItemStack?((RealItemStack) stack).asItemStackRep():new ItemStackFR(stack);
     }

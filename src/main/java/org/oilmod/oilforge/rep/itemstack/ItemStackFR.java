@@ -6,6 +6,7 @@ import org.oilmod.api.rep.itemstack.ItemStackRep;
 import org.oilmod.api.rep.itemstack.state.ItemStackStateRep;
 import org.oilmod.api.rep.providers.ItemStackStateProvider;
 import org.oilmod.oilforge.rep.item.ItemFR;
+import org.oilmod.oilforge.rep.itemstack.state.ItemStackStateFR;
 
 import static org.oilmod.oilforge.Util.toOil;
 
@@ -26,7 +27,7 @@ public class ItemStackFR implements ItemStackRep {
 
     protected ItemStackFR(ItemFR item, ItemStackStateFR state, int amount) {
         this.forge  = new ItemStack(item.getForge(), amount);
-        if (state != null)state.applyTo(this);
+        if (state != null)state.applyTo(this, false, true);
         this.item = toOil(forge.getItem()); //might have changed so need to get it from stack
         this.state = new ItemStackStateFR(this.forge);
     }

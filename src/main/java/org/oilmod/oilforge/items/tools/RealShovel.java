@@ -1,8 +1,11 @@
 package org.oilmod.oilforge.items.tools;
 
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.enchantment.Enchantment;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.*;
 import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.nbt.NBTTagCompound;
@@ -12,6 +15,7 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ToolType;
+import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import org.oilmod.api.items.OilItem;
 import org.oilmod.api.items.type.IDurable;
 import org.oilmod.api.items.type.IPickaxe;
@@ -77,20 +81,12 @@ public class RealShovel extends ItemSpade implements RealItemImplHelper {
     //Connect interface
 
 
-    @Override
-    public boolean canHarvestBlock(IBlockState blockIn) {
-        OilMain.printTrace("canHarvestBlock(IBlockState blockIn)");
-        return super.canHarvestBlock(blockIn);
-    }
-
-    @Override
     public boolean canHarvestBlock(ItemStack stack, IBlockState state) {
-        OilMain.printTrace("canHarvestBlock(ItemStack stack, IBlockState blockIn)");
         return RealItemImplHelper.super.canHarvestBlock(stack, state);
     }
 
-    public int getItemEnchantability() {
-        return RealItemImplHelper.super.getItemEnchantability();
+    public int getItemEnchantability(ItemStack stack) {
+        return RealItemImplHelper.super.getItemEnchantability(stack);
     }
 
     public float getDestroySpeed(ItemStack stack, IBlockState state) {
@@ -123,5 +119,31 @@ public class RealShovel extends ItemSpade implements RealItemImplHelper {
     @Override
     public boolean getIsRepairable(ItemStack toRepair, ItemStack repair) {
         return RealItemImplHelper.super.getIsRepairable(toRepair, repair);
+    }
+
+    @Override
+    public double getDurabilityForDisplay(ItemStack stack) {
+        return RealItemImplHelper.super.getDurabilityForDisplay(stack);
+    }
+
+    @Override
+    public String getHighlightTip(ItemStack item, String displayName) {
+        return RealItemImplHelper.super.getHighlightTip(item, displayName);
+    }
+
+    @Override
+    public boolean canEquip(ItemStack stack, EntityEquipmentSlot armorType, Entity entity) {
+        return RealItemImplHelper.super.canEquip(stack, armorType, entity);
+    }
+
+    @Nullable
+    @Override
+    public ICapabilityProvider initCapabilities(ItemStack stack, @Nullable NBTTagCompound nbt) {
+        return RealItemImplHelper.super.initCapabilities(stack, nbt);
+    }
+
+    @Override
+    public boolean canApplyAtEnchantingTable(ItemStack stack, Enchantment enchantment) {
+        return RealItemImplHelper.super.canApplyAtEnchantingTable(stack, enchantment);
     }
 }

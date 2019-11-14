@@ -1,6 +1,7 @@
 package org.oilmod.oilforge;
 
 
+import net.minecraftforge.common.capabilities.CapabilityManager;
 import org.oilmod.api.OilMod;
 import org.oilmod.api.blocks.BlockType;
 import org.oilmod.api.inventory.InventoryFactory;
@@ -15,6 +16,8 @@ import org.oilmod.api.util.OilUtil;
 import org.oilmod.oilforge.block.RealBlockTypeHelper;
 import org.oilmod.oilforge.inventory.RealInventoryFactory;
 import org.oilmod.oilforge.items.*;
+import org.oilmod.oilforge.items.capability.OilItemStackHandler;
+import org.oilmod.oilforge.items.capability.OilItemStackStorage;
 import org.oilmod.oilforge.items.tools.RealTBBHelper;
 import org.oilmod.oilforge.modloader.RealModHelper;
 import org.oilmod.oilforge.rep.RepAPIImpl;
@@ -27,9 +30,11 @@ public class OilMain {
     public static void init() {
         RepAPI.installImplementation(new RepAPIImpl());
 
+
         OilMod.ModHelper.setInstance(new RealModHelper());
         ModMinecraft  =  new OilMod("minecraft", "Minecraft");
         ModOilMod  =  new OilMod("oilmod", "OilMod");
+
         ItemFactory.setInstance(new RealItemFactory());
         RealItemClassMap itemClassMap = new RealItemClassMap();
         ItemClassMap.setInstance(itemClassMap);

@@ -11,7 +11,7 @@ public class TestBackpackItemStack extends OilItemStack {
 
     public TestBackpackItemStack(NMSItemStack nmsItemStack, OilItem item) {
         super(nmsItemStack, item);
-        inventory = InventoryFactory.getInstance().createBasicInventory("items",this, 16, item.getDisplayName(), BackpackItemFilter.INSTANCE, true);
+        inventory = InventoryFactory.getInstance().createBasicInventory("items",this, 18, item.getDisplayName(), BackpackItemFilter.INSTANCE, true);
     }
 
 

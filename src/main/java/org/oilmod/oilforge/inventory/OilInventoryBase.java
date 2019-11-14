@@ -15,6 +15,7 @@ import org.oilmod.oilforge.items.TempRealItemHelper;
 import org.oilmod.oilforge.rep.inventory.InventoryFR;
 
 import java.lang.ref.WeakReference;
+import java.lang.reflect.Field;
 import java.util.Collections;
 import java.util.List;
 
@@ -24,8 +25,8 @@ import java.util.List;
 public abstract class OilInventoryBase<APIObject extends ModInventoryObjectBase> extends InventoryBasic implements OilIInventory<APIObject> {
     private final WeakReference<InventoryHolderRep> owner;
     private final IItemFilter itemFilter;
-    public final NonNullList<ItemStack> items;
-    public final List<ItemStack> itemsReadOnly;
+    private final NonNullList<ItemStack> items;
+    private final List<ItemStack> itemsReadOnly;
     private WeakReference<APIObject> modInventoryObject;
     private ITicker ticker;
     private final boolean needsOwner;
@@ -35,7 +36,7 @@ public abstract class OilInventoryBase<APIObject extends ModInventoryObjectBase>
 
     public OilInventoryBase(InventoryHolderRep owner, String title, int size, ITicker ticker, IItemFilter itemFilter, boolean needsOwner) {
         super(new TextComponentString(title), size);
-        this.items = initItems(size);
+        this.items = extractItems();
         this.itemsReadOnly = Collections.unmodifiableList(this.items);
         this.owner = new WeakReference<>(owner);
         this.inventoryRep = new InventoryFR(this);
@@ -47,8 +48,23 @@ public abstract class OilInventoryBase<APIObject extends ModInventoryObjectBase>
         }
     }
 
-    protected NonNullList<ItemStack> initItems(int size) {
-        return NonNullList.withSize(size, ItemStack.EMPTY);
+    private static final Field inventoryContentsField;
+    static {
+        try {
+            inventoryContentsField = InventoryBasic.class.getDeclaredField("inventoryContents");
+            inventoryContentsField.setAccessible(true);
+        } catch (NoSuchFieldException e) {
+            throw new IllegalStateException(e);
+        }
+    }
+
+    private NonNullList<ItemStack> extractItems() {
+        try {
+            //noinspection unchecked
+            return (NonNullList<ItemStack>) inventoryContentsField.get(this);
+        } catch (IllegalAccessException e) {
+            throw new IllegalStateException(e);
+        }
     }
 
     public InventoryHolderRep getOwner() {

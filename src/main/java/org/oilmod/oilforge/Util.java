@@ -30,6 +30,7 @@ import org.oilmod.api.util.InteractionResult;
 import org.oilmod.oilforge.block.RealBlockType;
 import org.oilmod.oilforge.block.RealBlockTypeHelper;
 import org.oilmod.oilforge.items.RealItemStack;
+import org.oilmod.oilforge.items.capability.OilItemStackHandler;
 import org.oilmod.oilforge.rep.block.BlockFR;
 import org.oilmod.oilforge.rep.block.BlockStateFR;
 import org.oilmod.oilforge.rep.entity.EntityFR;
@@ -203,5 +204,13 @@ public final class Util {
             default:
                 throw new IllegalStateException("self cannot be represented, invalid blockface");
         }
+    }
+
+    public static RealItemStack toReal(ItemStack stack) {
+        return stack.getCapability(OilItemStackHandler.CAPABILITY).orElseThrow(() -> new IllegalStateException("No RealItemStack instance supplied"));
+    }
+
+    public static boolean isModStack(ItemStack stack) {
+        return stack.getCapability(OilItemStackHandler.CAPABILITY).isPresent();
     }
 }

@@ -24,11 +24,10 @@ public class TempRealItemHelper {
                 NBTTagCompound itemNBT = new NBTTagCompound();
                 item.write(itemNBT);
                 NBTCompound oilNBT = new NBTCompound(itemNBT);
-                copyTo(oilNBT, compound1);
+                copyTo(oilNBT, compound1); //todo should be doable as a itemsCompoundList.append(compound1) even if not of same compound config type (on the fly detection and translation)
 
                 //item.save(compound1);
                 itemsCompoundList.append(compound1);
-                throw new NotImplementedException("todo");
             }
         }
         compound.setList(key, itemsCompoundList);

@@ -1,8 +1,11 @@
 package org.oilmod.oilforge.items;
 
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.enchantment.Enchantment;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
@@ -13,6 +16,7 @@ import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import org.oilmod.api.items.NMSItem;
 import org.oilmod.api.items.OilItem;
 import org.oilmod.api.items.type.IDurable;
@@ -55,8 +59,8 @@ public class RealItem extends Item implements NMSItem, RealItemImplHelper {
         return RealItemImplHelper.super.canHarvestBlock(stack, state);
     }
 
-    public int getItemEnchantability() {
-        return RealItemImplHelper.super.getItemEnchantability();
+    public int getItemEnchantability(ItemStack stack) {
+        return RealItemImplHelper.super.getItemEnchantability(stack);
     }
 
     public float getDestroySpeed(ItemStack stack, IBlockState state) {
@@ -92,7 +96,39 @@ public class RealItem extends Item implements NMSItem, RealItemImplHelper {
     }
 
     @Override
-    public boolean isRepairable() {
-        return super.isRepairable();
+    public double getDurabilityForDisplay(ItemStack stack) {
+        return RealItemImplHelper.super.getDurabilityForDisplay(stack);
     }
+
+    @Override
+    public String getHighlightTip(ItemStack item, String displayName) {
+        return RealItemImplHelper.super.getHighlightTip(item, displayName);
+    }
+
+    @Override
+    public boolean canEquip(ItemStack stack, EntityEquipmentSlot armorType, Entity entity) {
+        return RealItemImplHelper.super.canEquip(stack, armorType, entity);
+    }
+
+    @Nullable
+    @Override
+    public ICapabilityProvider initCapabilities(ItemStack stack, @Nullable NBTTagCompound nbt) {
+        return RealItemImplHelper.super.initCapabilities(stack, nbt);
+    }
+
+    @Override
+    public boolean canApplyAtEnchantingTable(ItemStack stack, Enchantment enchantment) {
+        return RealItemImplHelper.super.canApplyAtEnchantingTable(stack, enchantment);
+    }
+
+
+    /*@Override
+    public boolean isRepairable() {
+        return RealItemImplHelper.super.isRepairable();
+    }*/
+
+
+    //test impl
+
+
 }
