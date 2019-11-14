@@ -2,6 +2,7 @@ package org.oilmod.oilforge.config.nbttag;
 
 
 import net.minecraft.nbt.*;
+import org.apache.commons.lang3.Validate;
 import org.oilmod.api.config.Compound;
 import org.oilmod.api.config.DataKeyedEntry;
 import org.oilmod.api.config.DataList;
@@ -108,6 +109,7 @@ public class NBTCompound implements Compound {
 
     @Override
     public void set(String key, Object value, DataType type) {
+		Validate.isInstanceOf(type.getJavaClass(), value);
         switch (type) {
             case Byte:
                 setByte(key, (Byte) value);
@@ -228,7 +230,7 @@ public class NBTCompound implements Compound {
             case Byte:
                 return ((NBTTagByte) nbt).getByte();
             case Short:
-                return ((NBTTagShort) nbt).getFloat();
+                return ((NBTTagShort) nbt).getShort();
             case Int:
                 return ((NBTTagInt) nbt).getInt();
             case Long:

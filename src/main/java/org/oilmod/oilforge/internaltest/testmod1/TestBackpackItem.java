@@ -9,12 +9,16 @@ import org.oilmod.api.items.OilItem;
 import org.oilmod.api.items.OilItemStack;
 import org.oilmod.api.items.type.IUnique;
 import org.oilmod.api.rep.entity.EntityHumanRep;
+import org.oilmod.api.rep.inventory.InventoryRep;
+import org.oilmod.api.rep.itemstack.ItemStackRep;
+import org.oilmod.api.rep.itemstack.state.Inventory;
 import org.oilmod.api.rep.providers.minecraft.MinecraftItem;
 import org.oilmod.api.rep.world.WorldRep;
 import org.oilmod.api.util.InteractionResult;
 import org.oilmod.api.util.OilKey;
 import org.oilmod.oilforge.items.RealItemStack;
 
+import static org.oilmod.oilforge.Util.toForge;
 import static org.oilmod.oilforge.Util.toOil;
 
 public class TestBackpackItem extends OilItem implements IUnique {
@@ -34,7 +38,20 @@ public class TestBackpackItem extends OilItem implements IUnique {
         RealItemStack ris = ((RealItemStack)stack.getNmsItemStack());
         ItemStack nms = ris.getForgeItemStack();
 
-        nms.write(new NBTTagCompound());
+        boolean hasInv = Inventory.RESOLVER.isApplicable(stack.asBukkitItemStack().getItemStackState());
+        if (hasInv) {
+            InventoryRep inv = Inventory.get(stack.asBukkitItemStack());
+            for (int i = 0; i < inv.getStorageSize(); i++) {
+                ItemStackRep stack2 = inv.getStored(i);
+                if (stack2.isEmpty())continue;
+
+                System.out.println("item slot " + i + " + " + toForge(stack2).toString());
+            }
+        } else {
+            System.out.println("no inventory found huh");
+        }
+
+
 
 
         return new ItemInteractionResult(InteractionResult.SUCCESS, stack);

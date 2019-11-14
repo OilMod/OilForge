@@ -1,10 +1,8 @@
 package org.oilmod.oilforge.internaltest.testmod1;
 
+import net.minecraft.enchantment.Enchantment;
 import net.minecraft.init.Items;
-import org.oilmod.api.items.EnchantmentType;
-import org.oilmod.api.items.ItemInteractionResult;
-import org.oilmod.api.items.OilItem;
-import org.oilmod.api.items.OilItemStack;
+import org.oilmod.api.items.*;
 import org.oilmod.api.items.type.IChestplate;
 import org.oilmod.api.items.type.IDurable;
 import org.oilmod.api.items.type.IPickaxe;
@@ -13,6 +11,7 @@ import org.oilmod.api.rep.block.BlockFaceRep;
 import org.oilmod.api.rep.entity.EntityHumanRep;
 import org.oilmod.api.rep.entity.EntityLivingRep;
 import org.oilmod.api.rep.itemstack.ItemStackRep;
+import org.oilmod.api.rep.itemstack.state.DisplayName;
 import org.oilmod.api.rep.itemstack.state.Enchantments;
 import org.oilmod.api.rep.providers.minecraft.MinecraftItem;
 import org.oilmod.api.rep.world.LocationBlockRep;
@@ -21,6 +20,8 @@ import org.oilmod.api.util.InteractionResult;
 import org.oilmod.api.util.OilKey;
 import org.oilmod.oilforge.OilMain;
 import org.oilmod.oilforge.rep.item.ItemFR;
+
+import static org.oilmod.oilforge.Util.toOil;
 
 public class TestPickaxe extends OilItem implements IPickaxe, IDurable, IChestplate {
     public TestPickaxe(OilKey key) {
@@ -91,5 +92,17 @@ public class TestPickaxe extends OilItem implements IPickaxe, IDurable, IChestpl
     @Override
     public ImplementationProvider getImplementationProvider() {
         return IPickaxe.super.getImplementationProvider();
+    }
+
+    @Override
+    protected OilItemStackFactory[] createCreativeItems() {
+        return new OilItemStackFactory[]{()->createItemStack(1),
+                ()->{
+                    ItemStackRep stack = createItemStack(1);
+                    DisplayName.set(stack, "This is special");
+                    Enchantments.add(stack, toOil(net.minecraft.init.Enchantments.EFFICIENCY), 2, true);
+                    System.out.println(Enchantments.getEnchantmentLevel(stack, toOil(net.minecraft.init.Enchantments.EFFICIENCY)) + " level was applied");
+                    return stack;
+                }};
     }
 }

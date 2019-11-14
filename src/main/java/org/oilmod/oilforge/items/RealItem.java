@@ -14,6 +14,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
@@ -121,6 +122,20 @@ public class RealItem extends Item implements NMSItem, RealItemImplHelper {
         return RealItemImplHelper.super.canApplyAtEnchantingTable(stack, enchantment);
     }
 
+    @Override
+    public boolean isInGroup(ItemGroup group) {
+        return super.isInGroup(group); //correct like this
+    }
+
+    @Override
+    public void fillItemGroup(ItemGroup group, NonNullList<ItemStack> items) {
+        RealItemImplHelper.super.fillItemGroup(group, items);
+    }
+
+    @Override
+    public boolean shouldCauseReequipAnimation(ItemStack oldStack, ItemStack newStack, boolean slotChanged) {
+        return RealItemImplHelper.super.shouldCauseReequipAnimation(oldStack, newStack, slotChanged);
+    }
 
     /*@Override
     public boolean isRepairable() {
@@ -129,6 +144,5 @@ public class RealItem extends Item implements NMSItem, RealItemImplHelper {
 
 
     //test impl
-
 
 }

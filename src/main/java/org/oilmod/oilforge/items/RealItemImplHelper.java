@@ -8,21 +8,22 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemUseContext;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.extensions.IForgeItem;
-import org.oilmod.api.items.ItemInteractionResult;
-import org.oilmod.api.items.NMSItem;
-import org.oilmod.api.items.OilItem;
-import org.oilmod.api.items.OilItemStack;
+import org.oilmod.api.items.*;
 import org.oilmod.api.items.type.*;
+import org.oilmod.api.rep.enchant.EnchantmentRep;
+import org.oilmod.api.rep.itemstack.ItemStackRep;
 import org.oilmod.oilforge.config.nbttag.NBTCompound;
 import org.oilmod.oilforge.items.capability.OilItemStackProvider;
 import org.oilmod.oilforge.rep.item.ItemFR;
@@ -30,9 +31,7 @@ import org.oilmod.oilforge.rep.itemstack.ItemStackFR;
 
 import javax.annotation.Nullable;
 
-import static org.oilmod.oilforge.Util.toForge;
-import static org.oilmod.oilforge.Util.toOil;
-import static org.oilmod.oilforge.Util.toReal;
+import static org.oilmod.oilforge.Util.*;
 
 public interface RealItemImplHelper extends NMSItem, IForgeItem {
 
@@ -45,6 +44,8 @@ public interface RealItemImplHelper extends NMSItem, IForgeItem {
     }
 
     OilItem getApiItem();
+
+
 
     //NMS
     @Override
@@ -154,20 +155,31 @@ public interface RealItemImplHelper extends NMSItem, IForgeItem {
     @Nullable
     @Override
     default ICapabilityProvider initCapabilities(ItemStack stack, @Nullable NBTTagCompound nbt) {
-        System.out.println("created realitemstack for " + getApiItem().getOilKey().toString());
-        if (nbt != null)System.out.println(nbt.toFormattedComponent(" ", 2).getFormattedText());
         RealItemStack realItemStack = new RealItemStack(stack, getApiItem());
 
         return new OilItemStackProvider(realItemStack);
     }
 
-
-
-
-    //todo damn make use of this
     @Override
-    default boolean canApplyAtEnchantingTable(ItemStack stack, Enchantment enchantment) {
-        return IForgeItem.super.canApplyAtEnchantingTable(stack, enchantment);
+    default boolean canApplyAtEnchantingTable(ItemStack stack, Enchantment ench) {
+        EnchantmentRep enchRep = toOil(ench);
+        return getApiItem().getEnchantmentType().containsEnchantment(enchRep) || getApiItem().canEnchantSpecial(enchRep, false);
+    }
+
+    boolean isInGroup(ItemGroup group);
+
+    default void fillItemGroup(ItemGroup group, NonNullList<ItemStack> items) {
+        if (isInGroup(group)) {
+            for (OilItemStackFactory factory:getApiItem().getCreativeItems()) {
+                items.add(toForge(factory.create()));
+            }
+        }
+    }
+
+    @Override
+    default boolean shouldCauseReequipAnimation(ItemStack oldStack, ItemStack newStack, boolean slotChanged) {
+        if (slotChanged) return IForgeItem.super.shouldCauseReequipAnimation(oldStack, newStack, slotChanged);
+        else return isModStack(oldStack) && isModStack(newStack) && toReal(oldStack).getItem().getApiItem().equals( toReal(newStack).getItem().getApiItem());
     }
 
 

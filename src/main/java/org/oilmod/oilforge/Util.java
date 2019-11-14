@@ -3,6 +3,8 @@ package org.oilmod.oilforge;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.enchantment.Enchantment;
+import net.minecraft.enchantment.EnumEnchantmentType;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
@@ -15,11 +17,15 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
+import net.minecraftforge.items.IItemHandler;
 import org.oilmod.api.blocks.BlockType;
+import org.oilmod.api.items.EnchantmentType;
 import org.oilmod.api.items.OilItemStack;
 import org.oilmod.api.rep.block.BlockFaceRep;
+import org.oilmod.api.rep.enchant.EnchantmentRep;
 import org.oilmod.api.rep.entity.EntityLivingRep;
 import org.oilmod.api.rep.inventory.InventoryRep;
+import org.oilmod.api.rep.item.ItemRep;
 import org.oilmod.api.rep.itemstack.ItemStackRep;
 import org.oilmod.api.rep.stdimpl.world.LocFactoryImpl;
 import org.oilmod.api.rep.world.LocationBlockRep;
@@ -27,16 +33,19 @@ import org.oilmod.api.rep.world.LocationEntityRep;
 import org.oilmod.api.rep.world.LocationRep;
 import org.oilmod.api.rep.world.VectorRep;
 import org.oilmod.api.util.InteractionResult;
-import org.oilmod.oilforge.block.RealBlockType;
 import org.oilmod.oilforge.block.RealBlockTypeHelper;
+import org.oilmod.oilforge.enchantments.RealEnchantmentTypeHelper;
+import org.oilmod.oilforge.items.RealItemImplHelper;
 import org.oilmod.oilforge.items.RealItemStack;
 import org.oilmod.oilforge.items.capability.OilItemStackHandler;
 import org.oilmod.oilforge.rep.block.BlockFR;
 import org.oilmod.oilforge.rep.block.BlockStateFR;
+import org.oilmod.oilforge.rep.enchantment.EnchantmentFR;
 import org.oilmod.oilforge.rep.entity.EntityFR;
 import org.oilmod.oilforge.rep.entity.EntityHumanFR;
 import org.oilmod.oilforge.rep.entity.EntityLivingBaseFR;
 import org.oilmod.oilforge.rep.entity.EntityLivingFR;
+import org.oilmod.oilforge.rep.inventory.IItemHandlerInventoryFR;
 import org.oilmod.oilforge.rep.inventory.InventoryFR;
 import org.oilmod.oilforge.rep.item.ItemFR;
 import org.oilmod.oilforge.rep.itemstack.ItemStackFR;
@@ -58,6 +67,9 @@ public final class Util {
 
     public static ItemStack toForge(ItemStackRep stack) {
         return ((ItemStackFR)stack).getForge();
+    }
+    public static Item toForge(ItemRep item) {
+        return ((ItemFR)item).getForge();
     }
 
     public static ItemStackRep[] toOil(List<ItemStack> stacks) {
@@ -102,6 +114,15 @@ public final class Util {
             default:
                 return EnumActionResult.PASS;
         }
+    }
+
+    public static boolean isModStack(ItemStack stack) {
+        //might not have item set yet so we need to test both
+        return stack.getItem() instanceof RealItemImplHelper || stack.getCapability(OilItemStackHandler.CAPABILITY).isPresent();
+    }
+
+    public static RealItemStack toReal(ItemStack stack) {
+        return stack.getCapability(OilItemStackHandler.CAPABILITY).orElseThrow(() -> new IllegalStateException("No RealItemStack instance supplied"));
     }
 
     //Location stuff
@@ -206,11 +227,22 @@ public final class Util {
         }
     }
 
-    public static RealItemStack toReal(ItemStack stack) {
-        return stack.getCapability(OilItemStackHandler.CAPABILITY).orElseThrow(() -> new IllegalStateException("No RealItemStack instance supplied"));
+    public static IItemHandlerInventoryFR toOil(IItemHandler itemHandler) {
+        return new IItemHandlerInventoryFR(itemHandler);
     }
 
-    public static boolean isModStack(ItemStack stack) {
-        return stack.getCapability(OilItemStackHandler.CAPABILITY).isPresent();
+    //enchantments
+
+    public static EnchantmentRep toOil(Enchantment ench) {
+        return new EnchantmentFR(ench);
     }
+
+    public static Enchantment toForge(EnchantmentRep item) {
+        return ((EnchantmentFR)item).getForge();
+    }
+
+    public static EnchantmentType toOil(EnumEnchantmentType forge) {
+        return ((RealEnchantmentTypeHelper)EnchantmentType.EnchantmentTypeHelper.getInstance()).convertToOil(forge);
+    }
+
 }

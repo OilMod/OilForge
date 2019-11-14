@@ -7,6 +7,8 @@ import org.oilmod.api.items.OilItem;
 
 import java.util.Set;
 
+import static org.oilmod.oilforge.Util.toForge;
+
 public class RealItemRegistryHelper extends ItemRegistry.ItemRegistryHelper {
     public Set<Item> toBeRegistered = new THashSet<>();
 
@@ -20,10 +22,10 @@ public class RealItemRegistryHelper extends ItemRegistry.ItemRegistryHelper {
 
     @Override
     public <T extends OilItem> void register(ItemRegistry itemRegistry, T oilItem) {
-        Item item = (Item) oilItem.getImplementationProvider().implement(oilItem);
+        Item item = toForge(oilItem.getImplementationProvider().implement(oilItem));
         setNMSModItem(item, oilItem);
         itemClassMap.register(oilItem);
-        toBeRegistered.add(item); //todo improve at some point this set is registered and new ones are ignored
+        toBeRegistered.add(item); //todo improve at some point this set is registered and new ones are ignored - might be okay as we promt the mod in the same method to register
     }
 
     @Override

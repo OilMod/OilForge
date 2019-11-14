@@ -95,7 +95,7 @@ public class RealShapedRecipe extends RealRecipe {
 
         //no real clue how all this works with autocrafters etc. they might not have a player object etc, so lets just do it now
         //this was originally done because i did not see itemstacks as a mere data holder but as an actual object, in retrospect this might be a wrong design choice based on how most systems work but it allowed for a persistant oop instance to come with every itemstack
-        //todo make OilItemStack transitive by nbt trick, and clone object here
+        //todo clone OilItemStack here or find reliant onCraft event
         getRecipeResult().craftResult(result, ingredients, true, recipeWidth, recipeHeight);
 
         //are those fake normal looking recipes still needed

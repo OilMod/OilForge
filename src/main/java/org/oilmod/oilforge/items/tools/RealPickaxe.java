@@ -6,15 +6,13 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.EntityEquipmentSlot;
-import net.minecraft.item.IItemTier;
-import net.minecraft.item.ItemPickaxe;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.ItemUseContext;
+import net.minecraft.item.*;
 import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ToolType;
@@ -83,6 +81,7 @@ public class RealPickaxe extends ItemPickaxe implements RealItemImplHelper {
     //Connect interface
 
 
+
     public boolean canHarvestBlock(ItemStack stack, IBlockState state) {
         return RealItemImplHelper.super.canHarvestBlock(stack, state);
     }
@@ -147,5 +146,20 @@ public class RealPickaxe extends ItemPickaxe implements RealItemImplHelper {
     @Override
     public boolean canApplyAtEnchantingTable(ItemStack stack, Enchantment enchantment) {
         return RealItemImplHelper.super.canApplyAtEnchantingTable(stack, enchantment);
+    }
+
+    @Override
+    public boolean isInGroup(ItemGroup group) {
+        return super.isInGroup(group); //correct like this
+    }
+
+    @Override
+    public void fillItemGroup(ItemGroup group, NonNullList<ItemStack> items) {
+        RealItemImplHelper.super.fillItemGroup(group, items);
+    }
+
+    @Override
+    public boolean shouldCauseReequipAnimation(ItemStack oldStack, ItemStack newStack, boolean slotChanged) {
+        return RealItemImplHelper.super.shouldCauseReequipAnimation(oldStack, newStack, slotChanged);
     }
 }

@@ -3,8 +3,11 @@ package org.oilmod.oilforge.items;
 import org.oilmod.api.items.NMSItem;
 import org.oilmod.api.items.OilItem;
 import org.oilmod.api.items.type.ImplementationProvider;
+import org.oilmod.api.rep.item.ItemRep;
 import org.oilmod.oilforge.items.tools.RealPickaxe;
 import org.oilmod.oilforge.items.tools.RealShovel;
+
+import static org.oilmod.oilforge.Util.toOil;
 
 public class RealIPHelper extends ImplementationProvider.IPHelper {
     @Override
@@ -18,7 +21,7 @@ public class RealIPHelper extends ImplementationProvider.IPHelper {
     }
 
     private interface ImplementationDelegate{
-        NMSItem implement(OilItem oilItem);
+        RealItemImplHelper implement(OilItem oilItem);
     }
 
     private static class DIP extends ImplementationProvider {
@@ -30,8 +33,8 @@ public class RealIPHelper extends ImplementationProvider.IPHelper {
         }
 
         @Override
-        public NMSItem implement(OilItem oilItem) {
-            return delegate.implement(oilItem);
+        public ItemRep implement(OilItem oilItem) {
+            return toOil(delegate.implement(oilItem).getItem());
         }
     }
 
