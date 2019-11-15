@@ -41,7 +41,7 @@ public class MC113BlockProvider extends MinecraftBlockProvider {
                 data = data.set(state, opt.get());
             }*/
             return new Substitute<>(req.getAvailability(), new BlockStateFR(states));
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             reportError(e);
             return new Substitute<>(Availability.Unavailable, null);
         }

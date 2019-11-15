@@ -1,6 +1,7 @@
 package org.oilmod.oilforge.modloading;
 
 import net.minecraft.item.Item;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.EventBusErrorMessage;
 import net.minecraftforge.eventbus.api.BusBuilder;
@@ -8,37 +9,36 @@ import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.IEventListener;
 import net.minecraftforge.fml.*;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.forgespi.language.IModInfo;
 import net.minecraftforge.forgespi.language.ModFileScanData;
 import net.minecraftforge.registries.IForgeRegistry;
+import org.apache.commons.lang3.Validate;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.oilmod.api.OilMod;
-import org.oilmod.api.rep.providers.minecraft.MinecraftItemProvider;
-import org.oilmod.oilforge.OilMain;
+import org.oilmod.oilforge.modloader.OilModLoaderMod;
 import org.oilmod.oilforge.modloader.RealModHelper;
-import org.oilmod.oilforge.rep.minecraft.MC113ItemProvider;
 
 import java.util.Optional;
 import java.util.function.Consumer;
 
 import static net.minecraftforge.fml.Logging.LOADING;
+import static org.oilmod.api.OilMod.ModHelper.getDefaultContext;
 
-public class OilModContainer extends ModContainer implements OilMod.ModContext { //would like to overwrite fmlmodcontainer, but cannot overwrite private methods :(
+public class OilModContainer extends ModContainer { //would like to overwrite fmlmodcontainer, but cannot overwrite private methods :(
     private static final Logger LOGGER = LogManager.getLogger();
     private final ModFileScanData scanResults;
     private final IEventBus eventBus;
     private OilMod modInstance;
     private final Class<? extends OilMod> modClass;
 
-    public OilModContainer(OilModInfo info, String className, ClassLoader modClassLoader, ModFileScanData modFileScanResults)
+    public OilModContainer(IModInfo info, String className, ClassLoader modClassLoader, ModFileScanData modFileScanResults)
     {
         super(info);
         LOGGER.debug(LOADING,"Creating OilModContainer instance for {} with classLoader {} & {}", className, modClassLoader, getClass().getClassLoader());
         this.scanResults = modFileScanResults;
         triggerMap.put(ModLoadingStage.CONSTRUCT, dummy().andThen(this::beforeEvent).andThen(this::constructMod).andThen(this::afterEvent));
-        triggerMap.put(ModLoadingStage.CREATE_REGISTRIES, dummy().andThen(this::beforeEvent).andThen(this::fireEvent).andThen(this::afterEvent));
+        triggerMap.put(ModLoadingStage.CREATE_REGISTRIES, dummy().andThen(this::checkConstructState).andThen(this::beforeEvent).andThen(this::fireEvent).andThen(this::afterEvent));
         triggerMap.put(ModLoadingStage.LOAD_REGISTRIES, dummy().andThen(this::beforeEvent).andThen(this::fireEvent).andThen(this::afterEvent));
         triggerMap.put(ModLoadingStage.COMMON_SETUP, dummy().andThen(this::beforeEvent).andThen(this::preinitMod).andThen(this::fireEvent).andThen(this::afterEvent));
         triggerMap.put(ModLoadingStage.SIDED_SETUP, dummy().andThen(this::beforeEvent).andThen(this::fireEvent).andThen(this::afterEvent));
@@ -66,7 +66,13 @@ public class OilModContainer extends ModContainer implements OilMod.ModContext {
         //OilMod
         //register events
 
+
+        MinecraftForge.EVENT_BUS.addListener(this::onOilAPIInitEvent);
         eventBus.addGenericListener(Item.class, this::registerItems);
+    }
+
+    private void checkConstructState(LifecycleEventProvider.LifecycleEvent lifecycleEvent) {
+        Validate.notNull(modInstance, "Previous stage did not complete, as OilAPIInitEvent was not fired");
     }
 
     //OilMod
@@ -83,8 +89,8 @@ public class OilModContainer extends ModContainer implements OilMod.ModContext {
 
 
     @Override
-    public OilModInfo getModInfo() {
-        return (OilModInfo) super.getModInfo();
+    public IModInfo getModInfo() {
+        return (IModInfo) super.getModInfo();
     }
 
     private void completeLoading(LifecycleEventProvider.LifecycleEvent lifecycleEvent)
@@ -94,8 +100,6 @@ public class OilModContainer extends ModContainer implements OilMod.ModContext {
 
     private void initMod(LifecycleEventProvider.LifecycleEvent lifecycleEvent)
     {
-        //OilMod
-        RealModHelper.initialise(modInstance);
     }
 
     private Consumer<LifecycleEventProvider.LifecycleEvent> dummy() { return (s) -> {}; }
@@ -133,26 +137,51 @@ public class OilModContainer extends ModContainer implements OilMod.ModContext {
     {
     }
 
+    private boolean oilAPIinit = false;
+    private void onOilAPIInitEvent(OilAPIInitEvent event) {
+        LOGGER.debug("Received OilAPI init event for {}", getModId());
+        synchronized (apiInitMutex) {
+            oilAPIinit = true;
+            constructMod();
+        }
+    }
+
+
+
     private void constructMod(LifecycleEventProvider.LifecycleEvent event)
     {
-        try
-        {
-            LOGGER.debug(LOADING, "Loading mod instance {} of type {}", getModId(), modClass.getName());
-            //OilMod
-            this.modInstance = OilMod.ModHelper.createInstance(modClass, this, getModId(), getModInfo().getDisplayName());
+        constructMod();
+    }
+
+
+    private final Object apiInitMutex = new Object();
+    private void constructMod()
+    {
+        synchronized (apiInitMutex) {
+            if (!oilAPIinit) {
+                return;
+            }
+            try
+            {
+                LOGGER.debug(LOADING, "Loading mod instance {} of type {}", getModId(), modClass.getName());
+                //OilMod
+                this.modInstance = OilMod.ModHelper.createInstance(modClass, getDefaultContext(), getModId(), getModInfo().getDisplayName());
 
 
 
-            LOGGER.debug(LOADING, "Loaded mod instance {} of type {}", getModId(), modClass.getName());
+                LOGGER.debug(LOADING, "Loaded mod instance {} of type {}", getModId(), modClass.getName());
+            }
+            catch (Throwable e)
+            {
+                LOGGER.error(LOADING,"Failed to create mod instance. ModID: {}, class {}", getModId(), modClass.getName(), e);
+                //todo try to somehow get the stage (should always be CONSTRUCT)
+                throw new ModLoadingException(modInfo, ModLoadingStage.CONSTRUCT, "fml.modloading.failedtoloadmod", e, modClass);
+            }
+            LOGGER.debug(LOADING, "Injecting Automatic event subscribers for {}", getModId());
+            AutomaticEventSubscriber.inject(this, this.scanResults, this.modClass.getClassLoader());
+            LOGGER.debug(LOADING, "Completed Automatic event subscribers for {}", getModId());
         }
-        catch (Throwable e)
-        {
-            LOGGER.error(LOADING,"Failed to create mod instance. ModID: {}, class {}", getModId(), modClass.getName(), e);
-            throw new ModLoadingException(modInfo, event.fromStage(), "fml.modloading.failedtoloadmod", e, modClass);
-        }
-        LOGGER.debug(LOADING, "Injecting Automatic event subscribers for {}", getModId());
-        AutomaticEventSubscriber.inject(this, this.scanResults, this.modClass.getClassLoader());
-        LOGGER.debug(LOADING, "Completed Automatic event subscribers for {}", getModId());
+
     }
 
     @Override

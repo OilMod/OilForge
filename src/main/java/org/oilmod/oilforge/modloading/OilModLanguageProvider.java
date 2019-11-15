@@ -7,6 +7,7 @@ import net.minecraftforge.forgespi.language.IModLanguageProvider;
 import net.minecraftforge.forgespi.language.ModFileScanData;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.oilmod.oilforge.modloading.hacks.OilModFileInfoHelper;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -18,6 +19,7 @@ import java.util.stream.Collectors;
 
 import static net.minecraftforge.fml.Logging.LOADING;
 import static net.minecraftforge.fml.Logging.SCAN;
+import static org.oilmod.oilforge.modloading.hacks.OilModFileInfoHelper.*;
 
 public class OilModLanguageProvider implements IModLanguageProvider {
     //TODO: get inspired by FMLJavaModLanguageProvider
@@ -34,12 +36,20 @@ public class OilModLanguageProvider implements IModLanguageProvider {
     public Consumer<ModFileScanData> getFileVisitor() {
         return scanResult -> {
             scanResult.getIModInfoData().forEach(modFileInfo -> LOGGER.debug("found modFileInfo: {}", modFileInfo));
-            final Map<String, OilLoader> modTargetMap = scanResult.getIModInfoData().stream().filter(fileInfo -> fileInfo instanceof OilModFileInfo)
+            //Original, broken due to forge not allowing other implementations of IModFileInfo
+            /*final Map<String, OilLoader> modTargetMap = scanResult.getIModInfoData().stream().filter(fileInfo -> fileInfo instanceof OilModFileInfo)
                     .map(fileInfo -> (OilModFileInfo)fileInfo)
                     .flatMap(fileInfo -> fileInfo.getOilMods().stream())
                     .peek(modInfo -> LOGGER.debug(SCAN, "Found oilmod-classpath {} with id {}", modInfo::getClasspath, modInfo::getModId))
                     .map(modInfo -> new OilLoader(modInfo.getClasspath(), modInfo.getModId()))
+                    .collect(Collectors.toMap(OilLoader::getModId, Function.identity(), (a, b)->a));*/
+            final Map<String, OilLoader> modTargetMap = scanResult.getIModInfoData().stream()
+                    .flatMap(fileInfo -> fileInfo.getMods().stream())
+                    .filter(OilModFileInfoHelper::isOilModIfo)
+                    .peek(modInfo -> LOGGER.debug(SCAN, "Found oilmod-classpath {} with id {}", getClasspath(modInfo)::toString, modInfo::getModId))
+                    .map(modInfo -> new OilLoader(getClasspath(modInfo), modInfo.getModId()))
                     .collect(Collectors.toMap(OilLoader::getModId, Function.identity(), (a, b)->a));
+            scanResult.addLanguageLoader(modTargetMap);
         };
     }
 
@@ -72,14 +82,14 @@ public class OilModLanguageProvider implements IModLanguageProvider {
             // in the classloader of the game - the context classloader is appropriate here.
             try
             {
-                final Class<?> fmlContainer = Class.forName("net.minecraftforge.fml.javafmlmod.FMLModContainer", true, Thread.currentThread().getContextClassLoader());
-                LOGGER.debug(LOADING, "Loading FMLModContainer from classloader {} - got {}", Thread.currentThread().getContextClassLoader(), fmlContainer.getClassLoader());
-                final Constructor<?> constructor = fmlContainer.getConstructor(IModInfo.class, String.class, ClassLoader.class, ModFileScanData.class);
+                final Class<?> oilContainer = Class.forName("org.oilmod.oilforge.modloading.OilModContainer", true, Thread.currentThread().getContextClassLoader());
+                LOGGER.debug(LOADING, "Loading OilModContainer from classloader {} - got {}", Thread.currentThread().getContextClassLoader(), oilContainer.getClassLoader());
+                final Constructor<?> constructor = oilContainer.getConstructor(IModInfo.class, String.class, ClassLoader.class, ModFileScanData.class);
                 return (T)constructor.newInstance(info, className, modClassLoader, modFileScanResults);
             }
             catch (NoSuchMethodException | ClassNotFoundException | InstantiationException | IllegalAccessException | InvocationTargetException e)
             {
-                LOGGER.fatal(LOADING,"Unable to load FMLModContainer, wut?", e);
+                LOGGER.fatal(LOADING,"Unable to load OilModContainer, wut?", e);
                 throw new RuntimeException(e);
             }
         }

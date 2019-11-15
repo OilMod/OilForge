@@ -9,6 +9,7 @@ public class RealModHelper extends OilMod.ModHelper {
     protected void register(OilMod mod) {
         //todo do forge stuff
         super.register(mod);
+        initialise(mod);
     }
 
     @Override
@@ -23,9 +24,6 @@ public class RealModHelper extends OilMod.ModHelper {
 
     public static ItemRegistry getItemRegistry(OilMod mod) {
         return OilMod.ModHelper.getItemRegistry(mod);
-    }
-    public static void initialise(OilMod mod) {
-        OilMod.ModHelper.initialise(mod);
     }
 
     public static void invokeRegisterItems(OilMod mod) {

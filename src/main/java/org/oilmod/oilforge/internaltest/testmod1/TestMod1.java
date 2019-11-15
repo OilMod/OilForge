@@ -5,10 +5,6 @@ import org.oilmod.api.items.ItemRegistry;
 
 public class TestMod1 extends OilMod {
 
-    public TestMod1() {
-        super();
-    }
-
     @Override
     public void onRegisterItems(ItemRegistry itemRegistry) {
         itemRegistry.register(new TestItem1(createKey("testitem1")));

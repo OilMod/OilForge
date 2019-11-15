@@ -22,6 +22,7 @@ public class MC113ItemProvider extends MinecraftItemProvider {
 
     @Override
     protected Substitute<ItemStateRep> getItem(MinecraftItem item) {
+        Validate.notNull(itemRegistry, "MinecraftItem was accessed before the provider was initialised!");
         try {
             MC113ItemReq req = item.getMc113();
 
@@ -42,7 +43,7 @@ public class MC113ItemProvider extends MinecraftItemProvider {
 
             //allow data if needed
             return new Substitute<>(req.getAvailability(), new ItemStateFR(i, (short) /*req.getData()*/0));
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             reportError(e);
             return new Substitute<>(Availability.Unavailable, null);
         }

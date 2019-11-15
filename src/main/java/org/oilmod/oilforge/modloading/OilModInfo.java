@@ -25,9 +25,9 @@ import java.util.stream.Collectors;
 public class OilModInfo implements IModInfo {
     private static final Logger LOGGER = LogManager.getLogger();
     private static final DefaultArtifactVersion DEFAULT_VERSION = new DefaultArtifactVersion("1");
-    private static final Pattern VALID_LABEL = Util.alphanumericalPattern;
-    private static final Pattern CLASSPATH_PATTERN = Pattern.compile("([\\p{L}_$][\\p{L}\\p{N}_$]*\\.)*[\\p{L}_$][\\p{L}\\p{N}_$]*");
-    private final OilModFileInfo owningFile;
+    public static final Pattern VALID_LABEL = Util.alphanumericalPattern;
+    public static final Pattern CLASSPATH_PATTERN = Pattern.compile("([\\p{L}_$][\\p{L}\\p{N}_$]*\\.)*[\\p{L}_$][\\p{L}\\p{N}_$]*");
+    private final ModFileInfo owningFile;
     private final String modId;
     private final String classpath;
     private final String namespace;
@@ -39,9 +39,9 @@ public class OilModInfo implements IModInfo {
     private final Map<String, Object> properties;
     private final UnmodifiableConfig modConfig;
 
-    public OilModInfo(OilModFileInfo owningFile, UnmodifiableConfig modConfig) {
+    public OilModInfo(IModFileInfo _owningFile, UnmodifiableConfig modConfig) {
         //todo remove stuff we wont support (e.g. update service)
-        this.owningFile = owningFile;
+        this.owningFile = (ModFileInfo) _owningFile;
         this.modConfig = modConfig;
         this.modId = (String)modConfig.getOptional("modId").orElseThrow(() -> new InvalidModFileException("Missing modId entry", owningFile));
         if (!VALID_LABEL.matcher(this.modId).matches()) {
@@ -50,7 +50,7 @@ public class OilModInfo implements IModInfo {
         }
 
         this.classpath = (String)modConfig.getOptional("classpath").orElseThrow(() -> new InvalidModFileException("Missing classpath entry", owningFile));
-        if (!VALID_LABEL.matcher(this.modId).matches()) {
+        if (!CLASSPATH_PATTERN.matcher(this.modId).matches()) {
             LOGGER.fatal("Invalid classpath found in file {} for mod {} - {} does not match the standard: {}", this.owningFile.getFile().getFilePath(), this.modId, this.classpath, CLASSPATH_PATTERN.pattern());
             throw new InvalidModFileException("Invalid classpath found : " + this.modId, owningFile);
         }
@@ -85,7 +85,7 @@ public class OilModInfo implements IModInfo {
 
     }
 
-    public OilModFileInfo getOwningFile() {
+    public IModFileInfo getOwningFile() {
         return this.owningFile;
     }
 

@@ -1,6 +1,7 @@
 package org.oilmod.oilforge;
 
 
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.CapabilityManager;
 import org.oilmod.api.OilMod;
 import org.oilmod.api.blocks.BlockType;
@@ -22,6 +23,7 @@ import org.oilmod.oilforge.items.capability.OilItemStackHandler;
 import org.oilmod.oilforge.items.capability.OilItemStackStorage;
 import org.oilmod.oilforge.items.tools.RealTBBHelper;
 import org.oilmod.oilforge.modloader.RealModHelper;
+import org.oilmod.oilforge.modloading.OilAPIInitEvent;
 import org.oilmod.oilforge.rep.RepAPIImpl;
 
 import static org.oilmod.api.OilMod.ModHelper.createInstance;
@@ -37,13 +39,13 @@ public class OilMain {
 
 
         OilMod.ModHelper.setInstance(new RealModHelper());
+        RealItemClassMap itemClassMap = new RealItemClassMap();
+        ItemRegistry.ItemRegistryHelper.setInstance(realItemRegistryHelper = new RealItemRegistryHelper(itemClassMap));
         ModMinecraft  =  createInstance(OilMod.class, getDefaultContext(),"minecraft", "Minecraft");
         ModOilMod  =  createInstance(OilMod.class, getDefaultContext(),"oilmod", "OilMod");
 
         ItemFactory.setInstance(new RealItemFactory());
-        RealItemClassMap itemClassMap = new RealItemClassMap();
         ItemClassMap.setInstance(itemClassMap);
-        ItemRegistry.ItemRegistryHelper.setInstance(realItemRegistryHelper = new RealItemRegistryHelper(itemClassMap));
         OilUtil.UtilImpl.setInstance(new RealOilUtil());
         InventoryFactory.setInstance(new RealInventoryFactory());
         ImplementationProvider.IPHelper.setInstance(new RealIPHelper());
@@ -55,6 +57,8 @@ public class OilMain {
         TBBType.TBBHelper.setInstance(new RealTBBHelper());
         initReflection();
         //YBase.registerYAMLClasses();
+
+        MinecraftForge.EVENT_BUS.post(new OilAPIInitEvent());
     }
 
     public static void printTrace(String text) {

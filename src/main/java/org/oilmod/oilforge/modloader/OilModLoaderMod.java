@@ -31,6 +31,8 @@ import org.oilmod.oilforge.items.RealItemStack;
 import org.oilmod.oilforge.items.capability.ModInventoryObjectProvider;
 import org.oilmod.oilforge.items.capability.OilItemStackHandler;
 import org.oilmod.oilforge.items.capability.OilItemStackProvider;
+import org.oilmod.oilforge.modloading.OilAPIInitEvent;
+import org.oilmod.oilforge.modloading.OilModContainer;
 import org.oilmod.oilforge.modloading.OilModContext;
 import org.oilmod.oilforge.rep.minecraft.MC113ItemProvider;
 
@@ -48,8 +50,8 @@ public class OilModLoaderMod
     private TestMod1 mod1;
 
     public OilModLoaderMod() {
-        FMLJavaModLoadingContext.get().getModEventBus().addGenericListener(Block.class, this::registerBlocks);
-        FMLJavaModLoadingContext.get().getModEventBus().addGenericListener(Item.class, this::registerItems);
+        FMLJavaModLoadingContext.get().getModEventBus().addGenericListener(Block.class, EventPriority.HIGHEST, this::registerBlocks);
+        FMLJavaModLoadingContext.get().getModEventBus().addGenericListener(Item.class, EventPriority.HIGHEST, this::registerItems);
         //FMLJavaModLoadingContext.get().getModEventBus().addGenericListener(ItemStack.class, this::attackCapabilities);
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::commonSetup);
 
@@ -57,12 +59,9 @@ public class OilModLoaderMod
         MinecraftForge.EVENT_BUS.register(this);
         MinecraftForge.EVENT_BUS.addListener(this::modelBakeEvent);
 
-
         OilMain.init();
 
         mod1 =  OilMod.ModHelper.createInstance(TestMod1.class,OilMod.ModHelper.getDefaultContext(),"testmod1", "Internal Test Mod1"); // registers itself
-
-        RealModHelper.initialise(mod1);
 
         LOGGER.info("DID SETUP DESDTRFYOIHKJLLHGOTRD, 1 mod loaded");
     }
@@ -110,6 +109,10 @@ public class OilModLoaderMod
 
         context.itemRegistry = null;
 
+    }
+
+    public void registerOilMod(OilModContainer container) {
+        LOGGER.debug("registerOilMod was called for container {} containing {}", container::toString, container::getModId);
     }
 
     public void modelBakeEvent(ModelBakeEvent event) {

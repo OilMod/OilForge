@@ -5,10 +5,7 @@ import com.electronwill.nightconfig.core.UnmodifiableConfig;
 import com.electronwill.nightconfig.core.utils.FakeCommentedConfig;
 import com.electronwill.nightconfig.core.utils.FakeUnmodifiableCommentedConfig;
 import net.minecraftforge.fml.loading.StringUtils;
-import net.minecraftforge.fml.loading.moddiscovery.InvalidModFileException;
-import net.minecraftforge.fml.loading.moddiscovery.ModFile;
-import net.minecraftforge.fml.loading.moddiscovery.ModFileInfo;
-import net.minecraftforge.fml.loading.moddiscovery.ModInfo;
+import net.minecraftforge.fml.loading.moddiscovery.*;
 import net.minecraftforge.forgespi.language.IModFileInfo;
 import net.minecraftforge.forgespi.language.IModInfo;
 import net.minecraftforge.forgespi.language.MavenVersionAdapter;
@@ -19,23 +16,17 @@ import java.util.*;
 import java.util.jar.Manifest;
 import java.util.stream.Collectors;
 
-public class OilModFileInfo extends ModFileInfo implements IModFileInfo {
+public class OilModFileInfo /*extends StupidModFileInfo*/ implements IModFileInfo {
     private final UnmodifiableConfig config;
     private final OilModFile modFile;
     private final VersionRange modLoaderVersion = VersionRange.createFromVersion("1");
     private final List<OilModInfo> mods;
     private final Map<String, Object> properties = new HashMap<>();
 
-    private static final Config fakeModConfig; //needed because of forge spidity, casts all IModFileInfo to ModFileInfo for no reason whatsoever, like just for fun
-    static {
-        fakeModConfig = Config.inMemory(); //maybe do by included resource file instead
-        fakeModConfig.add("modLoader", "fucku");
-        fakeModConfig.add("loaderVersion", "1");
-        fakeModConfig.add("mods", new ArrayList<>());
-    }
 
-    OilModFileInfo(OilModFile modFile, UnmodifiableConfig config) {
-        super(modFile, fakeModConfig);
+
+    private OilModFileInfo(OilModFile modFile, UnmodifiableConfig config) {
+        //super(modFile);
         this.config = config;
         this.modFile = modFile;
         this.modFile.setFileProperties(this.properties);
