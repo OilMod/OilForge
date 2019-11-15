@@ -20,6 +20,7 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.IForgeRegistry;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.oilmod.api.OilMod;
 import org.oilmod.api.items.OilItemStack;
 import org.oilmod.api.rep.providers.minecraft.MinecraftBlockProvider;
 import org.oilmod.api.rep.providers.minecraft.MinecraftItemProvider;
@@ -30,6 +31,7 @@ import org.oilmod.oilforge.items.RealItemStack;
 import org.oilmod.oilforge.items.capability.ModInventoryObjectProvider;
 import org.oilmod.oilforge.items.capability.OilItemStackHandler;
 import org.oilmod.oilforge.items.capability.OilItemStackProvider;
+import org.oilmod.oilforge.modloading.OilModContext;
 import org.oilmod.oilforge.rep.minecraft.MC113ItemProvider;
 
 import java.util.Map;
@@ -43,6 +45,7 @@ public class OilModLoaderMod
 {
     // Directly reference a log4j logger.
     public static final Logger LOGGER = LogManager.getLogger();
+    private TestMod1 mod1;
 
     public OilModLoaderMod() {
         FMLJavaModLoadingContext.get().getModEventBus().addGenericListener(Block.class, this::registerBlocks);
@@ -57,10 +60,9 @@ public class OilModLoaderMod
 
         OilMain.init();
 
-        TestMod1 mod1 = new TestMod1(); // registers itself
+        mod1 =  OilMod.ModHelper.createInstance(TestMod1.class,OilMod.ModHelper.getDefaultContext(),"testmod1", "Internal Test Mod1"); // registers itself
 
-
-        RealModHelper.initialiseAll();
+        RealModHelper.initialise(mod1);
 
         LOGGER.info("DID SETUP DESDTRFYOIHKJLLHGOTRD, 1 mod loaded");
     }
@@ -99,13 +101,15 @@ public class OilModLoaderMod
         IForgeRegistry<Item> itemRegistry = event.getRegistry();
         ((MC113ItemProvider)MinecraftItemProvider.getInstance()).setItemRegistry(itemRegistry);
         MinecraftItemProvider.init();
-        RealModHelper.invokeRegisterItemsAll();
 
-        LOGGER.info("111 123e4567-e89b-12d3-a456-426655440000 going to register {} items", OilMain.realItemRegistryHelper.toBeRegistered.size());
-        for (Item item:OilMain.realItemRegistryHelper.toBeRegistered) {
-            itemRegistry.register(item);
-            LOGGER.info("registered {}", item.getRegistryName().toString());
-        }
+        //
+        OilModContext context = (OilModContext) mod1.getContext();
+        context.itemRegistry = itemRegistry;
+
+        RealModHelper.invokeRegisterItems(mod1);
+
+        context.itemRegistry = null;
+
     }
 
     public void modelBakeEvent(ModelBakeEvent event) {
@@ -115,7 +119,9 @@ public class OilModLoaderMod
 
         Map<ModelResourceLocation, IBakedModel> models = event.getModelRegistry();
 
-        for (Item item:OilMain.realItemRegistryHelper.toBeRegistered) {
+
+
+        for (Item item:OilMain.realItemRegistryHelper.allRegistered) {
             Item from = ((RealItemImplHelper)item).getVanillaFakeItem(toReal(item.getDefaultInstance()));
             ModelResourceLocation form3 = new ModelResourceLocation(from.getRegistryName(), "inventory");
             ModelResourceLocation to3 = new ModelResourceLocation(item.getRegistryName(), "inventory");

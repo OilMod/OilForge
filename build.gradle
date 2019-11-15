@@ -96,6 +96,7 @@ dependencies {
     // http://www.gradle.org/docs/current/userguide/artifact_dependencies_tutorial.html
     // http://www.gradle.org/docs/current/userguide/dependency_management.html
 
+    compile 'com.electronwill.night-config:json:3.6.0' // Only needed for JSON config format
     compile "org.oilmod:oilmod-api:1.0-SNAPSHOT"
 }
 

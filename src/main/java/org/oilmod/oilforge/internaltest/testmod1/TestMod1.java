@@ -6,7 +6,7 @@ import org.oilmod.api.items.ItemRegistry;
 public class TestMod1 extends OilMod {
 
     public TestMod1() {
-        super("testmod1", "Internal Test Mod1");
+        super();
     }
 
     @Override

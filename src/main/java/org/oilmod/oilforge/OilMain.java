@@ -24,6 +24,9 @@ import org.oilmod.oilforge.items.tools.RealTBBHelper;
 import org.oilmod.oilforge.modloader.RealModHelper;
 import org.oilmod.oilforge.rep.RepAPIImpl;
 
+import static org.oilmod.api.OilMod.ModHelper.createInstance;
+import static org.oilmod.api.OilMod.ModHelper.getDefaultContext;
+
 public class OilMain {
     public static OilMod ModMinecraft;
     public static OilMod ModOilMod;
@@ -34,8 +37,8 @@ public class OilMain {
 
 
         OilMod.ModHelper.setInstance(new RealModHelper());
-        ModMinecraft  =  new OilMod("minecraft", "Minecraft");
-        ModOilMod  =  new OilMod("oilmod", "OilMod");
+        ModMinecraft  =  createInstance(OilMod.class, getDefaultContext(),"minecraft", "Minecraft");
+        ModOilMod  =  createInstance(OilMod.class, getDefaultContext(),"oilmod", "OilMod");
 
         ItemFactory.setInstance(new RealItemFactory());
         RealItemClassMap itemClassMap = new RealItemClassMap();

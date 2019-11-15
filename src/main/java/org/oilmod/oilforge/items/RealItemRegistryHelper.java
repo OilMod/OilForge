@@ -1,20 +1,28 @@
 package org.oilmod.oilforge.items;
 
 import gnu.trove.set.hash.THashSet;
+import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import net.minecraft.item.Item;
+import org.apache.commons.lang3.Validate;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.oilmod.api.items.ItemRegistry;
 import org.oilmod.api.items.OilItem;
+import org.oilmod.oilforge.modloading.OilModContext;
 
+import java.util.Objects;
 import java.util.Set;
 
 import static org.oilmod.oilforge.Util.toForge;
 
 public class RealItemRegistryHelper extends ItemRegistry.ItemRegistryHelper {
-    public Set<Item> toBeRegistered = new THashSet<>();
+    private static final Logger LOGGER = LogManager.getLogger();
 
 
     private ItemStackRegistry register = ItemStackRegistry.getInstance();
     private final RealItemClassMap itemClassMap;
+
+    public Set<Item> allRegistered = new ObjectOpenHashSet<>();
 
     public RealItemRegistryHelper(RealItemClassMap itemClassMap) {
         this.itemClassMap = itemClassMap;
@@ -25,7 +33,13 @@ public class RealItemRegistryHelper extends ItemRegistry.ItemRegistryHelper {
         Item item = toForge(oilItem.getImplementationProvider().implement(oilItem));
         setNMSModItem(item, oilItem);
         itemClassMap.register(oilItem);
-        toBeRegistered.add(item); //todo improve at some point this set is registered and new ones are ignored - might be okay as we promt the mod in the same method to register
+
+        OilModContext context = (OilModContext) itemRegistry.getMod().getContext();
+        Validate.notNull(context.itemRegistry, "ItemRegistry not set for modcontext, out of order registration?");
+        context.itemRegistry.register(item);
+
+        LOGGER.info("registered {}", Objects.requireNonNull(item.getRegistryName())::toString);
+        allRegistered.add(item); //try to get better solution to access all registered items
     }
 
     @Override
