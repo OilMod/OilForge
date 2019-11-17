@@ -1,5 +1,7 @@
 package org.oilmod.oilforge.inventory;
 
+import net.minecraft.inventory.container.ContainerType;
+import net.minecraft.item.crafting.IRecipeType;
 import org.apache.commons.lang3.NotImplementedException;
 import org.oilmod.api.data.DataParent;
 import org.oilmod.api.data.ItemStackData;
@@ -25,7 +27,7 @@ public class RealInventoryFactory extends InventoryFactory {
 
     @Override
     protected ObjectFactory<ModNMSIInventory<ModFurnaceInventoryObject>> getFurnaceInventoryFactory(final OilItemStack oilItemStack, final String title, final ITicker ticker, final ItemFilter filter) {
-        return () -> new OilInventoryFurnace(oilItemStack,title, ticker, createNMSFilter(filter));
+        return () -> new OilInventoryFurnace(ContainerType.FURNACE, IRecipeType.SMELTING, oilItemStack,title, ticker, createNMSFilter(filter));
     }
 
     @Override

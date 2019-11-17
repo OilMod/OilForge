@@ -2,7 +2,6 @@ package org.oilmod.oilforge.enchantments;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
-import net.minecraft.enchantment.EnumEnchantmentType;
 import org.apache.commons.lang3.Validate;
 import org.oilmod.api.items.EnchantmentType;
 import org.oilmod.api.items.nms.NMSEnchantmentType;
@@ -12,14 +11,13 @@ import org.oilmod.api.util.OilKey;
 import org.oilmod.oilforge.OilMain;
 
 import java.util.Arrays;
-import java.util.Set;
 import java.util.stream.Stream;
 
 import static org.oilmod.oilforge.Util.toForge;
 import static org.oilmod.oilforge.Util.toOil;
 
 public class RealEnchantmentTypeHelper extends EnchantmentType.EnchantmentTypeHelper {
-    private final Object2ObjectMap<EnumEnchantmentType, EnchantmentType> customTypeMap = new Object2ObjectOpenHashMap<>();
+    private final Object2ObjectMap<net.minecraft.enchantment.EnchantmentType, EnchantmentType> customTypeMap = new Object2ObjectOpenHashMap<>();
 
     @Override
     protected void apiInit() {
@@ -37,31 +35,31 @@ public class RealEnchantmentTypeHelper extends EnchantmentType.EnchantmentTypeHe
             case ALL_VANILLA:
                 return implAllVanilla();
             case ALL:
-                return impl(EnumEnchantmentType.ALL, e);
+                return impl(net.minecraft.enchantment.EnchantmentType.ALL, e);
             case ARMOR:
-                return impl(EnumEnchantmentType.ARMOR, e);
+                return impl(net.minecraft.enchantment.EnchantmentType.ARMOR, e);
             case ARMOR_BOOTS:
-                return impl(EnumEnchantmentType.ARMOR_FEET, e);
+                return impl(net.minecraft.enchantment.EnchantmentType.ARMOR_FEET, e);
             case ARMOR_LEGGINGS:
-                return impl(EnumEnchantmentType.ARMOR_LEGS, e);
+                return impl(net.minecraft.enchantment.EnchantmentType.ARMOR_LEGS, e);
             case ARMOR_CHEST:
-                return impl(EnumEnchantmentType.ARMOR_CHEST, e);
+                return impl(net.minecraft.enchantment.EnchantmentType.ARMOR_CHEST, e);
             case ARMOR_HELMET:
-                return impl(EnumEnchantmentType.ARMOR_HEAD, e);
+                return impl(net.minecraft.enchantment.EnchantmentType.ARMOR_HEAD, e);
             case WEAPON:
-                return impl(EnumEnchantmentType.WEAPON, e);
+                return impl(net.minecraft.enchantment.EnchantmentType.WEAPON, e);
             case DIGGER:
-                return impl(EnumEnchantmentType.DIGGER, e);
+                return impl(net.minecraft.enchantment.EnchantmentType.DIGGER, e);
             case FISHING_ROD:
-                return impl(EnumEnchantmentType.FISHING_ROD, e);
+                return impl(net.minecraft.enchantment.EnchantmentType.FISHING_ROD, e);
             case TRIDENT:
-                return impl(EnumEnchantmentType.TRIDENT, e);
+                return impl(net.minecraft.enchantment.EnchantmentType.TRIDENT, e);
             case BREAKABLE:
-                return impl(EnumEnchantmentType.BREAKABLE, e);
+                return impl(net.minecraft.enchantment.EnchantmentType.BREAKABLE, e);
             case BOW:
-                return impl(EnumEnchantmentType.BOW, e);
+                return impl(net.minecraft.enchantment.EnchantmentType.BOW, e);
             case WEARABLE:
-                return impl(EnumEnchantmentType.WEARABLE, e);
+                return impl(net.minecraft.enchantment.EnchantmentType.WEARABLE, e);
             case NONE:
                 return implNONE();
             default:
@@ -69,7 +67,7 @@ public class RealEnchantmentTypeHelper extends EnchantmentType.EnchantmentTypeHe
         }
     }
 
-    public EnchantmentType convertToOil(EnumEnchantmentType forge) {
+    public EnchantmentType convertToOil(net.minecraft.enchantment.EnchantmentType forge) {
         switch (forge) {
             case ALL:
                 return EnchantmentType.ALL;
@@ -104,14 +102,13 @@ public class RealEnchantmentTypeHelper extends EnchantmentType.EnchantmentTypeHe
 
     @Override
     protected NMSEnchantmentType registerCustom(EnchantmentType enchantmentType) {
-        EnumEnchantmentType.create(enchantmentType.getOilKey().toString(), item -> enchantmentType.canEnchant(toOil(item).getStandardState()));
-        return null;
+        return nms(net.minecraft.enchantment.EnchantmentType.create(enchantmentType.getOilKey().toString(), item -> enchantmentType.canEnchant(toOil(item).getStandardState())));
     }
 
-    private NMSEnchantmentType nms(EnumEnchantmentType forgeEnum) {
+    private NMSEnchantmentType nms(net.minecraft.enchantment.EnchantmentType forgeEnum) {
         return new NMSEnchantmentTypeImpl(forgeEnum);
     }
-    private EnchantmentTypeImpl impl(EnumEnchantmentType forge, EnchantmentType.EnchantmentTypeEnum blockTypeEnum, EnchantmentType... subtypes) {
+    private EnchantmentTypeImpl impl(net.minecraft.enchantment.EnchantmentType forge, EnchantmentType.EnchantmentTypeEnum blockTypeEnum, EnchantmentType... subtypes) {
         EnchantmentTypeImpl impl = new EnchantmentTypeImpl(forge, blockTypeEnum, subtypes);
         switch (blockTypeEnum) {
             case ALL_VANILLA:
@@ -135,10 +132,10 @@ public class RealEnchantmentTypeHelper extends EnchantmentType.EnchantmentTypeHe
     }
 
     public static class NMSEnchantmentTypeImpl implements NMSEnchantmentType {
-        private final EnumEnchantmentType forge;
+        private final net.minecraft.enchantment.EnchantmentType forge;
         private EnchantmentType oil;
 
-        public NMSEnchantmentTypeImpl(EnumEnchantmentType forge) {
+        public NMSEnchantmentTypeImpl(net.minecraft.enchantment.EnchantmentType forge) {
             this(forge, null);
         }
 
@@ -147,12 +144,12 @@ public class RealEnchantmentTypeHelper extends EnchantmentType.EnchantmentTypeHe
             this.oil = oil;
         }
 
-        public NMSEnchantmentTypeImpl(EnumEnchantmentType forge, EnchantmentType oil) {
+        public NMSEnchantmentTypeImpl(net.minecraft.enchantment.EnchantmentType forge, EnchantmentType oil) {
             this.forge = forge;
             this.oil = oil;
         }
 
-        public EnumEnchantmentType getForge() {
+        public net.minecraft.enchantment.EnchantmentType getForge() {
             return forge;
         }
 
@@ -186,7 +183,7 @@ public class RealEnchantmentTypeHelper extends EnchantmentType.EnchantmentTypeHe
 
         private static NMSEnchantmentTypeImpl createNMS(EnchantmentTypeEnum blockTypeEnum, OilKey key) {
             Ref ref = new Ref();
-            ref.value = new NMSEnchantmentTypeImpl(EnumEnchantmentType.create(key.toString(),item -> ref.value.oil.canEnchant(toOil(item).getStandardState())));
+            ref.value = new NMSEnchantmentTypeImpl(net.minecraft.enchantment.EnchantmentType.create(key.toString(),item -> ref.value.oil.canEnchant(toOil(item).getStandardState())));
             return ref.value;
         }
 
@@ -194,7 +191,7 @@ public class RealEnchantmentTypeHelper extends EnchantmentType.EnchantmentTypeHe
             this(createNMS(blockTypeEnum, key), key, blockTypeEnum , subtypes);
         }
 
-        protected EnchantmentTypeImpl(EnumEnchantmentType forge, EnchantmentTypeEnum blockTypeEnum, EnchantmentType... subtypes) {
+        protected EnchantmentTypeImpl(net.minecraft.enchantment.EnchantmentType forge, EnchantmentTypeEnum blockTypeEnum, EnchantmentType... subtypes) {
             this(new NMSEnchantmentTypeImpl(forge), key(forge.toString()) , blockTypeEnum, subtypes);
         }
 

@@ -1,6 +1,6 @@
 package org.oilmod.oilforge.block;
 
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockState;
 import net.minecraft.util.math.BlockPos;
 import org.apache.commons.lang3.NotImplementedException;
 import org.oilmod.api.blocks.BlockType;
@@ -12,9 +12,9 @@ import static org.oilmod.oilforge.Util.toOil;
 
 
 public class RealOilBlockState implements org.oilmod.api.blocks.IBlockState { //consider moving this to rep
-    private final IBlockState nms;
+    private final BlockState nms;
 
-    public RealOilBlockState(IBlockState nms) {
+    public RealOilBlockState(BlockState nms) {
         this.nms = nms;
     }
 
@@ -35,7 +35,7 @@ public class RealOilBlockState implements org.oilmod.api.blocks.IBlockState { //
     }
 
     @Override
-    public IBlockState getNMS() {
+    public BlockState getNMS() {
         return nms;
     }
 }

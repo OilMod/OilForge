@@ -1,8 +1,8 @@
 package org.oilmod.oilforge.block;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.Blocks;
 import net.minecraft.block.material.Material;
-import net.minecraft.init.Blocks;
 import org.oilmod.api.blocks.BlockType;
 import org.oilmod.api.blocks.MapColor;
 import org.oilmod.api.blocks.PistonReaction;

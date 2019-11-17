@@ -3,6 +3,7 @@ package org.oilmod.oilforge.modloader;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.model.IBakedModel;
 import net.minecraft.client.renderer.model.ModelResourceLocation;
+import net.minecraft.client.renderer.model.SimpleBakedModel;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
@@ -22,14 +23,13 @@ import org.apache.logging.log4j.Logger;
 import org.oilmod.api.OilMod;
 import org.oilmod.api.rep.providers.minecraft.MinecraftBlockProvider;
 import org.oilmod.api.rep.providers.minecraft.MinecraftItemProvider;
+import org.oilmod.oilforge.OilAPIInitEvent;
 import org.oilmod.oilforge.OilMain;
 import org.oilmod.oilforge.internaltest.testmod1.TestMod1;
 import org.oilmod.oilforge.items.RealItemImplHelper;
 import org.oilmod.oilforge.items.capability.ModInventoryObjectProvider;
 import org.oilmod.oilforge.items.capability.OilItemStackHandler;
-import org.oilmod.oilforge.modloading.OilAPIInitEvent;
-import org.oilmod.oilforge.modloading.OilModContainer;
-import org.oilmod.oilforge.modloading.OilModContext;
+import org.oilmod.oilforge.OilModContext;
 import org.oilmod.oilforge.rep.minecraft.MC113ItemProvider;
 
 import java.util.Map;
@@ -50,23 +50,34 @@ public class OilModLoaderMod
         FMLJavaModLoadingContext.get().getModEventBus().addGenericListener(Item.class, EventPriority.HIGHEST, this::registerItems);
         //FMLJavaModLoadingContext.get().getModEventBus().addGenericListener(ItemStack.class, this::attackCapabilities);
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::commonSetup);
+        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::modelBakeEvent);
+        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::attachCapabilities);
 
         // Register ourselves for server, registry and other game events we are interested in
         MinecraftForge.EVENT_BUS.register(this);
-        MinecraftForge.EVENT_BUS.addListener(this::modelBakeEvent);
+
+        OilAPIInitEvent.addListener(this::onAPIInit);
+
+
 
         OilMain.init();
 
         mod1 =  OilMod.ModHelper.createInstance(TestMod1.class,OilMod.ModHelper.getDefaultContext(),"testmod1", "Internal Test Mod1"); // registers itself
 
-        LOGGER.info("DID SETUP DESDTRFYOIHKJLLHGOTRD, 1 mod loaded");
+        LOGGER.info("DID SETUP DESDTRFYOIHKJLLHGOTRD, 1 mod manually loaded");
+    }
+
+    public void onAPIInit() {
+        LOGGER.info("oilforgeapi received API init event");
     }
 
 
     public void commonSetup(FMLCommonSetupEvent event) {
-
-
+        LOGGER.info("OilForgeApi received FMLCommonSetupEvent");
         OilItemStackHandler.register();
+
+
+        LOGGER.info("OilForgeApi registered Capability {}", OilItemStackHandler.CAPABILITY);
     }
 
 
@@ -77,7 +88,7 @@ public class OilModLoaderMod
         if (isModStack(stack)) {
             ModInventoryObjectProvider pro = new ModInventoryObjectProvider(stack); //do everything lazily, we need to wait for other capability to be initialised
             attachCapabilitiesEvent.addListener(pro::invalidate);
-            attachCapabilitiesEvent.addCapability(new ResourceLocation("oilmodloader", "mod_inventory_object_cap_provider"), pro);
+            attachCapabilitiesEvent.addCapability(new ResourceLocation("oilforgeapi", "mod_inventory_object_cap_provider"), pro);
         }
 
         //if (attachCapabilitiesEvent.getObject() instanceof RealItemImplHelper) {
@@ -87,12 +98,13 @@ public class OilModLoaderMod
 
     // You can use SubscribeEvent and let the Event Bus discover methods to call
     public void registerBlocks(final RegistryEvent.Register<Block> blockRegistryEvent) {
+        LOGGER.debug("OilForgeApi received RegistryEvent.Register<Block>, initialising block providers");
         MinecraftBlockProvider.init();
         // register a new block here
-        LOGGER.info("HELLO from Register Block");
     }
 
     public void registerItems(RegistryEvent.Register<Item> event) {
+        LOGGER.debug("OilForgeApi received RegistryEvent.Register<Item>, initialising item providers");
         IForgeRegistry<Item> itemRegistry = event.getRegistry();
         ((MC113ItemProvider)MinecraftItemProvider.getInstance()).setItemRegistry(itemRegistry);
         MinecraftItemProvider.init();
@@ -107,29 +119,38 @@ public class OilModLoaderMod
 
     }
 
-    public void registerOilMod(OilModContainer container) {
+    /*public void registerOilMod(OilModContainer container) {
         LOGGER.debug("registerOilMod was called for container {} containing {}", container::toString, container::getModId);
-    }
+    }*/
 
     public void modelBakeEvent(ModelBakeEvent event) {
-        LOGGER.warn("modelBakeEvent was called");
+        LOGGER.debug("OilForgeApi received ModelBakeEvent");
         //TODO: move to client only class
 
 
-        Map<ModelResourceLocation, IBakedModel> models = event.getModelRegistry();
+        Map<ResourceLocation, IBakedModel> models = event.getModelRegistry();
 
-
+        IBakedModel missing = event.getModelManager().getMissingModel();
+        ResourceLocation missingNo = ((SimpleBakedModel)missing).getParticleTexture().getName();
 
         for (Item item:OilMain.realItemRegistryHelper.allRegistered) {
             Item from = ((RealItemImplHelper)item).getVanillaFakeItem(toReal(item.getDefaultInstance()));
-            ModelResourceLocation form3 = new ModelResourceLocation(from.getRegistryName(), "inventory");
             ModelResourceLocation to3 = new ModelResourceLocation(item.getRegistryName(), "inventory");
+
+            IBakedModel proviced =models.get(to3);
+            if (!(proviced instanceof SimpleBakedModel && ((SimpleBakedModel)proviced).getParticleTexture().getName().equals(missingNo))) {
+                LOGGER.debug("skipped adding copying model for {} as texture was provided: {}", item::getRegistryName, ()->proviced);
+                continue;
+            }
+
+
+            ModelResourceLocation form3 = new ModelResourceLocation(from.getRegistryName(), "inventory");
 
             IBakedModel model = models.get(form3);
             models.put(to3, model);
 
 
-            LOGGER.info("tries to copy model from {} to {}, copied model: {}", from.getRegistryName(), item.getRegistryName(), model);
+            LOGGER.debug("tried to copy model from {} to {}, copied model: {}", from::getRegistryName, item::getRegistryName, model::toString);
         }
     }
 

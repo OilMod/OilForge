@@ -2,7 +2,7 @@ package org.oilmod.oilforge.rep.block;
 
 
 import net.minecraft.block.Block;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockState;
 
 public class StandardBlockStateFR extends BlockStateBase {
     private final Block block;
@@ -11,7 +11,7 @@ public class StandardBlockStateFR extends BlockStateBase {
         this.block = block;
     }
 
-    public IBlockState getForge() {
+    public BlockState getForge() {
         return block.getDefaultState();
     }
 

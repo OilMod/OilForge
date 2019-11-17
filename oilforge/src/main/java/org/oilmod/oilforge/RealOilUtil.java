@@ -64,12 +64,12 @@ public class RealOilUtil  extends OilUtil.UtilImpl {
     }
 
     @Override
-    protected void setLastDamager(EntityLivingRep entityLivingRep, EntityLivingRep entityLivingRep1) {
+    protected void setLastDamager(EntityLivingRep EntityLivingRep, EntityLivingRep EntityLivingRep1) {
         throw new NotImplementedException("soon");
     }
 
     @Override
-    protected boolean damageEntity(EntityLivingRep entityLivingRep, double v, EntityLivingRep entityLivingRep1) {
+    protected boolean damageEntity(EntityLivingRep EntityLivingRep, double v, EntityLivingRep EntityLivingRep1) {
         throw new NotImplementedException("soon");
     }
 

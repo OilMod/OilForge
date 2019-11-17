@@ -1,7 +1,8 @@
 package org.oilmod.oilforge.rep.entity;
 
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.IInventory;
+import net.minecraft.inventory.container.INamedContainerProvider;
 import org.apache.commons.lang3.NotImplementedException;
 import org.oilmod.api.rep.entity.EntityHumanRep;
 import org.oilmod.api.rep.inventory.InventoryRep;
@@ -11,16 +12,16 @@ import org.oilmod.oilforge.rep.inventory.InventoryFR;
 
 import static org.oilmod.oilforge.Util.toOil;
 
-public class EntityHumanFR extends EntityLivingBaseFR implements EntityHumanRep {
+public class EntityHumanFR extends LivingEntityBaseFR implements EntityHumanRep {
 
 
-    public EntityHumanFR(EntityPlayer forge) {
+    public EntityHumanFR(PlayerEntity forge) {
         super(forge);
     }
 
     @Override
-    public EntityPlayer getForge() {
-        return (EntityPlayer) super.getForge();
+    public PlayerEntity getForge() {
+        return (PlayerEntity) super.getForge();
     }
 
     @Override
@@ -31,9 +32,12 @@ public class EntityHumanFR extends EntityLivingBaseFR implements EntityHumanRep 
     @Override
     public InventoryUIRep openInventory(InventoryRep inventory) {
         IInventory inv = ((InventoryFR)inventory).getForge();
-        EntityPlayer player = getForge();
-        player.displayGUIChest(inv);
-        return null;
+        PlayerEntity player = getForge();
+        if (inv instanceof INamedContainerProvider) {
+            player.openContainer((INamedContainerProvider) inv);
+            return null; //todo
+        }
+        throw new NotImplementedException("Does not know how to display inventory without associated UI"); //todo fix maybe
     }
 
     @Override
@@ -54,7 +58,7 @@ public class EntityHumanFR extends EntityLivingBaseFR implements EntityHumanRep 
 
     @Override
     public boolean isSleeping() {
-        return getForge().isPlayerSleeping();
+        return getForge().isSleeping();
     }
 
     @Override
@@ -111,4 +115,5 @@ public class EntityHumanFR extends EntityLivingBaseFR implements EntityHumanRep 
     public boolean hasAI() {
         throw new NotImplementedException("not implementable");  //todo remove
     }
+
 }

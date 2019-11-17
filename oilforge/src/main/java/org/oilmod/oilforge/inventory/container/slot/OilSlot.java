@@ -1,6 +1,6 @@
 package org.oilmod.oilforge.inventory.container.slot;
 
-import net.minecraft.inventory.Slot;
+import net.minecraft.inventory.container.Slot;
 import net.minecraft.item.ItemStack;
 import org.oilmod.oilforge.inventory.OilIInventory;
 

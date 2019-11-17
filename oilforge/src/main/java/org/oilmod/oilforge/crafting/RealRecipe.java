@@ -1,12 +1,16 @@
 package org.oilmod.oilforge.crafting;
 
+import net.minecraft.inventory.CraftingInventory;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.*;
+import net.minecraft.item.crafting.ICraftingRecipe;
+import net.minecraft.item.crafting.IRecipe;
+import net.minecraft.item.crafting.IRecipeSerializer;
+import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 
-public abstract class RealRecipe implements IRecipe {
+public abstract class RealRecipe implements ICraftingRecipe {
     private final ResourceLocation id;
     private final String group;
     /** Is the ItemStack that you get when craft the recipe. */
@@ -30,10 +34,6 @@ public abstract class RealRecipe implements IRecipe {
 
     public ResourceLocation getId() {
         return this.id;
-    }
-
-    public IRecipeSerializer<?> getSerializer() {
-        return RecipeSerializers.CRAFTING_SHAPELESS;
     }
 
     /**
@@ -70,9 +70,9 @@ public abstract class RealRecipe implements IRecipe {
 
 //Oil stuff
 
-    protected abstract IngredientReference[] getIngredientReferences(IInventory inv);
+    protected abstract IngredientReference[] getIngredientReferences(CraftingInventory inv);
 
-    protected final NonNullList<ItemStack> getIngredientItemStacks(IInventory inv) {
+    protected final NonNullList<ItemStack> getIngredientItemStacks(CraftingInventory inv) {
         return refToStack(getIngredientReferences(inv));
     }
     protected final NonNullList<ItemStack> refToStack(IngredientReference[] refs) {

@@ -9,30 +9,30 @@ import org.oilmod.api.config.DataType;
 import java.util.Iterator;
 
 public class NBTDataList<Type> implements DataList<Type> {
-	private final NBTTagList parent;
+	private final ListNBT parent;
     private final Class<Type> javaType;
     private final DataType type;
 
 
 	public NBTDataList(Class<Type> javaType, DataType type) {
-		this(new NBTTagList(), javaType, type);
+		this(new ListNBT(), javaType, type);
 	}
 
-	private NBTDataList(NBTTagList parent, Class<Type> javaType, DataType type) {
+	private NBTDataList(ListNBT parent, Class<Type> javaType, DataType type) {
 		this.parent = parent;
         this.javaType = javaType;
         this.type = type;
     }
 
 
-    public NBTDataList(NBTTagList parent) {
+    public NBTDataList(ListNBT parent) {
         this.parent = parent;
         this.type = DataType.getByNbtId(parent.getTagType());
         //noinspection unchecked
         this.javaType = (Class<Type>) type.getJavaClass();
     }
 
-	public NBTTagList getNBTTagList() {
+	public ListNBT getListNBT() {
 		return parent;
 	}
 
@@ -44,12 +44,12 @@ public class NBTDataList<Type> implements DataList<Type> {
 
     @Override
     public void set(int i, Type type) {
-        parent.setTag(i, convertNBT(type));
+        parent.set(i, convertNBT(type));
     }
 
     @Override
     public Type get(int i) {
-        return convertJava(parent.getTag(i));
+        return convertJava(parent.get(i));
     }
 
     @Override
@@ -72,41 +72,41 @@ public class NBTDataList<Type> implements DataList<Type> {
         return javaType;
     }
 
-    private INBTBase convertNBT(Type obj) {
+    private INBT convertNBT(Type obj) {
         if (obj == null) {
             throw new IllegalArgumentException("Argument must not be null");
         }
         switch (type) {
             case Byte:
-                return new NBTTagByte((Byte) obj);
+                return new ByteNBT((Byte) obj);
             case Short:
-                return new NBTTagShort((Short) obj);
+                return new ShortNBT((Short) obj);
             case Int:
-                return new NBTTagInt((Integer) obj);
+                return new IntNBT((Integer) obj);
             case Long:
-                return new NBTTagLong((Long) obj);
+                return new LongNBT((Long) obj);
             case Float:
-                return new NBTTagFloat((Float) obj);
+                return new FloatNBT((Float) obj);
             case Double:
-                return new NBTTagDouble((Double) obj);
+                return new DoubleNBT((Double) obj);
             case ByteArray:
-                return new NBTTagByteArray((byte[]) obj);
+                return new ByteArrayNBT((byte[]) obj);
             case String:
-                return new NBTTagString((String) obj);
+                return new StringNBT((String) obj);
             case List:
-                return ((NBTDataList) obj).getNBTTagList();
+                return ((NBTDataList) obj).getListNBT();
             case Subsection:
-                return ((NBTCompound) obj).getNBTTagCompound();
+                return ((OilNBTCompound) obj).getCompoundNBT();
             case IntArray:
-                return new NBTTagIntArray((int[]) obj);
+                return new IntArrayNBT((int[]) obj);
             default:
                 throw new IllegalStateException("Cannot convert object with type " + type.toString() + " to NBT");
         }
     }
 
     @SuppressWarnings("unchecked")
-    private Type convertJava(INBTBase nbt) {
-        return (Type) NBTCompound.convertJava(nbt, type);
+    private Type convertJava(INBT nbt) {
+        return (Type) OilNBTCompound.convertJava(nbt, type);
     }
 
     @Override
@@ -121,7 +121,7 @@ public class NBTDataList<Type> implements DataList<Type> {
 
             @Override
             public DataIndexedEntry<Type> next() {
-                INBTBase nbt = parent.getTag(index); //todo: replaced h with get hopefully correct
+                INBT nbt = parent.get(index);
                 DataIndexedEntry<Type> result = new DataIndexedEntry<>(index, convertJava(nbt), type);
                 index++;
                 return result;

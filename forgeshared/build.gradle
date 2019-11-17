@@ -1,0 +1,8 @@
+
+
+version = '1.0'
+fmlmodtype = 'NONE'
+
+dependencies {
+    compileOnly ("org.oilmod:oilmod-api:1.0-SNAPSHOT")
+}

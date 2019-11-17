@@ -4,7 +4,8 @@ import net.minecraftforge.items.IItemHandler;
 import org.oilmod.api.rep.inventory.InventoryRep;
 import org.oilmod.api.rep.itemstack.ItemStackRep;
 
-import static org.oilmod.oilforge.Util.*;
+import static org.oilmod.oilforge.Util.toForge;
+import static org.oilmod.oilforge.Util.toOil;
 
 public class IItemHandlerInventoryFR implements InventoryRep {
     private final IItemHandler forge;

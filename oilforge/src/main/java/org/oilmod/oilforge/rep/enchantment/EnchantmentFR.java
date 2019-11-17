@@ -1,7 +1,7 @@
 package org.oilmod.oilforge.rep.enchantment;
 
 import net.minecraft.enchantment.Enchantment;
-import net.minecraft.util.registry.IRegistry;
+import net.minecraft.util.registry.Registry;
 import org.oilmod.api.rep.IKey;
 import org.oilmod.api.rep.enchant.EnchantmentRep;
 import org.oilmod.api.rep.item.ItemRep;
@@ -12,6 +12,7 @@ import org.oilmod.api.rep.itemstack.state.ItemStackStateRep;
 import org.oilmod.oilforge.NMSKeyImpl;
 import org.oilmod.oilforge.rep.item.ItemFR;
 import org.oilmod.oilforge.rep.itemstack.ItemStackFR;
+
 
 public class EnchantmentFR implements EnchantmentRep {
     private final Enchantment forge;
@@ -26,7 +27,7 @@ public class EnchantmentFR implements EnchantmentRep {
 
     @Override
     public IKey getKey() {
-        return new NMSKeyImpl(IRegistry.field_212628_q.getKey(forge));
+        return new NMSKeyImpl(Registry.ENCHANTMENT.getKey(forge));
     }
 
     @Override

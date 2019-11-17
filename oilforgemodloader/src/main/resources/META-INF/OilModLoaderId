@@ -1,1 +1,3 @@
 OilModLoaderId File
+
+This file is paramount as it allows the oilforgemodloader to find its own jar

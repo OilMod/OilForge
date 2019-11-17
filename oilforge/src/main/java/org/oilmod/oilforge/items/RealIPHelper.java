@@ -1,6 +1,5 @@
 package org.oilmod.oilforge.items;
 
-import org.oilmod.api.items.NMSItem;
 import org.oilmod.api.items.OilItem;
 import org.oilmod.api.items.type.ImplementationProvider;
 import org.oilmod.api.rep.item.ItemRep;

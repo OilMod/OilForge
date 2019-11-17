@@ -1,16 +1,15 @@
 package org.oilmod.oilforge.rep.itemstack.state;
 
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.StringTextComponent;
 import org.oilmod.api.rep.itemstack.state.DisplayName;
-import org.oilmod.api.rep.itemstack.state.Durability;
 import org.oilmod.api.rep.itemstack.state.ItemStackStateRep;
 
 public class DisplayNameHelperFR extends DisplayName.DisplayNameHelper {
     @Override
     protected void set(ItemStackStateRep state, String displayName) {
         ItemStack forgeState = ((ItemStackStateFR)state).getForgeState();
-        forgeState.setDisplayName(new TextComponentString(displayName));
+        forgeState.setDisplayName(new StringTextComponent(displayName));
     }
 
     @Override

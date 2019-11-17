@@ -1,9 +1,11 @@
 package org.oilmod.oilforge.inventory;
 
-import net.minecraft.inventory.InventoryBasic;
+import net.minecraft.inventory.Inventory;
+import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
-import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.World;
 import org.apache.commons.lang3.NotImplementedException;
 import org.oilmod.api.config.Compound;
@@ -22,7 +24,7 @@ import java.util.List;
 /**
  * Created by sirati97 on 13.02.2016.
  */
-public abstract class OilInventoryBase<APIObject extends ModInventoryObjectBase> extends InventoryBasic implements OilIInventory<APIObject> {
+public abstract class OilInventoryBase<APIObject extends ModInventoryObjectBase> extends Inventory implements OilIInventory<APIObject> {
     private final WeakReference<InventoryHolderRep> owner;
     private final IItemFilter itemFilter;
     private final NonNullList<ItemStack> items;
@@ -32,10 +34,12 @@ public abstract class OilInventoryBase<APIObject extends ModInventoryObjectBase>
     private final boolean needsOwner;
     private World world;
     private final InventoryFR inventoryRep;
+    private ITextComponent displayName;
 
 
     public OilInventoryBase(InventoryHolderRep owner, String title, int size, ITicker ticker, IItemFilter itemFilter, boolean needsOwner) {
-        super(new TextComponentString(title), size);
+        super(size);
+        setTitle(title);
         this.items = extractItems();
         this.itemsReadOnly = Collections.unmodifiableList(this.items);
         this.owner = new WeakReference<>(owner);
@@ -51,7 +55,7 @@ public abstract class OilInventoryBase<APIObject extends ModInventoryObjectBase>
     private static final Field inventoryContentsField;
     static {
         try {
-            inventoryContentsField = InventoryBasic.class.getDeclaredField("inventoryContents");
+            inventoryContentsField = Inventory.class.getDeclaredField("inventoryContents");
             inventoryContentsField.setAccessible(true);
         } catch (NoSuchFieldException e) {
             throw new IllegalStateException(e);
@@ -122,11 +126,21 @@ public abstract class OilInventoryBase<APIObject extends ModInventoryObjectBase>
 
     @Override
     public void setTitle(String s) {
-        super.setCustomName(new TextComponentString(s));
+        this.displayName = new StringTextComponent(s);
+    }
+
+    @Override
+    public ITextComponent getDisplayName() {
+        return displayName;
     }
 
     @Override
     public InventoryFR getInventoryRep() {
         return inventoryRep;
+    }
+
+    @Override
+    public void setInventorySlotContents(int index, ItemStack stack) {
+        super.setInventorySlotContents(index, stack);
     }
 }

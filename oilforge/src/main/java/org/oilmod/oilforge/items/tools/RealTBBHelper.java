@@ -47,17 +47,17 @@ public class RealTBBHelper extends TBBType.TBBHelper {
                         }
 
                         @Override
-                        protected boolean onEntityHit(IToolBlockBreaking iToolBlockBreaking, OilItemStack oilItemStack, EntityLivingRep entityLivingRep, EntityLivingRep entityLivingRep1) {
+                        protected boolean onEntityHit(IToolBlockBreaking iToolBlockBreaking, OilItemStack oilItemStack, EntityLivingRep EntityLivingRep, EntityLivingRep EntityLivingRep1) {
                             return false;
                         }
 
                         @Override
-                        protected boolean onBlockDestroyed(IToolBlockBreaking iToolBlockBreaking, OilItemStack oilItemStack, BlockStateRep blockStateRep, LocationBlockRep locationBlockRep, EntityLivingRep entityLivingRep) {
+                        protected boolean onBlockDestroyed(IToolBlockBreaking iToolBlockBreaking, OilItemStack oilItemStack, BlockStateRep blockStateRep, LocationBlockRep locationBlockRep, EntityLivingRep EntityLivingRep) {
                             return false;
                         }
 
                         @Override
-                        protected InteractionResult onItemUseOnBlock(IToolBlockBreaking iToolBlockBreaking, OilItemStack oilItemStack, EntityLivingRep entityLivingRep, LocationBlockRep locationBlockRep, boolean b, BlockFaceRep blockFaceRep, float v, float v1, float v2) {
+                        protected InteractionResult onItemUseOnBlock(IToolBlockBreaking iToolBlockBreaking, OilItemStack oilItemStack, EntityLivingRep EntityLivingRep, LocationBlockRep locationBlockRep, boolean b, BlockFaceRep blockFaceRep, float v, float v1, float v2) {
                             return InteractionResult.SUCCESS;
                         }
 

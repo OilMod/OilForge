@@ -1,11 +1,16 @@
 package org.oilmod.oilforge.modloader;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.oilmod.api.OilMod;
 import org.oilmod.api.items.ItemRegistry;
-import org.oilmod.oilforge.modloading.ModHelperBase;
-import org.oilmod.oilforge.modloading.OilModContext;
+import org.oilmod.oilforge.OilModContext;
 
-public class RealModHelper extends ModHelperBase {
+import java.lang.reflect.InvocationTargetException;
+
+public class RealModHelper extends OilMod.ModHelper {
+    public static final Logger LOGGER = LogManager.getLogger();
+
     @Override
     protected void register(OilMod mod) {
         //todo do forge stuff
@@ -27,6 +32,9 @@ public class RealModHelper extends ModHelperBase {
         return OilMod.ModHelper.getItemRegistry(mod);
     }
 
+    public static void invokeRegisterItems(OilMod mod) {
+        OilMod.ModHelper.invokeRegisterItems(mod);
+    }
 
     @Override
     protected OilMod.ModContext createDefaultContext() {

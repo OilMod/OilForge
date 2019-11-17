@@ -1,16 +1,16 @@
 package org.oilmod.oilforge.rep.block;
 
 
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockState;
 
 public class BlockStateFR extends BlockStateBase {
-    private final IBlockState forge;
+    private final BlockState forge;
 
-    public BlockStateFR(IBlockState forge) {
+    public BlockStateFR(BlockState forge) {
         this.forge = forge;
     }
 
-    public IBlockState getForge() {
+    public BlockState getForge() {
         return forge;
     }
 

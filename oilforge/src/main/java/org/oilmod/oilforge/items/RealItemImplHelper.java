@@ -1,30 +1,30 @@
 package org.oilmod.oilforge.items;
 
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockState;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLiving;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.EntityEquipmentSlot;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.MobEntity;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemUseContext;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ActionResult;
-import net.minecraft.util.EnumActionResult;
-import net.minecraft.util.EnumHand;
+import net.minecraft.util.ActionResultType;
+import net.minecraft.util.Hand;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.extensions.IForgeItem;
 import org.oilmod.api.items.*;
 import org.oilmod.api.items.type.*;
 import org.oilmod.api.rep.enchant.EnchantmentRep;
-import org.oilmod.api.rep.itemstack.ItemStackRep;
-import org.oilmod.oilforge.config.nbttag.NBTCompound;
+import org.oilmod.oilforge.config.nbttag.OilNBTCompound;
 import org.oilmod.oilforge.items.capability.OilItemStackProvider;
 import org.oilmod.oilforge.rep.item.ItemFR;
 import org.oilmod.oilforge.rep.itemstack.ItemStackFR;
@@ -49,7 +49,7 @@ public interface RealItemImplHelper extends NMSItem, IForgeItem {
 
     //NMS
     @Override
-    default boolean canHarvestBlock(ItemStack stack, IBlockState state) { //todo generify to consider itemstack
+    default boolean canHarvestBlock(ItemStack stack, BlockState state) { //todo generify to consider itemstack
         if (getApiItem() instanceof IToolBlockBreaking) {
             return ((IToolBlockBreaking)getApiItem()).canHarvestBlock(toReal(stack).getOilItemStack(), toOil(state), toOil(state.getMaterial()));
         }
@@ -60,55 +60,56 @@ public interface RealItemImplHelper extends NMSItem, IForgeItem {
         return getApiItem().getItemEnchantability();
     }
 
-    default float getDestroySpeed(ItemStack stack, IBlockState state) {
+    default float getDestroySpeed(ItemStack stack, BlockState state) {
         if (getApiItem() instanceof IToolBlockBreaking) {
             return ((IToolBlockBreaking)getApiItem()).getDestroySpeed(toReal(stack).getOilItemStack(), toOil(state), toOil(state.getMaterial()));
         }
         return 1.0F;//return super
     }
 
-    default EnumActionResult onItemUse(ItemUseContext context) {
+    default ActionResultType onItemUse(ItemUseContext context) {
         World world = context.getWorld();
         BlockPos blockpos = context.getPos();
-        EntityPlayer player = context.getPlayer();
+        PlayerEntity player = context.getPlayer();
 
         RealItemStack itemstack = toReal(context.getItem());
-        return toForge(getApiItem().onItemUseOnBlock(itemstack.getOilItemStack(), toOil(player), toOil(blockpos, world), player.getHeldItemOffhand()==context.getItem(), toOil(context.getFace()), context.getHitX(), context.getHitY(), context.getHitZ()));
+        Vec3d hit = context.getHitVec();
+        return toForge(getApiItem().onItemUseOnBlock(itemstack.getOilItemStack(), toOil(player), toOil(blockpos, world), player.getHeldItemOffhand()==context.getItem(), toOil(context.getFace()), (float)hit.x, (float)hit.y, (float)hit.z));
     }
 
     /*
-    public EnumInteractionResult onItemUseOnBlock(EntityHuman human, World w, BlockPosition pos, EnumHand hand, EnumDirection facing, float hitX, float hitY, float hitZ) {
+    public EnumInteractionResult onItemUseOnBlock(EntityHuman human, World w, BlockPosition pos, Hand hand, EnumDirection facing, float hitX, float hitY, float hitZ) {
         RealItemStack itemstack = (RealItemStack) human.b(hand);
-        return OilSpigotUtil.toNMS(getApiItem().onItemUseOnBlock(itemstack.getOilItemStack(), human.getBukkitEntity(), OilSpigotUtil.toBukkit(w, pos), hand==EnumHand.OFF_HAND, OilSpigotUtil.toBukkit(facing), hitX, hitY, hitZ));
+        return OilSpigotUtil.toNMS(getApiItem().onItemUseOnBlock(itemstack.getOilItemStack(), human.getBukkitEntity(), OilSpigotUtil.toBukkit(w, pos), hand==Hand.OFF_HAND, OilSpigotUtil.toBukkit(facing), hitX, hitY, hitZ));
     }
 
-    public boolean onEntityHit(ItemStack stack, EntityLiving target, EntityLiving attacker) {
+    public boolean onEntityHit(ItemStack stack, LivingEntity target, LivingEntity attacker) {
         return getApiItem().onEntityHit(((RealItemStack)stack).getOilItemStack(), (LivingEntity)target.getBukkitEntity(), (LivingEntity)attacker.getBukkitEntity());
     }*/ //TODO
 
-    default boolean onBlockDestroyed(ItemStack stack, World worldIn, IBlockState state, BlockPos pos, EntityLivingBase entityLiving) {
-        return getApiItem().onBlockDestroyed(toReal(stack).getOilItemStack(), toOil(state), toOil(pos, worldIn), entityLiving instanceof EntityPlayer?toOil((EntityPlayer)entityLiving):toOil((EntityLiving)entityLiving));
+    default boolean onBlockDestroyed(ItemStack stack, World worldIn, BlockState state, BlockPos pos, LivingEntity livingEntity) {
+        return getApiItem().onBlockDestroyed(toReal(stack).getOilItemStack(), toOil(state), toOil(pos, worldIn), livingEntity instanceof PlayerEntity?toOil((PlayerEntity)livingEntity):toOil((MobEntity) livingEntity));
     }
 
-    default ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer playerIn, EnumHand handIn) {
+    default ActionResult<ItemStack> onItemRightClick(World worldIn, PlayerEntity playerIn, Hand handIn) {
         RealItemStack itemstack = toReal(playerIn.getHeldItem(handIn));
-        ItemInteractionResult result = getApiItem().onItemRightClick(itemstack.getOilItemStack(), toOil(worldIn), toOil(playerIn), handIn==EnumHand.OFF_HAND);
+        ItemInteractionResult result = getApiItem().onItemRightClick(itemstack.getOilItemStack(), toOil(worldIn), toOil(playerIn), handIn==Hand.OFF_HAND);
 
         return new ActionResult<>(toForge(result.getInteractionResult()), ((ItemStackFR)result.getItemStack()).getForge());
     }
 
     @Nullable
     @Override
-    default NBTTagCompound getShareTag(ItemStack stack) {
-        NBTTagCompound result = new NBTTagCompound();
-        toReal(stack).saveModData(new NBTCompound(result));
+    default CompoundNBT getShareTag(ItemStack stack) {
+        CompoundNBT result = new CompoundNBT();
+        toReal(stack).saveModData(new OilNBTCompound(result));
         return result;
     }
 
     @Override
-    default void readShareTag(ItemStack stack, @Nullable NBTTagCompound nbt) {
+    default void readShareTag(ItemStack stack, @Nullable CompoundNBT nbt) {
         //todo this is only for the client receiving stuff wrong method
-        toReal(stack).loadModData(new NBTCompound(nbt));
+        toReal(stack).loadModData(new OilNBTCompound(nbt));
     }
 
     default boolean getIsRepairable(ItemStack toRepair, ItemStack repair) {
@@ -129,12 +130,11 @@ public interface RealItemImplHelper extends NMSItem, IForgeItem {
 
     @Override
     default String getHighlightTip(ItemStack item, String displayName) {
-        System.out.println("Highlight tip is: " + displayName);
-        return displayName + " this was added";
+        return displayName + " this was added"; //todo use api function
     }
 
     @Override
-    default boolean canEquip(ItemStack stack, EntityEquipmentSlot armorType, Entity entity) {
+    default boolean canEquip(ItemStack stack, EquipmentSlotType armorType, Entity entity) {
         switch (armorType) {
             case FEET:
                 if (getApiItem() instanceof IShoes) return true;
@@ -154,7 +154,7 @@ public interface RealItemImplHelper extends NMSItem, IForgeItem {
 
     @Nullable
     @Override
-    default ICapabilityProvider initCapabilities(ItemStack stack, @Nullable NBTTagCompound nbt) {
+    default ICapabilityProvider initCapabilities(ItemStack stack, @Nullable CompoundNBT nbt) {
         RealItemStack realItemStack = new RealItemStack(stack, getApiItem());
 
         return new OilItemStackProvider(realItemStack);
@@ -179,8 +179,14 @@ public interface RealItemImplHelper extends NMSItem, IForgeItem {
     @Override
     default boolean shouldCauseReequipAnimation(ItemStack oldStack, ItemStack newStack, boolean slotChanged) {
         if (slotChanged) return IForgeItem.super.shouldCauseReequipAnimation(oldStack, newStack, slotChanged);
-        else return isModStack(oldStack) && isModStack(newStack) && toReal(oldStack).getItem().getApiItem().equals( toReal(newStack).getItem().getApiItem());
+        else return !(isModStack(oldStack) && isModStack(newStack) && toReal(oldStack).getItem().getApiItem().equals( toReal(newStack).getItem().getApiItem()));
     }
 
+    //todo use for crafting
+    /*/**
+     * Called when item is crafted/smelted. Used only by maps so far.
+     */
+    /*public void onCreated(ItemStack stack, World worldIn, PlayerEntity playerIn) {
+    }*/
 
 }

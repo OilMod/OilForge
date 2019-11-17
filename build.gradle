@@ -26,7 +26,7 @@ subprojects {
         fmlmodtype = "MOD"
     }
     archivesBaseName = project.projectDir.name
-
+    group = 'org.oilmod'
 }
 
 allprojects {
@@ -43,68 +43,6 @@ allprojects {
 
         // accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
 
-        // Default run configurations.
-        // These can be tweaked, removed, or duplicated as needed.
-        runs {
-            client {
-                workingDirectory rootProject.file('run')
-
-                // Recommended logging data for a userdev environment
-                property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
-
-                // Recommended logging level for the console
-                property 'forge.logging.console.level', 'debug'
-
-                mods {
-                    oilforge {
-                        source project(":oilforge").sourceSets.main
-                    }
-                    oilforgemodloader {
-                        source project(":oilforgemodloader").sourceSets.main
-                    }
-                }
-            }
-
-            server {
-                workingDirectory rootProject.file('run')
-
-                // Recommended logging data for a userdev environment
-                property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
-
-                // Recommended logging level for the console
-                property 'forge.logging.console.level', 'debug'
-
-                mods {
-                    oilforge {
-                        source project(":oilforge").sourceSets.main
-                    }
-                    oilforgemodloader {
-                        source project(":oilforgemodloader").sourceSets.main
-                    }
-                }
-            }
-
-            data {
-                workingDirectory rootProject.file('run')
-
-                // Recommended logging data for a userdev environment
-                property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
-
-                // Recommended logging level for the console
-                property 'forge.logging.console.level', 'debug'
-
-                args '--mod', 'examplemod', '--all', '--output', file('src/generated/resources/')
-
-                mods {
-                    oilforge {
-                        source project(":oilforge").sourceSets.main
-                    }
-                    oilforgemodloader {
-                        source project(":oilforgemodloader").sourceSets.main
-                    }
-                }
-            }
-        }
     }
 
     configurations {

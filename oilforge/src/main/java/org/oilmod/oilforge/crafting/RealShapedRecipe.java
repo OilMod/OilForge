@@ -1,7 +1,9 @@
 package org.oilmod.oilforge.crafting;
 
+import net.minecraft.inventory.CraftingInventory;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.crafting.IRecipeSerializer;
 import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
@@ -22,11 +24,16 @@ public class RealShapedRecipe extends RealRecipe {
         this.recipeHeight = recipeHeight;
     }
 
+
+    public IRecipeSerializer<?> getSerializer() {
+        return IRecipeSerializer.CRAFTING_SHAPED; //todo probably better to make out own
+    }
+
+
     /**
      * Used to check if a recipe matches current crafting inventory
      */
-    @Override
-    public boolean matches(IInventory inv, World worldIn) {
+    public boolean matches(CraftingInventory inv, World worldIn) {
         if (false) {
             return false;
         } else {
@@ -49,7 +56,7 @@ public class RealShapedRecipe extends RealRecipe {
     /**
      * Checks if the region of a crafting inventory is match for the recipe.
      */
-    private boolean checkMatch(IInventory craftingInventory, int offX, int offY, boolean mirror) {
+    private boolean checkMatch(CraftingInventory craftingInventory, int offX, int offY, boolean mirror) {
         dataHolder.use();
         try {
             getIngredients().stream().filter(i -> i instanceof OilIngredient)
@@ -89,7 +96,7 @@ public class RealShapedRecipe extends RealRecipe {
 
 
     @Override
-    public ItemStack getCraftingResult(IInventory inv) {
+    public ItemStack getCraftingResult(CraftingInventory inv) {
         NonNullList<ItemStack> ingredients = getIngredientItemStacks(inv);
         ItemStack result = getRecipeResult().preCraftResult(ingredients, true, recipeWidth, recipeHeight);
 
@@ -110,7 +117,7 @@ public class RealShapedRecipe extends RealRecipe {
 
     }
 
-    protected IngredientReference[] getIngredientReferences(IInventory inv) {
+    protected IngredientReference[] getIngredientReferences(CraftingInventory inv) {
         int left = Integer.MAX_VALUE;
         int top = Integer.MAX_VALUE;
         for (int i = inv.getWidth()-1/*width*/; i >= 0 ; i--) {

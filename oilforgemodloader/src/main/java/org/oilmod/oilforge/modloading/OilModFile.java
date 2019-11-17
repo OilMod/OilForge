@@ -2,9 +2,9 @@ package org.oilmod.oilforge.modloading;
 
 import cpw.mods.modlauncher.api.LamdbaExceptionUtils;
 import net.minecraftforge.fml.loading.moddiscovery.CoreModFile;
-import net.minecraftforge.fml.loading.moddiscovery.IModLocator;
 import net.minecraftforge.fml.loading.moddiscovery.ModFile;
 import net.minecraftforge.forgespi.language.IModFileInfo;
+import net.minecraftforge.forgespi.locating.IModLocator;
 
 import java.lang.reflect.Field;
 import java.nio.file.Path;

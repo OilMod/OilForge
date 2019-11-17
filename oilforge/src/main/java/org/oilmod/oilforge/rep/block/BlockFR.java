@@ -1,8 +1,8 @@
 package org.oilmod.oilforge.rep.block;
 
 import net.minecraft.block.Block;
+import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemBlock;
 import org.oilmod.api.rep.block.BlockRep;
 import org.oilmod.api.rep.item.BlockItemRep;
 import org.oilmod.oilforge.rep.item.BlockItemFR;
@@ -16,7 +16,7 @@ public class BlockFR implements BlockRep {
 
         Item item = Item.getItemFromBlock(forge);
 
-        itemRep = item instanceof ItemBlock ? new BlockItemFR((ItemBlock) item) : null;
+        itemRep = item instanceof BlockItem ? new BlockItemFR((BlockItem) item) : null;
     }
 
     public Block getForge() {

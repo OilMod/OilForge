@@ -1,8 +1,6 @@
 package org.oilmod.oilforge.rep.item;
 
 import net.minecraft.item.Item;
-import org.oilmod.api.rep.item.ItemStateRep;
-import org.oilmod.api.rep.providers.ItemStateProvider;
 
 public class ItemStateFR extends ItemStateBase {
     private int data;

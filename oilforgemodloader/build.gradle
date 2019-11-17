@@ -1,6 +1,5 @@
 
-version = '1.0'
-group = 'org.oilmod' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
+version = '1.0' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 
 fmlmodtype = 'LANGPROVIDER'
 
@@ -10,10 +9,19 @@ dependencies {
     providedJars 'com.electronwill.night-config:core:3.6.0'
     providedJars 'org.apache.commons:commons-lang3:3.5'
     compileJars 'com.electronwill.night-config:json:3.6.0' // Only needed for JSON config format
-    compileJars("org.oilmod:oilmod-api:1.0-SNAPSHOT") /*{
-        exclude group: 't.unimi.dsi', name: 'fastutil'
-    }*/
+    compileOnly ("org.oilmod:oilmod-api:1.0-SNAPSHOT")
+    compileOnly project(":forgeshared")
 
+}
+
+jar {
+    doLast {
+        copy {
+            from jar
+            into rootProject.file('run/mods')
+        }
+
+    }
 }
 
 

@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 
 import static net.minecraftforge.fml.Logging.LOADING;
 import static net.minecraftforge.fml.Logging.SCAN;
-import static org.oilmod.oilforge.modloading.hacks.OilModFileInfoHelper.*;
+import static org.oilmod.oilforge.modloading.hacks.OilModFileInfoHelper.getClasspath;
 
 public class OilModLanguageProvider implements IModLanguageProvider {
     //TODO: get inspired by FMLJavaModLanguageProvider

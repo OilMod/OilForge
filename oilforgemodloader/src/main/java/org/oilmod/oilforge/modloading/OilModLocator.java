@@ -1,23 +1,25 @@
 package org.oilmod.oilforge.modloading;
 
 import cpw.mods.modlauncher.api.LamdbaExceptionUtils;
+import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
+import net.minecraftforge.fml.loading.FMLPaths;
+import net.minecraftforge.fml.loading.LogMarkers;
+import net.minecraftforge.fml.loading.ModDirTransformerDiscoverer;
+import net.minecraftforge.fml.loading.StringUtils;
+import net.minecraftforge.fml.loading.moddiscovery.AbstractJarFileLocator;
+import net.minecraftforge.fml.loading.moddiscovery.ModFile;
+import net.minecraftforge.forgespi.locating.IModFile;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.net.URL;
 import java.nio.file.*;
 import java.security.ProtectionDomain;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
-import net.minecraftforge.fml.loading.*;
-import net.minecraftforge.fml.loading.moddiscovery.AbstractJarFileLocator;
-import net.minecraftforge.fml.loading.moddiscovery.ModFile;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
-import static net.minecraftforge.fml.loading.LogMarkers.CORE;
+import static cpw.mods.modlauncher.api.LamdbaExceptionUtils.uncheck;
 
 public class OilModLocator extends AbstractJarFileLocator {
     public static boolean CREATED = false;
@@ -59,20 +61,30 @@ public class OilModLocator extends AbstractJarFileLocator {
         LOGGER.debug("Created new OilModLocator {}", this::toString);
     }
 
-    public List<ModFile> scanMods() {
+    public List<IModFile> scanMods() {
         LOGGER.debug(LogMarkers.SCAN, "Scanning mods dir {} for mods", this.modFolder);
-        List<Path> excluded = (new ModDirTransformerDiscoverer()).candidates(FMLPaths.GAMEDIR.get());
-        return LamdbaExceptionUtils.uncheck(() -> Files.list(this.modFolder))
-                .filter((p) -> !excluded.contains(p))
-                .sorted(Comparator.comparing((path) -> StringUtils.toLowerCase(path.getFileName().toString())))
-                .filter((p) -> StringUtils.toLowerCase(p.getFileName().toString()).endsWith(SUFFIX))
+        List<IModFile> result = LamdbaExceptionUtils.uncheck(() -> Files.list(this.modFolder))
+                .sorted(Comparator.comparing(path-> StringUtils.toLowerCase(path.getFileName().toString())))
+                .filter(p->StringUtils.toLowerCase(p.getFileName().toString()).endsWith(SUFFIX))
                 .peek(path -> LOGGER.trace("checking out oilmod candidate {}", path::toString))
-                .map((p) -> new OilModFile(p, this))
-                .peek((f) -> this.modJars.compute(f, (mf, fs) -> this.createFileSystem(mf))).collect(Collectors.toList());
+                .map(p -> new OilModFile(p, this))
+                .peek(f -> this.modJars.compute(f, (mf, fs) -> this.createFileSystem(mf)))
+                .collect(Collectors.toList());
+
+        //Lets be nasty and just load ourselves, otherwise we need another jar for the LanguageProvider and we both care about the same dependencies making things awkward
+        List<Path> excluded = ModDirTransformerDiscoverer.allExcluded();
+        uncheck(excluded::stream)
+                .sorted(Comparator.comparing(path-> StringUtils.toLowerCase(path.getFileName().toString())))
+                .filter(p->StringUtils.toLowerCase(p.getFileName().toString()).endsWith(SUFFIX))
+                .filter(p->uncheck(()->Files.exists(FileSystems.newFileSystem(p, getClass().getClassLoader()).getPath("META-INF/OilModLoaderId"))))
+                .map(p->new ModFile(p, this))
+                .peek(f->modJars.compute(f, (mf, fs)->createFileSystem(mf)))
+                .forEach(result::add);
+        return result;
     }
 
     @Override
-    public Path findPath(ModFile modFile, String... path) {
+    public Path findPath(IModFile modFile, String... path) {
         Path result = super.findPath(modFile, path);
         if (Files.notExists(result)) {
             if (Arrays.stream(path).anyMatch(DELEGATED_RESOURCES::contains)) {

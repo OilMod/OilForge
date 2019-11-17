@@ -20,7 +20,6 @@ import org.oilmod.oilforge.inventory.RealInventoryFactory;
 import org.oilmod.oilforge.items.*;
 import org.oilmod.oilforge.items.tools.RealTBBHelper;
 import org.oilmod.oilforge.modloader.RealModHelper;
-import org.oilmod.oilforge.modloading.OilAPIInitEvent;
 import org.oilmod.oilforge.rep.RepAPIImpl;
 
 import static org.oilmod.api.OilMod.ModHelper.createInstance;
@@ -55,7 +54,7 @@ public class OilMain {
         initReflection();
         //YBase.registerYAMLClasses();
 
-        MinecraftForge.EVENT_BUS.post(new OilAPIInitEvent());
+        OilAPIInitEvent.fire();
     }
 
     public static void printTrace(String text) {

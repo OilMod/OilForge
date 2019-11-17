@@ -1,19 +1,10 @@
 package org.oilmod.oilforge.rep.itemstack.state;
 
-import net.minecraft.enchantment.Enchantment;
-import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
-import net.minecraft.util.registry.IRegistry;
 import org.apache.commons.lang3.NotImplementedException;
-import org.oilmod.api.rep.enchant.EnchantmentRep;
 import org.oilmod.api.rep.item.ItemStateRep;
 import org.oilmod.api.rep.itemstack.state.ItemStackStateRep;
 import org.oilmod.api.rep.providers.ItemStackStateProvider;
-import org.oilmod.api.util.ConvertedReadSet;
-import org.oilmod.api.util.ReadSet;
-import org.oilmod.oilforge.rep.enchantment.EnchantmentFR;
 import org.oilmod.oilforge.rep.item.ItemStateFR;
 
 public class ItemStackStateFR implements ItemStackStateRep {

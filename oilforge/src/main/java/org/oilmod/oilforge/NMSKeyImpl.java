@@ -23,6 +23,6 @@ public class NMSKeyImpl implements NMSKey, IKey { //todo get rid of this with mi
 
     @Override
     public String toString() {
-        return getNamespace().toString() + ":" + getKeyString();
+        return getNamespace() + ":" + getKeyString();
     }
 }

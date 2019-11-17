@@ -16,6 +16,8 @@ import org.apache.commons.lang3.Validate;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.oilmod.api.OilMod;
+import org.oilmod.oilforge.OilAPIInitEvent;
+import org.oilmod.oilforge.OilModContext;
 
 import java.util.Optional;
 import java.util.function.Consumer;
@@ -43,6 +45,7 @@ public class OilModContainer extends ModContainer { //would like to overwrite fm
         triggerMap.put(ModLoadingStage.ENQUEUE_IMC, dummy().andThen(this::beforeEvent).andThen(this::initMod).andThen(this::fireEvent).andThen(this::afterEvent));
         triggerMap.put(ModLoadingStage.PROCESS_IMC, dummy().andThen(this::beforeEvent).andThen(this::fireEvent).andThen(this::afterEvent));
         triggerMap.put(ModLoadingStage.COMPLETE, dummy().andThen(this::beforeEvent).andThen(this::completeLoading).andThen(this::fireEvent).andThen(this::afterEvent));
+        triggerMap.put(ModLoadingStage.GATHERDATA, dummy().andThen(this::beforeEvent).andThen(this::fireEvent).andThen(this::afterEvent));
         this.eventBus = BusBuilder.builder().setExceptionHandler(this::onEventFailed).setTrackPhases(false).build();
         this.configHandler = Optional.of(this.eventBus::post);
         //OilMod
@@ -65,7 +68,7 @@ public class OilModContainer extends ModContainer { //would like to overwrite fm
         //register events
 
 
-        MinecraftForge.EVENT_BUS.addListener(this::onOilAPIInitEvent);
+        OilAPIInitEvent.addListener(this::onOilAPIInitEvent);
         eventBus.addGenericListener(Item.class, this::registerItems); //if this fails, its indicated that classloader stuff went wrong (this class cannot be classloaded by AppClassLoader etc must be e.g. TransformingClassLoader)
     }
 
@@ -79,7 +82,7 @@ public class OilModContainer extends ModContainer { //would like to overwrite fm
         OilModContext context = (OilModContext) modInstance.getContext();
         context.itemRegistry = itemRegistry;
 
-        ModHelperBase.invokeRegisterItems(modInstance);
+        ModUtil.invokeRegisterItems(modInstance);
 
         context.itemRegistry = null;
 
@@ -88,7 +91,7 @@ public class OilModContainer extends ModContainer { //would like to overwrite fm
 
     @Override
     public IModInfo getModInfo() {
-        return (IModInfo) super.getModInfo();
+        return super.getModInfo();
     }
 
     private void completeLoading(LifecycleEventProvider.LifecycleEvent lifecycleEvent)
@@ -98,6 +101,7 @@ public class OilModContainer extends ModContainer { //would like to overwrite fm
 
     private void initMod(LifecycleEventProvider.LifecycleEvent lifecycleEvent)
     {
+
     }
 
     private Consumer<LifecycleEventProvider.LifecycleEvent> dummy() { return (s) -> {}; }
@@ -136,11 +140,12 @@ public class OilModContainer extends ModContainer { //would like to overwrite fm
     }
 
     private boolean oilAPIinit = false;
-    private void onOilAPIInitEvent(OilAPIInitEvent event) {
+    private boolean observedPhaseConstruct = false;
+    private void onOilAPIInitEvent() {
         LOGGER.debug("Received OilAPI init event for {}", getModId());
         synchronized (apiInitMutex) {
             oilAPIinit = true;
-            constructMod();
+            _constructMod();
         }
     }
 
@@ -148,17 +153,27 @@ public class OilModContainer extends ModContainer { //would like to overwrite fm
 
     private void constructMod(LifecycleEventProvider.LifecycleEvent event)
     {
-        constructMod();
+
+        synchronized (apiInitMutex) {
+            observedPhaseConstruct = true;
+            _constructMod();
+        }
     }
 
 
     private final Object apiInitMutex = new Object();
-    private void constructMod()
+    private void _constructMod()
     {
         synchronized (apiInitMutex) {
-            if (!oilAPIinit) {
+            if (!observedPhaseConstruct) {
+                LOGGER.debug("Received OilAPI init event before construct phase");
                 return;
             }
+            if (!oilAPIinit) {
+                LOGGER.warn("Async-initialisation-order unfavorable, delegating mod construction until after OIL-API is initialised");
+                return;
+            }
+            //basically whichever method onOilAPIInitEvent/constructMod runs last does the job (lazy init)
             try
             {
                 LOGGER.debug(LOADING, "Loading mod instance {} of type {}", getModId(), modClass.getName());

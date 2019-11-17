@@ -1,19 +1,19 @@
 package org.oilmod.oilforge.rep.entity;
 
-import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.LivingEntity;
 import org.apache.commons.lang3.NotImplementedException;
 import org.oilmod.api.rep.entity.EntityLivingRep;
 
 import java.lang.reflect.Field;
 
-public abstract class EntityLivingBaseFR extends EntityFR implements EntityLivingRep {
-    public EntityLivingBaseFR(EntityLivingBase forge) {
+public abstract class LivingEntityBaseFR extends EntityFR implements EntityLivingRep {
+    public LivingEntityBaseFR(LivingEntity forge) {
         super(forge);
     }
 
     @Override
-    public EntityLivingBase getForge() {
-        return (EntityLivingBase) super.getForge();
+    public LivingEntity getForge() {
+        return (LivingEntity) super.getForge();
     }
 
     @Override
@@ -49,7 +49,7 @@ public abstract class EntityLivingBaseFR extends EntityFR implements EntityLivin
     private static final Field LAST_DAMAGE_AMOUNT;
     static {
         try {
-            LAST_DAMAGE_AMOUNT = EntityLivingBase.class.getDeclaredField("lastDamage");
+            LAST_DAMAGE_AMOUNT = LivingEntity.class.getDeclaredField("lastDamage");
             LAST_DAMAGE_AMOUNT.setAccessible(true);
         } catch (NoSuchFieldException e) {
             throw new IllegalStateException(e);
@@ -103,4 +103,5 @@ public abstract class EntityLivingBaseFR extends EntityFR implements EntityLivin
     public boolean isCollidable() {
         return getForge().canBeCollidedWith();
     }
+
 }

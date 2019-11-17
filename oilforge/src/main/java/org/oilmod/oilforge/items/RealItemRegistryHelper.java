@@ -7,7 +7,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.oilmod.api.items.ItemRegistry;
 import org.oilmod.api.items.OilItem;
-import org.oilmod.oilforge.modloading.OilModContext;
+import org.oilmod.oilforge.OilModContext;
 
 import java.util.Objects;
 import java.util.Set;
@@ -37,7 +37,7 @@ public class RealItemRegistryHelper extends ItemRegistry.ItemRegistryHelper {
         Validate.notNull(context.itemRegistry, "ItemRegistry not set for modcontext, out of order registration?");
         context.itemRegistry.register(item);
 
-        LOGGER.info("registered {}", Objects.requireNonNull(item.getRegistryName())::toString);
+        LOGGER.debug("mod {} registered {}", ()->oilItem.getOilKey().getMod().getDisplayName(), Objects.requireNonNull(item.getRegistryName())::toString);
         allRegistered.add(item); //try to get better solution to access all registered items
     }
 

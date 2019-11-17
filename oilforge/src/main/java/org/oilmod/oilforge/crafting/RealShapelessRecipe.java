@@ -1,17 +1,15 @@
 package org.oilmod.oilforge.crafting;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParseException;
-import it.unimi.dsi.fastutil.ints.IntList;
+import net.minecraft.inventory.CraftingInventory;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.*;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.JsonUtils;
+import net.minecraft.item.crafting.IRecipeSerializer;
+import net.minecraft.item.crafting.Ingredient;
+import net.minecraft.item.crafting.RecipeItemHelper;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
+import org.apache.commons.lang3.NotImplementedException;
 
 public class RealShapelessRecipe extends RealRecipe{
     private final boolean isSimple;
@@ -21,20 +19,21 @@ public class RealShapelessRecipe extends RealRecipe{
         this.isSimple = recipeItemsIn.stream().allMatch(Ingredient::isSimple);
     }
 
-    public IRecipeSerializer<?> getSerializer() {
-        return RecipeSerializers.CRAFTING_SHAPELESS;
-    }
-
     @Override
-    protected IngredientReference[] getIngredientReferences(IInventory inv) {
-        return new IngredientReference[0];
+    protected IngredientReference[] getIngredientReferences(CraftingInventory inv) {
+        throw new NotImplementedException("todo");
     }
 
+
+    public IRecipeSerializer<?> getSerializer() {
+        return IRecipeSerializer.CRAFTING_SHAPELESS; //todo probably better to make out own
+    }
 
     /**
      * Used to check if a recipe matches current crafting inventory
      */
-    public boolean matches(IInventory inv, World worldIn) {
+    @Override
+    public boolean matches(CraftingInventory inv, World worldIn) {
         if (false) {
             return false;
         } else {
@@ -55,17 +54,17 @@ public class RealShapelessRecipe extends RealRecipe{
                 }
             }
 
-            return i == this.getSize() && (isSimple ? recipeitemhelper.canCraft(this, (IntList)null) : net.minecraftforge.common.util.RecipeMatcher.findMatches(inputs, this.getIngredients()) != null);
+            return i == this.getSize() && (isSimple ? recipeitemhelper.canCraft(this, null) : net.minecraftforge.common.util.RecipeMatcher.findMatches(inputs, this.getIngredients()) != null);
         }
     }
 
     @Override
-    public ItemStack getCraftingResult(IInventory inv) {
+    public ItemStack getCraftingResult(CraftingInventory inv) {
         return null;
     }
 
     @Override
-    public NonNullList<ItemStack> getRemainingItems(IInventory inv) {
+    public NonNullList<ItemStack> getRemainingItems(CraftingInventory inv) {
         return null;
     }
 

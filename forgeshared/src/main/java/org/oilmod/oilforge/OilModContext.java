@@ -1,4 +1,4 @@
-package org.oilmod.oilforge.modloading;
+package org.oilmod.oilforge;
 
 import net.minecraft.item.Item;
 import net.minecraftforge.registries.IForgeRegistry;

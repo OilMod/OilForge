@@ -8,8 +8,6 @@ import org.oilmod.api.rep.itemstack.state.Inventory;
 import org.oilmod.api.rep.itemstack.state.ItemStackStateRep;
 import org.oilmod.oilforge.Util;
 
-import static org.oilmod.oilforge.Util.toOil;
-
 public class InventoryHelperFR extends Inventory.InventoryHelper {
 
     @Override

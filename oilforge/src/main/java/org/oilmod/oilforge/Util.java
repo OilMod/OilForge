@@ -1,20 +1,21 @@
 package org.oilmod.oilforge;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockState;
 import net.minecraft.block.material.Material;
-import net.minecraft.block.state.IBlockState;
 import net.minecraft.enchantment.Enchantment;
-import net.minecraft.enchantment.EnumEnchantmentType;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLiving;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.MobEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumActionResult;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.item.ItemUseContext;
+import net.minecraft.util.ActionResultType;
+import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.items.IItemHandler;
@@ -28,11 +29,9 @@ import org.oilmod.api.rep.inventory.InventoryRep;
 import org.oilmod.api.rep.item.ItemRep;
 import org.oilmod.api.rep.itemstack.ItemStackRep;
 import org.oilmod.api.rep.stdimpl.world.LocFactoryImpl;
-import org.oilmod.api.rep.world.LocationBlockRep;
-import org.oilmod.api.rep.world.LocationEntityRep;
-import org.oilmod.api.rep.world.LocationRep;
-import org.oilmod.api.rep.world.VectorRep;
+import org.oilmod.api.rep.world.*;
 import org.oilmod.api.util.InteractionResult;
+import net.minecraft.util.Direction;
 import org.oilmod.oilforge.block.RealBlockTypeHelper;
 import org.oilmod.oilforge.enchantments.RealEnchantmentTypeHelper;
 import org.oilmod.oilforge.items.RealItemImplHelper;
@@ -43,8 +42,7 @@ import org.oilmod.oilforge.rep.block.BlockStateFR;
 import org.oilmod.oilforge.rep.enchantment.EnchantmentFR;
 import org.oilmod.oilforge.rep.entity.EntityFR;
 import org.oilmod.oilforge.rep.entity.EntityHumanFR;
-import org.oilmod.oilforge.rep.entity.EntityLivingBaseFR;
-import org.oilmod.oilforge.rep.entity.EntityLivingFR;
+import org.oilmod.oilforge.rep.entity.LivingEntityFR;
 import org.oilmod.oilforge.rep.inventory.IItemHandlerInventoryFR;
 import org.oilmod.oilforge.rep.inventory.InventoryFR;
 import org.oilmod.oilforge.rep.item.ItemFR;
@@ -53,6 +51,9 @@ import org.oilmod.oilforge.rep.itemstack.RealItemStackFactory;
 import org.oilmod.oilforge.rep.location.LocationBlockFR;
 import org.oilmod.oilforge.rep.location.WorldFR;
 
+import javax.annotation.Nullable;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
 public final class Util {
@@ -88,7 +89,7 @@ public final class Util {
         return RealItemStackFactory.INSTANCE.create(stack);
     }
 
-    public static InteractionResult toOil(EnumActionResult nms) {
+    public static InteractionResult toOil(ActionResultType nms) {
         switch (nms) {
             case SUCCESS:
                 return InteractionResult.SUCCESS;
@@ -103,16 +104,16 @@ public final class Util {
 
 
 
-    public static EnumActionResult toForge(InteractionResult oil) {
+    public static ActionResultType toForge(InteractionResult oil) {
         switch (oil) {
             case SUCCESS:
-                return EnumActionResult.SUCCESS;
+                return ActionResultType.SUCCESS;
             case FAIL:
-                return EnumActionResult.FAIL;
+                return ActionResultType.FAIL;
             case PASS:
             case NONE:
             default:
-                return EnumActionResult.PASS;
+                return ActionResultType.PASS;
         }
     }
 
@@ -152,10 +153,10 @@ public final class Util {
     public static EntityFR toOil(Entity e) {
         return new EntityFR(e);
     }
-    public static EntityLivingFR toOil(EntityLiving e) {
-        return new EntityLivingFR(e);
+    public static LivingEntityFR toOil(MobEntity e) {
+        return new LivingEntityFR(e);
     }
-    public static EntityHumanFR toOil(EntityPlayer e) {
+    public static EntityHumanFR toOil(PlayerEntity e) {
         return new EntityHumanFR(e);
     }
 
@@ -163,7 +164,7 @@ public final class Util {
     public static BlockFR toOil(Block block) {
         return new BlockFR(block);
     }
-    public static BlockStateFR toOil(IBlockState state) {
+    public static BlockStateFR toOil(BlockState state) {
         return new BlockStateFR(state);
     }
 
@@ -171,7 +172,7 @@ public final class Util {
         return ((RealBlockTypeHelper)BlockType.BlockTypeHelper.getInstance()).get(mat);
     }
 
-    public static BlockFaceRep toOil(EnumFacing notch) {
+    public static BlockFaceRep toOil(Direction notch) {
         switch (notch) {
             case DOWN:
                 return BlockFaceRep.DOWN;
@@ -197,8 +198,8 @@ public final class Util {
 
 
 
-    public static EntityLivingBase toForge(EntityLivingRep entity) {
-        return ((EntityLivingBaseFR)entity).getForge();
+    public static LivingEntity toForge(EntityLivingRep entity) {
+        return ((LivingEntityFR)entity).getForge();
     }
 
 
@@ -207,20 +208,20 @@ public final class Util {
     }
 
 
-    public static EnumFacing toForge(BlockFaceRep face) {
+    public static Direction toForge(BlockFaceRep face) {
         switch (face) {
             case DOWN:
-                return EnumFacing.DOWN;
+                return Direction.DOWN;
             case UP:
-                return EnumFacing.UP;
+                return Direction.UP;
             case NORTH:
-                return EnumFacing.NORTH;
+                return Direction.NORTH;
             case SOUTH:
-                return EnumFacing.SOUTH;
+                return Direction.SOUTH;
             case WEST:
-                return EnumFacing.WEST;
+                return Direction.WEST;
             case EAST:
-                return EnumFacing.EAST;
+                return Direction.EAST;
             case SELF:
             default:
                 throw new IllegalStateException("self cannot be represented, invalid blockface");
@@ -241,8 +242,31 @@ public final class Util {
         return ((EnchantmentFR)item).getForge();
     }
 
-    public static EnchantmentType toOil(EnumEnchantmentType forge) {
+    public static EnchantmentType toOil(net.minecraft.enchantment.EnchantmentType forge) {
         return ((RealEnchantmentTypeHelper)EnchantmentType.EnchantmentTypeHelper.getInstance()).convertToOil(forge);
     }
 
+    public static World toForge(WorldRep world) {
+        return ((WorldFR)world).getForge();
+    }
+
+
+    private static Constructor<ItemUseContext> ItemUseContextCtor;
+    static {
+        try {
+            ItemUseContextCtor = ItemUseContext.class.getDeclaredConstructor(World.class, PlayerEntity.class, Hand.class, ItemStack.class, BlockRayTraceResult.class);
+            ItemUseContextCtor.setAccessible(true);
+        } catch (NoSuchMethodException e) {
+            throw new IllegalStateException(e);
+        }
+    }
+
+    //todo make ItemUseContext not protect #AT
+    public static ItemUseContext createItemUseContext(World worldIn, @Nullable PlayerEntity player, Hand handIn, ItemStack heldItem, BlockRayTraceResult rayTraceResultIn) {
+        try {
+            return ItemUseContextCtor.newInstance(worldIn, player, handIn, heldItem, rayTraceResultIn);
+        } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
+            throw new IllegalStateException(e);
+        }
+    }
 }

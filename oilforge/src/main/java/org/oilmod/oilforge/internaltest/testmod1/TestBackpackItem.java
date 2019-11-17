@@ -1,8 +1,6 @@
 package org.oilmod.oilforge.internaltest.testmod1;
 
-import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
 import org.oilmod.api.items.ItemInteractionResult;
 import org.oilmod.api.items.NMSItemStack;
 import org.oilmod.api.items.OilItem;
@@ -19,7 +17,6 @@ import org.oilmod.api.util.OilKey;
 import org.oilmod.oilforge.items.RealItemStack;
 
 import static org.oilmod.oilforge.Util.toForge;
-import static org.oilmod.oilforge.Util.toOil;
 
 public class TestBackpackItem extends OilItem implements IUnique {
     public TestBackpackItem(OilKey key) {

@@ -13,8 +13,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.maven.artifact.versioning.ArtifactVersion;
 import org.apache.maven.artifact.versioning.DefaultArtifactVersion;
-import org.oilmod.api.OilMod;
-import org.oilmod.api.util.OilKey;
 import org.oilmod.api.util.Util;
 
 import java.net.URL;
@@ -63,9 +61,9 @@ public class OilModInfo implements IModInfo {
                 throw new InvalidModFileException("Invalid override namespace found : " + this.namespace, owningFile);
             } else {*/
         this.version = modConfig.<String>getOptional("version").map((s) -> StringSubstitutor.replace(s, owningFile != null ? owningFile.getFile() : null)).map(DefaultArtifactVersion::new).orElse(DEFAULT_VERSION);
-        this.displayName = (String)modConfig.getOptional("displayName").orElse((Object)null);
+        this.displayName = (String)modConfig.getOptional("displayName").orElse(null);
         this.description = modConfig.get("description");
-        this.updateJSONURL = (URL)modConfig.<String>getOptional("updateJSONURL").map(StringUtils::toURL).orElse(null);
+        this.updateJSONURL = modConfig.<String>getOptional("updateJSONURL").map(StringUtils::toURL).orElse(null);
         if (owningFile != null) {
             this.dependencies = (owningFile.getConfig().<List<UnmodifiableConfig>>getOptional(Arrays.asList("dependencies", this.modId)).orElse(Collections.emptyList())).stream().map((dep) -> new ModVersion(this, dep)).collect(Collectors.toList());
             this.properties = owningFile.getConfig().<UnmodifiableConfig>getOptional(Arrays.asList("modproperties", this.modId)).map(UnmodifiableConfig::valueMap).orElse(Collections.emptyMap());

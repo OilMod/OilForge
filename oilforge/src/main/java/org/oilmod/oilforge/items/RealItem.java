@@ -1,19 +1,19 @@
 package org.oilmod.oilforge.items;
 
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockState;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.EntityEquipmentSlot;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemUseContext;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ActionResult;
-import net.minecraft.util.EnumActionResult;
-import net.minecraft.util.EnumHand;
+import net.minecraft.util.ActionResultType;
+import net.minecraft.util.Hand;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -56,7 +56,7 @@ public class RealItem extends Item implements NMSItem, RealItemImplHelper {
 
 
 
-    public boolean canHarvestBlock(ItemStack stack, IBlockState state) {
+    public boolean canHarvestBlock(ItemStack stack, BlockState state) {
         return RealItemImplHelper.super.canHarvestBlock(stack, state);
     }
 
@@ -64,30 +64,31 @@ public class RealItem extends Item implements NMSItem, RealItemImplHelper {
         return RealItemImplHelper.super.getItemEnchantability(stack);
     }
 
-    public float getDestroySpeed(ItemStack stack, IBlockState state) {
+    public float getDestroySpeed(ItemStack stack, BlockState state) {
         return RealItemImplHelper.super.getDestroySpeed(stack, state);
     }
 
     @Nonnull
-    public EnumActionResult onItemUse(ItemUseContext context) {
+    public ActionResultType onItemUse(ItemUseContext context) {
         return RealItemImplHelper.super.onItemUse(context);
     }
 
-    public boolean onBlockDestroyed(ItemStack stack, World worldIn, IBlockState state, BlockPos pos, EntityLivingBase entityLiving) {
-        return RealItemImplHelper.super.onBlockDestroyed(stack,worldIn,state,pos,entityLiving);
+    public boolean onBlockDestroyed(ItemStack stack, World worldIn, BlockState state, BlockPos pos, LivingEntity livingEntity) {
+        return RealItemImplHelper.super.onBlockDestroyed(stack,worldIn,state,pos, livingEntity);
     }
 
     @Nonnull
-    public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer playerIn, @Nonnull EnumHand handIn) {
+    public ActionResult<ItemStack> onItemRightClick(World worldIn, PlayerEntity playerIn, @Nonnull Hand handIn) {
         return RealItemImplHelper.super.onItemRightClick(worldIn, playerIn, handIn);
     }
 
     @Nullable
-    public NBTTagCompound getShareTag(ItemStack stack) {
+    public CompoundNBT getShareTag(ItemStack stack) {
         return RealItemImplHelper.super.getShareTag(stack);
     }
 
-    public void readShareTag(ItemStack stack, @Nullable NBTTagCompound nbt) {
+
+    public void readShareTag(ItemStack stack, @Nullable CompoundNBT nbt) {
         RealItemImplHelper.super.readShareTag(stack, nbt);
     }
 
@@ -107,13 +108,13 @@ public class RealItem extends Item implements NMSItem, RealItemImplHelper {
     }
 
     @Override
-    public boolean canEquip(ItemStack stack, EntityEquipmentSlot armorType, Entity entity) {
+    public boolean canEquip(ItemStack stack, EquipmentSlotType armorType, Entity entity) {
         return RealItemImplHelper.super.canEquip(stack, armorType, entity);
     }
 
     @Nullable
     @Override
-    public ICapabilityProvider initCapabilities(ItemStack stack, @Nullable NBTTagCompound nbt) {
+    public ICapabilityProvider initCapabilities(ItemStack stack, @Nullable CompoundNBT nbt) {
         return RealItemImplHelper.super.initCapabilities(stack, nbt);
     }
 

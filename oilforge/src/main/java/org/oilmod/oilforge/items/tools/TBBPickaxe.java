@@ -1,32 +1,27 @@
 package org.oilmod.oilforge.items.tools;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockState;
 import net.minecraft.block.material.Material;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.init.Items;
-import net.minecraft.item.ItemTool;
+import net.minecraft.item.Items;
+import net.minecraft.item.ToolItem;
 import org.oilmod.api.blocks.BlockType;
 import org.oilmod.api.items.OilItemStack;
 import org.oilmod.api.items.type.IPickaxe;
 import org.oilmod.api.items.type.IToolBlockBreaking;
 import org.oilmod.api.items.type.ImplementationProvider;
 import org.oilmod.api.items.type.TBBType;
-import org.oilmod.api.rep.block.BlockFaceRep;
 import org.oilmod.api.rep.block.BlockStateRep;
-import org.oilmod.api.rep.entity.EntityLivingRep;
-import org.oilmod.api.rep.world.LocationBlockRep;
-import org.oilmod.api.util.InteractionResult;
-import org.oilmod.oilforge.modloader.RealModHelper;
 import org.oilmod.oilforge.rep.block.BlockStateFR;
 
 public class TBBPickaxe extends RealTBBTool {
     protected TBBPickaxe() {
-        super(TBBType.TBBEnum.PICKAXE, 1, 2, (ItemTool) Items.IRON_PICKAXE);
+        super(TBBType.TBBEnum.PICKAXE, 1, 2, (ToolItem) Items.IRON_PICKAXE);
     }
 
     @Override
     protected boolean canHarvestBlock(IToolBlockBreaking item, OilItemStack oilItemStack, BlockStateRep blockStateRep, BlockType blockType) {
-        IBlockState blockIn = ((BlockStateFR)blockStateRep).getForge();
+        BlockState blockIn = ((BlockStateFR)blockStateRep).getForge();
         IPickaxe pickaxe = (IPickaxe) item;
 
         //todo change to match for OilMaterials oil tools etc
@@ -42,7 +37,7 @@ public class TBBPickaxe extends RealTBBTool {
 
     @Override
     protected float getDestroySpeed(IToolBlockBreaking item, OilItemStack stack, BlockStateRep blockStateRep, BlockType blockType) {
-        IBlockState state = ((BlockStateFR)blockStateRep).getForge();
+        BlockState state = ((BlockStateFR)blockStateRep).getForge();
 
         //todo change to match for OilMaterials oil tools etc
         Material material = state.getMaterial();

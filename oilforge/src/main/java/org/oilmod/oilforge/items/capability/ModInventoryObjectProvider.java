@@ -2,8 +2,7 @@ package org.oilmod.oilforge.items.capability;
 
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.Direction;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.LazyOptional;
@@ -11,10 +10,8 @@ import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.apache.commons.lang3.NotImplementedException;
-import org.oilmod.api.inventory.ModInventoryObject;
 import org.oilmod.api.inventory.ModInventoryObjectBase;
 import org.oilmod.api.items.OilItemStack;
-import org.oilmod.oilforge.items.RealItemStack;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -38,7 +35,7 @@ public class ModInventoryObjectProvider implements ICapabilityProvider {
 
     @Nonnull
     @Override
-    public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable EnumFacing side) {
+    public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side) {
         if (stack == null)return LazyOptional.empty();
         if (CapabilityItemHandler.ITEM_HANDLER_CAPABILITY == cap) {
             if (handler == null) {

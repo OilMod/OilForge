@@ -1,7 +1,7 @@
 package org.oilmod.oilforge.rep.block;
 
 import gnu.trove.set.hash.THashSet;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockState;
 import net.minecraft.state.IProperty;
 import org.oilmod.api.rep.block.BlockRep;
 import org.oilmod.api.rep.block.BlockStateRep;
@@ -10,7 +10,7 @@ import org.oilmod.api.rep.world.LocationBlockRep;
 import org.oilmod.oilforge.rep.location.LocationBlockFR;
 
 public abstract class BlockStateBase implements BlockStateRep {
-    public abstract IBlockState getForge();
+    public abstract BlockState getForge();
 
     @Override
     public abstract boolean isReadOnly();
@@ -36,8 +36,8 @@ public abstract class BlockStateBase implements BlockStateRep {
     @Override
     public boolean isSame(BlockStateProvider other) {
         BlockStateBase otherBS = (BlockStateBase)other.getProvidedBlockState();
-        IBlockState f1 = getForge();
-        IBlockState f2 = otherBS.getForge();
+        BlockState f1 = getForge();
+        BlockState f2 = otherBS.getForge();
         //might be bad performace
 
         THashSet<IProperty> s1 = new THashSet<>(f1.getProperties());

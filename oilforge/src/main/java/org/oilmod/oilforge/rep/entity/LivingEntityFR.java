@@ -1,16 +1,22 @@
 package org.oilmod.oilforge.rep.entity;
 
-import net.minecraft.entity.EntityLiving;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.MobEntity;
+import org.apache.commons.lang3.NotImplementedException;
+import org.oilmod.api.rep.entity.EntityLivingRep;
 
-public class EntityLivingFR extends EntityLivingBaseFR {
-    public EntityLivingFR(EntityLiving forge) {
+import java.lang.reflect.Field;
+
+public class LivingEntityFR extends LivingEntityBaseFR implements EntityLivingRep {
+    public LivingEntityFR(MobEntity forge) {
         super(forge);
     }
 
     @Override
-    public EntityLiving getForge() {
-        return (EntityLiving) super.getForge();
+    public MobEntity getForge() {
+        return (MobEntity) super.getForge();
     }
+
     @Override
     public void setCanPickupItems(boolean pickup) {
         getForge().setCanPickUpLoot(pickup);

@@ -1,17 +1,17 @@
 package org.oilmod.oilforge.items.tools;
 
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockState;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.EntityEquipmentSlot;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.*;
 import net.minecraft.item.crafting.Ingredient;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ActionResult;
-import net.minecraft.util.EnumActionResult;
-import net.minecraft.util.EnumHand;
+import net.minecraft.util.ActionResultType;
+import net.minecraft.util.Hand;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -22,7 +22,6 @@ import org.oilmod.api.items.type.IDurable;
 import org.oilmod.api.items.type.IPickaxe;
 import org.oilmod.api.items.type.IToolBlockBreaking;
 import org.oilmod.oilforge.NMSKeyImpl;
-import org.oilmod.oilforge.OilMain;
 import org.oilmod.oilforge.items.RealItemImplHelper;
 
 import javax.annotation.Nonnull;
@@ -30,7 +29,7 @@ import javax.annotation.Nullable;
 
 import static org.oilmod.oilforge.items.RealItem.createBuilder;
 
-public class RealPickaxe extends ItemPickaxe implements RealItemImplHelper {
+public class RealPickaxe extends PickaxeItem implements RealItemImplHelper {
 
     private final OilItem apiItem;
 
@@ -82,7 +81,7 @@ public class RealPickaxe extends ItemPickaxe implements RealItemImplHelper {
 
 
 
-    public boolean canHarvestBlock(ItemStack stack, IBlockState state) {
+    public boolean canHarvestBlock(ItemStack stack, BlockState state) {
         return RealItemImplHelper.super.canHarvestBlock(stack, state);
     }
 
@@ -90,30 +89,30 @@ public class RealPickaxe extends ItemPickaxe implements RealItemImplHelper {
         return RealItemImplHelper.super.getItemEnchantability(stack);
     }
 
-    public float getDestroySpeed(ItemStack stack, IBlockState state) {
+    public float getDestroySpeed(ItemStack stack, BlockState state) {
         return RealItemImplHelper.super.getDestroySpeed(stack, state);
     }
 
     @Nonnull
-    public EnumActionResult onItemUse(ItemUseContext context) {
+    public ActionResultType onItemUse(ItemUseContext context) {
         return RealItemImplHelper.super.onItemUse(context);
     }
 
-    public boolean onBlockDestroyed(ItemStack stack, World worldIn, IBlockState state, BlockPos pos, EntityLivingBase entityLiving) {
-        return RealItemImplHelper.super.onBlockDestroyed(stack,worldIn,state,pos,entityLiving);
+    public boolean onBlockDestroyed(ItemStack stack, World worldIn, BlockState state, BlockPos pos, LivingEntity livingEntity) {
+        return RealItemImplHelper.super.onBlockDestroyed(stack,worldIn,state,pos, livingEntity);
     }
 
     @Nonnull
-    public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer playerIn, @Nonnull EnumHand handIn) {
+    public ActionResult<ItemStack> onItemRightClick(World worldIn, PlayerEntity playerIn, @Nonnull Hand handIn) {
         return RealItemImplHelper.super.onItemRightClick(worldIn, playerIn, handIn);
     }
 
     @Nullable
-    public NBTTagCompound getShareTag(ItemStack stack) {
+    public CompoundNBT getShareTag(ItemStack stack) {
         return RealItemImplHelper.super.getShareTag(stack);
     }
 
-    public void readShareTag(ItemStack stack, @Nullable NBTTagCompound nbt) {
+    public void readShareTag(ItemStack stack, @Nullable CompoundNBT nbt) {
         RealItemImplHelper.super.readShareTag(stack, nbt);
     }
 
@@ -133,13 +132,13 @@ public class RealPickaxe extends ItemPickaxe implements RealItemImplHelper {
     }
 
     @Override
-    public boolean canEquip(ItemStack stack, EntityEquipmentSlot armorType, Entity entity) {
+    public boolean canEquip(ItemStack stack, EquipmentSlotType armorType, Entity entity) {
         return RealItemImplHelper.super.canEquip(stack, armorType, entity);
     }
 
     @Nullable
     @Override
-    public ICapabilityProvider initCapabilities(ItemStack stack, @Nullable NBTTagCompound nbt) {
+    public ICapabilityProvider initCapabilities(ItemStack stack, @Nullable CompoundNBT nbt) {
         return RealItemImplHelper.super.initCapabilities(stack, nbt);
     }
 

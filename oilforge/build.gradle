@@ -1,13 +1,80 @@
 
 
-version = '1.0'
-group = 'org.oilmod' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
+version = '1.0' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 
 
 dependencies {
-    compileOnly ("org.oilmod:oilmod-api:1.0-SNAPSHOT") /*{
-        exclude group: 't.unimi.dsi', name: 'fastutil'
-    }*/
+    compileJars("org.oilmod:oilmod-api:1.0-SNAPSHOT")
 
     compileOnly project(":oilforgemodloader")
+    compileJars project(":forgeshared")
+    compile 'com.electronwill.night-config:json:3.6.0' //remove after figuring out big jar
+}
+
+minecraft {
+    // The mappings can be changed at any time, and must be in the following format.
+    // snapshot_YYYYMMDD   Snapshot are built nightly.
+    // stable_#            Stables are built at the discretion of the MCP team.
+    // Use non-default mappings at your own risk. they may not always work.
+    // Simply re-run your setup task after changing the mappings to update your workspace.
+    mappings channel: 'snapshot', version: '20190719-1.14.3'
+    // makeObfSourceJar = false // an Srg named sources jar is made by default. uncomment this to disable.
+
+    // accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
+
+    // Default run configurations.
+    // These can be tweaked, removed, or duplicated as needed.
+    runs {
+        client {
+            workingDirectory rootProject.file('run')
+
+            // Recommended logging data for a userdev environment
+            property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
+
+            // Recommended logging level for the console
+            property 'forge.logging.console.level', 'debug'
+
+            mods {
+                oilforge {
+                    source project(":oilforge").sourceSets.main
+                }
+            }
+        }
+
+
+        server {
+            workingDirectory rootProject.file('run')
+
+            // Recommended logging data for a userdev environment
+            property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
+
+            // Recommended logging level for the console
+            property 'forge.logging.console.level', 'debug'
+
+            mods {
+                oilforge {
+                    source project(":oilforge").sourceSets.main
+                }
+            }
+        }
+
+        data {
+            workingDirectory rootProject.file('run')
+
+            // Recommended logging data for a userdev environment
+            property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
+
+            // Recommended logging level for the console
+            property 'forge.logging.console.level', 'debug'
+
+            args '--mod', 'examplemod', '--all', '--output', file('src/generated/resources/')
+
+            mods {
+                oilforge {
+                    source project(":oilforge").sourceSets.main
+                }
+            }
+        }
+        //dependsOn ':oilforgemodloader:jar'
+    }
 }

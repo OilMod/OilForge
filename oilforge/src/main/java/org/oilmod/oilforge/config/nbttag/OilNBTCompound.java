@@ -10,26 +10,26 @@ import org.oilmod.api.config.DataType;
 
 import java.util.Iterator;
 
-public class NBTCompound implements Compound {
-	NBTTagCompound parent;
+public class OilNBTCompound implements Compound {
+	CompoundNBT parent;
 	
 	
-	public NBTCompound() {
-		this(new NBTTagCompound());
+	public OilNBTCompound() {
+		this(new CompoundNBT());
 	}
 
-	public NBTCompound(NBTTagCompound parent) {
+	public OilNBTCompound(CompoundNBT parent) {
 		this.parent = parent;
 	}
 	
-	public NBTTagCompound getNBTTagCompound() {
+	public CompoundNBT getCompoundNBT() {
 		return parent;
 	}
 	
 	
 	@Override
 	public Compound createCompound() {
-        return new NBTCompound();
+        return new OilNBTCompound();
 	}
 
     @Override
@@ -42,68 +42,68 @@ public class NBTCompound implements Compound {
 
 	@Override
 	public void set(String paramString, Compound paramCompound) {
-		parent.setTag(paramString, ((NBTCompound) paramCompound).getNBTTagCompound());
+		parent.put(paramString, ((OilNBTCompound) paramCompound).getCompoundNBT());
 	}
 
 	@Override
 	public void setList(String paramString, DataList paramCompoundList) {
-		parent.setTag(paramString, ((NBTDataList) paramCompoundList).getNBTTagList());
+		parent.put(paramString, ((NBTDataList) paramCompoundList).getListNBT());
 		
 	}
 
 	@Override
 	public void setByte(String paramString, byte paramByte) {
-		parent.setByte(paramString, paramByte);
+		parent.putByte(paramString, paramByte);
 	}
 
 	@Override
 	public void setShort(String paramString, short paramShort) {
-		parent.setShort(paramString, paramShort);
+		parent.putShort(paramString, paramShort);
 	}
 
 	@Override
 	public void setInt(String paramString, int paramInt) {
-		parent.setInt(paramString, paramInt);
+		parent.putInt(paramString, paramInt);
 	}
 
 	@Override
 	public void setLong(String paramString, long paramLong) {
-		parent.setLong(paramString, paramLong);
+		parent.putLong(paramString, paramLong);
 	}
 
 	@Override
 	public void setFloat(String paramString, float paramFloat) {
-		parent.setFloat(paramString, paramFloat);
+		parent.putFloat(paramString, paramFloat);
 	}
 
 	@Override
 	public void setDouble(String paramString, double paramDouble) {
-		parent.setDouble(paramString, paramDouble);
+		parent.putDouble(paramString, paramDouble);
 	}
 
 	@Override
 	public void setString(String paramString1, String paramString2) {
-		parent.setString(paramString1, paramString2);
+		parent.putString(paramString1, paramString2);
 	}
 
 	@Override
 	public void setByteArray(String paramString, byte[] paramArrayOfByte) {
-		parent.setByteArray(paramString, paramArrayOfByte);
+		parent.putByteArray(paramString, paramArrayOfByte);
 	}
 
 	@Override
 	public void setIntArray(String paramString, int[] paramArrayOfInt) {
-		parent.setIntArray(paramString, paramArrayOfInt);
+		parent.putIntArray(paramString, paramArrayOfInt);
 	}
 
 	@Override
 	public void setBoolean(String paramString, boolean paramBoolean) {
-		parent.setBoolean(paramString, paramBoolean);
+		parent.putBoolean(paramString, paramBoolean);
 	}
 
 	@Override
 	public void setNBT(String paramString, Object paramNBTTag) {
-		parent.setTag(paramString, (NBTTagCompound) paramNBTTag);
+		parent.put(paramString, (CompoundNBT) paramNBTTag);
 	}
 
 
@@ -200,7 +200,7 @@ public class NBTCompound implements Compound {
 
 	@Override
 	public Compound getCompound(String paramString) {
-		return new NBTCompound(parent.getCompound(paramString));
+		return new OilNBTCompound(parent.getCompound(paramString));
 	}
 
 	@Override
@@ -215,42 +215,42 @@ public class NBTCompound implements Compound {
 
 	@Override
 	public Object getRaw(String s) {
-		return parent.getTag(s);
+		return parent.get(s);
 	}
 
     @Override
     public DataKeyedEntry get(String s) {
-        INBTBase nbtBase = parent.getTag(s);
+        INBT nbtBase = parent.get(s);
         DataType type = DataType.getByNbtId(nbtBase.getId());
         return new DataKeyedEntry<>(s, convertJava(nbtBase, type), type);
     }
 
-    static Object convertJava(INBTBase nbt, DataType type) {
+    static Object convertJava(INBT nbt, DataType type) {
         switch (type) {
             case Byte:
-                return ((NBTTagByte) nbt).getByte();
+                return ((ByteNBT) nbt).getByte();
             case Short:
-                return ((NBTTagShort) nbt).getShort();
+                return ((ShortNBT) nbt).getShort();
             case Int:
-                return ((NBTTagInt) nbt).getInt();
+                return ((IntNBT) nbt).getInt();
             case Long:
-                return ((NBTTagLong) nbt).getLong();
+                return ((LongNBT) nbt).getLong();
             case Float:
-                return ((NBTTagFloat) nbt).getFloat();
+                return ((FloatNBT) nbt).getFloat();
             case Double:
-                return ((NBTTagDouble) nbt).getDouble();
+                return ((DoubleNBT) nbt).getDouble();
             case ByteArray:
-                return ((NBTTagByteArray) nbt).getByteArray();
+                return ((ByteArrayNBT) nbt).getByteArray();
             case String:
-                return nbt.getString();
+                return ((StringNBT)nbt).getString(); //needed to check instance
             case List:
-                return new NBTDataList<>((NBTTagList) nbt);
+                return new NBTDataList<>((ListNBT) nbt);
             case Subsection:
-                return new NBTCompound((NBTTagCompound) nbt);
+                return new OilNBTCompound((CompoundNBT) nbt);
 			case IntArray:
-				return ((NBTTagIntArray) nbt).getIntArray();
+				return ((IntArrayNBT) nbt).getIntArray();
 			case LongArray:
-				return ((NBTTagLongArray) nbt).getAsLongArray();
+				return ((LongArrayNBT) nbt).getAsLongArray();
             default:
                 throw new IllegalStateException("Cannot convert object with type " + type.toString() + " to Java");
         }
@@ -258,7 +258,7 @@ public class NBTCompound implements Compound {
 
     @Override
 	public boolean containsKey(String s) {
-		return parent.hasKey(s);
+		return parent.contains(s);
 	}
 
     @Override
@@ -273,7 +273,7 @@ public class NBTCompound implements Compound {
 
 	@Override
 	public DataType getType(String s) {
-		return DataType.getByNbtId(parent.getTag(s).getId());
+		return DataType.getByNbtId(parent.get(s).getId());
 	}
 
     @Override

@@ -133,8 +133,8 @@ package org.oilmod.oilforge.inventory;
         for (HumanEntity humanEntity:viewers) {
             if (humanEntity instanceof CraftHumanEntity) {
                 EntityHuman human = ((CraftHumanEntity) humanEntity).getHandle();
-                if (human instanceof EntityPlayer) {
-                    EntityPlayer player = (EntityPlayer) human;
+                if (human instanceof PlayerEntity) {
+                    PlayerEntity player = (PlayerEntity) human;
                     player.playerConnection.sendPacket(new PacketPlayOutSetSlot(player.activeContainer.windowId, 0, craftResult));
 
                 }

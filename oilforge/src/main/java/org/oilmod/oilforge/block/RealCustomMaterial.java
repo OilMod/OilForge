@@ -3,7 +3,6 @@ package org.oilmod.oilforge.block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.material.MaterialColor;
 import org.oilmod.api.blocks.BlockType;
-import org.oilmod.api.unification.material.MaterialBuilder;
 
 import static org.oilmod.oilforge.block.RealBlockTypeHelper.toNMS;
 

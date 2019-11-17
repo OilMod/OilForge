@@ -2,14 +2,12 @@ package org.oilmod.oilforge.rep.itemstack.state;
 
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
-import net.minecraft.util.registry.IRegistry;
+import net.minecraft.nbt.ListNBT;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.util.registry.Registry;
 import org.oilmod.api.rep.enchant.EnchantmentRep;
 import org.oilmod.api.rep.itemstack.state.Enchantments;
 import org.oilmod.api.rep.itemstack.state.ItemStackStateRep;
-import org.oilmod.api.rep.providers.ItemStackStateProvider;
-import org.oilmod.api.rep.states.implapi.StateImplementationResolver;
 import org.oilmod.api.util.ConvertedReadSet;
 import org.oilmod.api.util.ReadSet;
 import org.oilmod.oilforge.rep.enchantment.EnchantmentFR;
@@ -35,14 +33,14 @@ public class EnchantmentHelperFR extends Enchantments.EnchantmentHelper {
         ItemStack forgeState = ((ItemStackStateFR)state).getForgeState();
         if (!forgeState.isEnchanted())return 0;
         net.minecraft.enchantment.Enchantment ench = ((EnchantmentFR)enchRep).getForge();
-        String id = String.valueOf((Object) IRegistry.field_212628_q.getKey(ench)); //todo find better way
+        String id = String.valueOf(Registry.ENCHANTMENT.getKey(ench)); //todo find better way
 
-        NBTTagList nbttaglist = forgeState.getEnchantmentTagList();
-        for (int i = 0; i < nbttaglist.size(); ++i) {
-            NBTTagCompound nbttagcompound = (NBTTagCompound) nbttaglist.get(i);
-            if (nbttagcompound.getString("id").equals(id)) {
-                short short0 = nbttagcompound.getShort("lvl");
-                nbttaglist.remove(i);
+        ListNBT ListNBT = forgeState.getEnchantmentTagList();
+        for (int i = 0; i < ListNBT.size(); ++i) {
+            CompoundNBT CompoundNBT = (CompoundNBT) ListNBT.get(i);
+            if (CompoundNBT.getString("id").equals(id)) {
+                short short0 = CompoundNBT.getShort("lvl");
+                ListNBT.remove(i);
                 return short0;
             }
         }
