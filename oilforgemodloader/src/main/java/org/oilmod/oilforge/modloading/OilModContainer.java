@@ -16,8 +16,6 @@ import org.apache.commons.lang3.Validate;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.oilmod.api.OilMod;
-import org.oilmod.oilforge.modloader.OilModLoaderMod;
-import org.oilmod.oilforge.modloader.RealModHelper;
 
 import java.util.Optional;
 import java.util.function.Consumer;
@@ -68,7 +66,7 @@ public class OilModContainer extends ModContainer { //would like to overwrite fm
 
 
         MinecraftForge.EVENT_BUS.addListener(this::onOilAPIInitEvent);
-        eventBus.addGenericListener(Item.class, this::registerItems);
+        eventBus.addGenericListener(Item.class, this::registerItems); //if this fails, its indicated that classloader stuff went wrong (this class cannot be classloaded by AppClassLoader etc must be e.g. TransformingClassLoader)
     }
 
     private void checkConstructState(LifecycleEventProvider.LifecycleEvent lifecycleEvent) {
@@ -81,7 +79,7 @@ public class OilModContainer extends ModContainer { //would like to overwrite fm
         OilModContext context = (OilModContext) modInstance.getContext();
         context.itemRegistry = itemRegistry;
 
-        RealModHelper.invokeRegisterItems(modInstance);
+        ModHelperBase.invokeRegisterItems(modInstance);
 
         context.itemRegistry = null;
 

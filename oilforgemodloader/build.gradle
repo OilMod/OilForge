@@ -1,0 +1,20 @@
+
+version = '1.0'
+group = 'org.oilmod' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
+
+fmlmodtype = 'LANGPROVIDER'
+
+dependencies {
+
+    providedJars 'it.unimi.dsi:fastutil:8.3.0'
+    providedJars 'com.electronwill.night-config:core:3.6.0'
+    providedJars 'org.apache.commons:commons-lang3:3.5'
+    compileJars 'com.electronwill.night-config:json:3.6.0' // Only needed for JSON config format
+    compileJars("org.oilmod:oilmod-api:1.0-SNAPSHOT") /*{
+        exclude group: 't.unimi.dsi', name: 'fastutil'
+    }*/
+
+}
+
+
+

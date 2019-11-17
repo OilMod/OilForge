@@ -2,8 +2,6 @@ package org.oilmod.oilforge.modloading;
 
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.ModLoadingContext;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.minecraftforge.fml.javafmlmod.FMLModContainer;
 
 public class OilJavaModLoadingContext {
     private final OilModContainer container;

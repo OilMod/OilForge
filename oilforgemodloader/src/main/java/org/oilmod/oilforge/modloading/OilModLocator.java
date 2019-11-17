@@ -2,7 +2,6 @@ package org.oilmod.oilforge.modloading;
 
 import cpw.mods.modlauncher.api.LamdbaExceptionUtils;
 
-import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -10,7 +9,6 @@ import java.nio.file.*;
 import java.security.ProtectionDomain;
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import net.minecraftforge.fml.loading.*;
@@ -22,6 +20,7 @@ import org.apache.logging.log4j.Logger;
 import static net.minecraftforge.fml.loading.LogMarkers.CORE;
 
 public class OilModLocator extends AbstractJarFileLocator {
+    public static boolean CREATED = false;
     private static final Set<String> DELEGATED_RESOURCES = new ObjectOpenHashSet<>(Arrays.asList("pack.mcmeta", "oilmodlogo.png"));
     private static final String SUFFIX = ".jar";
     private static final String OILMODS_FOLDER = "oilmods";
@@ -47,7 +46,16 @@ public class OilModLocator extends AbstractJarFileLocator {
     }
 
     OilModLocator(Path modFolder) {
+        LOGGER.info("Instance of {} was created", this.getClass()::getSimpleName);
+        CREATED = true;
         this.modFolder = modFolder;
+        if (Files.notExists(modFolder)) {
+            try {
+                Files.createDirectories(modFolder);
+            } catch (IOException e) {
+                throw new IllegalStateException("oilmods folder missing and could not be created", e);
+            }
+        }
         LOGGER.debug("Created new OilModLocator {}", this::toString);
     }
 
@@ -97,25 +105,6 @@ public class OilModLocator extends AbstractJarFileLocator {
     private static final String OILMODLOADER_ID_FILE = "META-INF/OilModLoaderId";
     @Override
     public void initArguments(Map<String, ?> map) {
-        try {
-            final Enumeration<URL> resources = getClass().getClassLoader().getResources(OILMODLOADER_ID_FILE);
-            while (resources.hasMoreElements()) {
-                URL url = resources.nextElement();
-                Path path = LibraryFinder.findJarPathFor(OILMODLOADER_ID_FILE, "oilmodloader_ref_jar", url);
-                try {
 
-                    FileSystems.newFileSystem(path, OilModLocator.class.getClassLoader());
-                    LOGGER.debug("found working filesystem at path {}", path::toString);
-                }catch (IOException | ProviderNotFoundException e) {
-                    e.printStackTrace();
-                }
-                if (Files.isDirectory(path))
-                    continue;
-
-            }
-        } catch (IOException e) {
-            LOGGER.fatal(CORE,"Error trying to find resources", e);
-            throw new RuntimeException("wha?", e);
-        }
     }
 }

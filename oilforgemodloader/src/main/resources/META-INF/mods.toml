@@ -1,3 +1,16 @@
+###probably not needed, oh well (for not at least)
+
+
+
+
+
+
+
+
+
+
+
+
 # This is an example mods.toml file. It contains the data relating to the loading mods.
 # There are several mandatory fields (#mandatory), and many more that are optional (#optional).
 # The overall format is standard TOML format, v0.5.0.
@@ -20,7 +33,7 @@ authors="sirati97" #optional
 # A list of mods - how many allowed here is determined by the individual mod loader
 [[mods]] #mandatory
 # The modid of the mod
-modId="oilmodloader" #mandatory
+modId="oilforgemodloader" #mandatory
 # The version number of the mod - there's a few well known ${} variables useable here or just hardcode it
 version="${file.jarVersion}" #mandatory
  # A display name for the mod

@@ -1,17 +1,12 @@
 package org.oilmod.oilforge.modloading;
 
-import com.electronwill.nightconfig.core.Config;
 import com.electronwill.nightconfig.core.UnmodifiableConfig;
-import com.electronwill.nightconfig.core.utils.FakeCommentedConfig;
-import com.electronwill.nightconfig.core.utils.FakeUnmodifiableCommentedConfig;
-import net.minecraftforge.fml.loading.StringUtils;
-import net.minecraftforge.fml.loading.moddiscovery.*;
+import net.minecraftforge.fml.loading.moddiscovery.InvalidModFileException;
+import net.minecraftforge.fml.loading.moddiscovery.ModFile;
 import net.minecraftforge.forgespi.language.IModFileInfo;
 import net.minecraftforge.forgespi.language.IModInfo;
-import net.minecraftforge.forgespi.language.MavenVersionAdapter;
 import org.apache.maven.artifact.versioning.VersionRange;
 
-import java.net.URL;
 import java.util.*;
 import java.util.jar.Manifest;
 import java.util.stream.Collectors;

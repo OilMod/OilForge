@@ -1,6 +1,5 @@
 package org.oilmod.oilforge.modloading;
 
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLanguageProvider;
 import net.minecraftforge.forgespi.language.ILifecycleEvent;
 import net.minecraftforge.forgespi.language.IModInfo;
 import net.minecraftforge.forgespi.language.IModLanguageProvider;
@@ -24,6 +23,9 @@ import static org.oilmod.oilforge.modloading.hacks.OilModFileInfoHelper.*;
 public class OilModLanguageProvider implements IModLanguageProvider {
     //TODO: get inspired by FMLJavaModLanguageProvider
 
+    public OilModLanguageProvider() {
+        LOGGER.info("Instance of {} was created", this.getClass()::getSimpleName);
+    }
 
     private static final Logger LOGGER = LogManager.getLogger();
 

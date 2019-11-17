@@ -5,27 +5,25 @@ import com.electronwill.nightconfig.core.UnmodifiableConfig;
 import cpw.mods.modlauncher.api.LamdbaExceptionUtils;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
-import net.minecraftforge.fml.loading.StringSubstitutor;
-import net.minecraftforge.fml.loading.StringUtils;
 import net.minecraftforge.fml.loading.moddiscovery.InvalidModFileException;
 import net.minecraftforge.fml.loading.moddiscovery.ModFile;
 import net.minecraftforge.fml.loading.moddiscovery.ModFileInfo;
 import net.minecraftforge.fml.loading.moddiscovery.ModInfo;
 import net.minecraftforge.forgespi.language.IModInfo;
-import org.apache.maven.artifact.versioning.DefaultArtifactVersion;
 import org.oilmod.oilforge.modloading.OilModFile;
+import org.oilmod.oilforge.modloading.OilModInfo;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
-import java.net.URL;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import static net.minecraft.world.biome.Biome.LOGGER;
-import static org.oilmod.oilforge.modloading.OilModInfo.CLASSPATH_PATTERN;
-import static org.oilmod.oilforge.modloading.OilModInfo.VALID_LABEL;
 
 public class OilModFileInfoHelper {
     public static final String OilModIdentifier = "OilModIdentifierClasspath";
@@ -118,16 +116,16 @@ public class OilModFileInfoHelper {
             set(fieldModConfig, result, modConfig);
 
             String modId = (String)modConfig.getOptional("modId").orElseThrow(() -> new InvalidModFileException("Missing modId entry", owningFile));
-            if (!VALID_LABEL.matcher(modId).matches()) {
-                LOGGER.fatal("Invalid modId found in file {} - {} does not match the standard: {}", owningFile.getFile().getFilePath(), modId, VALID_LABEL.pattern());
+            if (!OilModInfo.VALID_LABEL.matcher(modId).matches()) {
+                LOGGER.fatal("Invalid modId found in file {} - {} does not match the standard: {}", owningFile.getFile().getFilePath(), modId, OilModInfo.VALID_LABEL.pattern());
                 throw new InvalidModFileException("Invalid modId found : " + modId, owningFile);
             }
 
             set(fieldModId, result, modId);
 
             String classpath = (String)modConfig.getOptional("classpath").orElseThrow(() -> new InvalidModFileException("Missing classpath entry", owningFile));
-            if (!CLASSPATH_PATTERN.matcher(classpath).matches()) {
-                LOGGER.fatal("Invalid classpath found in file {} for mod {} - {} does not match the standard: {}", owningFile.getFile().getFilePath(), modId, classpath, CLASSPATH_PATTERN.pattern());
+            if (!OilModInfo.CLASSPATH_PATTERN.matcher(classpath).matches()) {
+                LOGGER.fatal("Invalid classpath found in file {} for mod {} - {} does not match the standard: {}", owningFile.getFile().getFilePath(), modId, classpath, OilModInfo.CLASSPATH_PATTERN.pattern());
                 throw new InvalidModFileException("Invalid classpath found : " + modId, owningFile);
             }
 
@@ -142,13 +140,19 @@ public class OilModFileInfoHelper {
             properties.put(OilModIdentifier, classpath);
 
             Config depOilModLoader = Config.inMemory(); //maybe do by included resource file instead
-            depOilModLoader.add("modId", "oilmodloader");
+            depOilModLoader.add("modId", "oilforgeapi");
             depOilModLoader.add("mandatory", true);
             depOilModLoader.add("versionRange", "${file.jarVersion}");
             depOilModLoader.add("ordering", IModInfo.Ordering.AFTER.toString());
-
-            //lets add implied dependencies e.g. OilModLoader!
+            //adds implied dependencies oilforge (oilforgeapi)!
             dependencies.add(new IModInfo.ModVersion(result, depOilModLoader));
+            /*depOilModLoader = Config.inMemory();
+            depOilModLoader.add("modId", "oilforgemodloader"); apparently providers do not appear as a mod so you cannot depend on them
+            depOilModLoader.add("mandatory", true);
+            depOilModLoader.add("versionRange", "${file.jarVersion}");
+            depOilModLoader.add("ordering", IModInfo.Ordering.AFTER.toString());
+            //adds implied dependencies OilModLoader (oilforgemodloader)!
+            dependencies.add(new IModInfo.ModVersion(result, depOilModLoader));*/
 
             set(fieldDependencies, result, dependencies);
             set(fieldProperties, result, properties);

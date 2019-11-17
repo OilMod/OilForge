@@ -8,7 +8,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.event.ModelBakeEvent;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
@@ -21,16 +20,13 @@ import net.minecraftforge.registries.IForgeRegistry;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.oilmod.api.OilMod;
-import org.oilmod.api.items.OilItemStack;
 import org.oilmod.api.rep.providers.minecraft.MinecraftBlockProvider;
 import org.oilmod.api.rep.providers.minecraft.MinecraftItemProvider;
 import org.oilmod.oilforge.OilMain;
 import org.oilmod.oilforge.internaltest.testmod1.TestMod1;
 import org.oilmod.oilforge.items.RealItemImplHelper;
-import org.oilmod.oilforge.items.RealItemStack;
 import org.oilmod.oilforge.items.capability.ModInventoryObjectProvider;
 import org.oilmod.oilforge.items.capability.OilItemStackHandler;
-import org.oilmod.oilforge.items.capability.OilItemStackProvider;
 import org.oilmod.oilforge.modloading.OilAPIInitEvent;
 import org.oilmod.oilforge.modloading.OilModContainer;
 import org.oilmod.oilforge.modloading.OilModContext;
@@ -42,7 +38,7 @@ import static org.oilmod.oilforge.Util.isModStack;
 import static org.oilmod.oilforge.Util.toReal;
 
 // The value here should match an entry in the META-INF/mods.toml file
-@Mod("oilmodloader")@Mod.EventBusSubscriber
+@Mod("oilforgeapi")@Mod.EventBusSubscriber
 public class OilModLoaderMod
 {
     // Directly reference a log4j logger.

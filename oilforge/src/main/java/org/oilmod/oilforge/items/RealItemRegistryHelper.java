@@ -1,6 +1,5 @@
 package org.oilmod.oilforge.items;
 
-import gnu.trove.set.hash.THashSet;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import net.minecraft.item.Item;
 import org.apache.commons.lang3.Validate;

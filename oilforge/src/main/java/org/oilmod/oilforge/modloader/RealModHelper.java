@@ -2,9 +2,10 @@ package org.oilmod.oilforge.modloader;
 
 import org.oilmod.api.OilMod;
 import org.oilmod.api.items.ItemRegistry;
+import org.oilmod.oilforge.modloading.ModHelperBase;
 import org.oilmod.oilforge.modloading.OilModContext;
 
-public class RealModHelper extends OilMod.ModHelper {
+public class RealModHelper extends ModHelperBase {
     @Override
     protected void register(OilMod mod) {
         //todo do forge stuff
@@ -26,10 +27,6 @@ public class RealModHelper extends OilMod.ModHelper {
         return OilMod.ModHelper.getItemRegistry(mod);
     }
 
-    public static void invokeRegisterItems(OilMod mod) {
-        OilMod.ModHelper.invokeRegisterItems(mod);
-
-    }
 
     @Override
     protected OilMod.ModContext createDefaultContext() {
