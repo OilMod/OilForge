@@ -1,0 +1,13 @@
+
+
+version = '1.0'
+group = 'org.oilmod' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
+
+
+dependencies {
+    compileOnly ("org.oilmod:oilmod-api:1.0-SNAPSHOT") /*{
+        exclude group: 't.unimi.dsi', name: 'fastutil'
+    }*/
+
+    compileOnly project(":oilforgemodloader")
+}

@@ -827,7 +827,7 @@ Build: 1.14.4-28.0.51 - Tue Aug 20 02:46:20 GMT 2019
 =========
 Build: 1.14.4-28.0.49 - Thu Aug 15 18:04:06 GMT 2019
 	williewillus:
-		Add hook to load custom mrls/rls not attached to a block or item. 
+		Add hook to load custom mrls/rls not attached to a block or item.
 		(#6010)
 
 =========
@@ -1019,7 +1019,7 @@ Build: 1.14.4-28.0.17 - Fri Jul 26 03:02:48 GMT 2019
 	cpw:
 		Added a coremod, shush, don't tell Lex.
 		Seriously, this is how to do targeted changes to specific classes.
-		In this case, adding a fieldtomethod redirect for EffectInstance.potion 
+		In this case, adding a fieldtomethod redirect for EffectInstance.potion
 		to allow substitution.
 		Signed-off-by: cpw <cpw+github@weeksfamily.ca>
 
@@ -1098,7 +1098,7 @@ Build: 1.14.4-28.0.2 - Sat Jul 20 16:06:15 GMT 2019
 	thaun1:
 		Updated Example Version Range for 1.14.4 (#5950)
 		* Updated Example Version Range for 1.14.4
-		
+
 		* Also changed loader version and version range
 
 =========
@@ -1152,7 +1152,7 @@ Build: 1.14.3-27.0.55 - Tue Jul 16 19:47:33 GMT 2019
 =========
 Build: 1.14.3-27.0.54 - Tue Jul 16 19:41:28 GMT 2019
 	mods.itsmeow:
-		 [1.14.x] Fix text positioning issues caused by scaling loading screen 
+		 [1.14.x] Fix text positioning issues caused by scaling loading screen
 		(#5932)
 
 =========
@@ -1233,7 +1233,7 @@ Build: 1.14.3-27.0.38 - Tue Jul 09 02:49:22 GMT 2019
 	bk1325:
 		Add isServer and isClient methods to LogicalSide (#5606)
 		* Add helper methods to LogicalSide.
-		
+
 		* Fix backwards docs.
 
 	sargun.vohra:
@@ -1386,7 +1386,7 @@ Build: 1.14.3-27.0.11 - Wed Jun 26 01:04:02 GMT 2019
 Build: 1.14.3-27.0.10 - Tue Jun 25 23:57:02 GMT 2019
 	tterrag:
 		Fix configs correcting numeric values when the primitive type differs
-		Fix configs with range not clamping the corrected value, and instead 
+		Fix configs with range not clamping the corrected value, and instead
 		just replacing with the default
 		Closes #5855
 
@@ -1698,8 +1698,8 @@ Build: 1.14.2-26.0.15 - Mon Jun 10 21:04:07 GMT 2019
 Build: 1.14.2-26.0.14 - Mon Jun 10 04:13:40 GMT 2019
 	tterrag:
 		Adjust NetworkEvent#enqueueWork to match vanilla logic
-		In singleplayer our packet work could get delayed until the next tick, 
-		breaking the expectation of packet read order. Fixes that using 
+		In singleplayer our packet work could get delayed until the next tick,
+		breaking the expectation of packet read order. Fixes that using
 		NetworkHooks.openGui would result in missing inventory data on the
 		client
 
@@ -1716,7 +1716,7 @@ Build: 1.14.2-26.0.12 - Sun Jun 09 08:24:28 GMT 2019
 	tterrag:
 		Add forge registries for most vanilla registries
 		Made all registry names consistent with their vanilla counterparts Also
-		added a system for legacy registry names, so no data will be lost 
+		added a system for legacy registry names, so no data will be lost
 		Cleaned up formatting in GameData and ForgeRegistries
 
 =========
