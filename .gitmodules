@@ -1,0 +1,12 @@
+[submodule "lib/OilRep-API"]
+	path = lib/OilRep-API
+	url = git@github.com:OilMod/OilMod-Representation-Api.git
+[submodule "lib/OilMod-API"]
+	path = lib/OilMod-API
+	url = git@github.com:OilMod/OilMod-API.git
+[submodule "lib/OilMod-TestPlugin2"]
+	path = lib/OilMod-TestPlugin2
+	url = git@github.com:OilMod/OilMod-TestPlugin2.git
+[submodule "lib/OilSPI"]
+	path = lib/OilSPI
+	url = git@github.com:OilMod/OilSPI.git

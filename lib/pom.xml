@@ -1,0 +1,22 @@
+<!-- The parent pom is needed as the child project reference it -->
+<project>
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>org.oilmod</groupId>
+    <artifactId>oilmod-parent</artifactId>
+    <version>dev-SNAPSHOT</version>
+    <packaging>pom</packaging>
+    <name>OilMod (Parent)</name>
+
+
+    <build>
+        <defaultGoal>install</defaultGoal>
+        <finalName>${project.artifactId}</finalName>
+    </build>
+    <modules>
+        <module>OilSPI</module>
+        <module>OilRep-API</module>
+        <module>OilMod-API</module>
+        <module>OilMod-TestPlugin2</module>
+    </modules>
+</project>
