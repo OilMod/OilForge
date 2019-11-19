@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.oilmod</groupId>
-    <artifactId>oilmod-parent</artifactId>
+    <artifactId>oilmod-libs</artifactId>
     <version>dev-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>OilMod (Parent)</name>
