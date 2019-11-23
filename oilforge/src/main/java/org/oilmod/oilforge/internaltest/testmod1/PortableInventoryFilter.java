@@ -12,7 +12,7 @@ public class PortableInventoryFilter implements ItemFilter {
     public boolean allowed(ItemStackRep itemStack) {
         if (itemStack instanceof OilBukkitItemStack) {
             OilItemStack oilItemStack = ((OilBukkitItemStack) itemStack).getOilItemStack();
-            return !(oilItemStack instanceof TestBackpackItemStack);
+            return oilItemStack.getInventory() != null;
             //Will disallow you to add an Backpack to inventories using this filter
         }
         return true;

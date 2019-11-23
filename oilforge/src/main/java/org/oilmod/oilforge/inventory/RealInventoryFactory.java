@@ -9,6 +9,7 @@ import org.oilmod.api.data.ObjectFactory;
 import org.oilmod.api.inventory.*;
 import org.oilmod.api.items.OilItemStack;
 import org.oilmod.api.util.ITicker;
+import org.oilmod.oilforge.inventory.container.OilContainerType;
 
 /**
  * Created by sirati97 on 12.02.2016.
@@ -21,13 +22,13 @@ public class RealInventoryFactory extends InventoryFactory {
     }
 
     @Override
-    protected ObjectFactory<ModNMSIInventory<ModInventoryObject>> getBasicInventoryFactory(final OilItemStack oilItemStack, final int size, final String title, final ItemFilter filter) {
-        return () -> new OilInventoryChest(oilItemStack,size,title,ItemFilterRegistryHelper.get(filter));
+    protected ObjectFactory<ModNMSIInventory<ModInventoryObject>> getBasicInventoryFactory(final OilItemStack oilItemStack, final int rows, final int columns, final String title, final ItemFilter filter) {
+        return () -> new OilInventoryChest(oilItemStack,rows, columns,title,ItemFilterRegistryHelper.get(filter));
     }
 
     @Override
     protected ObjectFactory<ModNMSIInventory<ModFurnaceInventoryObject>> getFurnaceInventoryFactory(final OilItemStack oilItemStack, final String title, final ITicker ticker, final ItemFilter filter) {
-        return () -> new OilInventoryFurnace(ContainerType.FURNACE, IRecipeType.SMELTING, oilItemStack,title, ticker, ItemFilterRegistryHelper.get(filter));
+        return () -> new OilInventoryFurnace(OilContainerType.FURNACE, IRecipeType.SMELTING, oilItemStack,title, ticker, ItemFilterRegistryHelper.get(filter));
     }
 
     @Override

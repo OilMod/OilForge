@@ -2,17 +2,12 @@ package org.oilmod.oilforge.inventory;
 
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.inventory.IInventory;
-import net.minecraft.inventory.container.ChestContainer;
 import net.minecraft.inventory.container.Container;
-import net.minecraft.inventory.container.ContainerType;
-import net.minecraft.inventory.container.HopperContainer;
-import net.minecraft.item.ItemStack;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraft.network.PacketBuffer;
 import org.oilmod.api.inventory.ModInventoryObject;
 import org.oilmod.api.rep.inventory.InventoryHolderRep;
-import org.oilmod.oilforge.inventory.container.OilChestContainer;
+import org.oilmod.oilforge.inventory.container.FlexChestPacket;
+import org.oilmod.oilforge.inventory.container.OilChestLikeContainer;
 
 import javax.annotation.Nullable;
 
@@ -23,50 +18,27 @@ import static org.oilmod.oilforge.inventory.container.OilContainerType.*;
  * Created by sirati97 on 17.01.2016.
  */
 public class OilInventoryChest extends OilInventoryBase<ModInventoryObject> {
+    private final int rows;
+    private final int columns;
 
-    public OilInventoryChest(InventoryHolderRep owner, int size, String title, IItemFilter itemFilter) {
-        super(owner, title, size, null, itemFilter, true);
+    public OilInventoryChest(InventoryHolderRep owner, int rows, int columns, String title, IItemFilter itemFilter) {
+        super(owner, title, rows * columns, null, itemFilter, true);
+        this.rows = rows;
+        this.columns = columns;
     }
 
-    public interface IFactory<T extends Container> {
-        @OnlyIn(Dist.CLIENT)
-        T create(int id, PlayerInventory player, OilInventoryChest inv);
-    }
-    private static final IFactory HOPPER = HopperContainer::new;
-    private static final IFactory Chest1Row = (id, p, i)->new OilChestContainer(GENERIC_9X1, id, p, i, 1);
-    private static final IFactory Chest2Row = (id, p, i)->new OilChestContainer(GENERIC_9X2, id, p, i, 2);
-    private static final IFactory Chest3Row = (id, p, i)->new OilChestContainer(GENERIC_9X3, id, p, i, 3);
-    private static final IFactory Chest4Row = (id, p, i)->new OilChestContainer(GENERIC_9X4, id, p, i, 4);
-    private static final IFactory Chest5Row = (id, p, i)->new OilChestContainer(GENERIC_9X5, id, p, i, 5);
-    private static final IFactory Chest6Row = (id, p, i)->new OilChestContainer(GENERIC_9X6, id, p, i, 6);
 
-
-    private IFactory resolveContainer() {
-        if (getSizeInventory() <= 5) {
-            return HopperContainer::new;
-        } else if (getSizeInventory() <= 9) {
-            return Chest1Row;
-        } else if (getSizeInventory() <= 18) {
-            return Chest2Row;
-        } else if (getSizeInventory() <= 27) {
-            return Chest3Row;
-        } else if (getSizeInventory() <= 36) {
-            return Chest4Row;
-        } else if (getSizeInventory() <= 45) {
-            return Chest5Row;
-        } else if (getSizeInventory() <= 56) {
-            return Chest6Row;
-        } else {
-            return (id, p, i)->new OilChestContainer(GENERIC_9X6, id, p, i, id/9);
-        }
-
-        //todo write inv ui api and make this automatic in standard case
-    }
 
     @Nullable
     @Override
     public Container createMenu(int id, PlayerInventory inv, PlayerEntity player) {
-        return resolveContainer().create(id, inv, this);
+        return new OilChestLikeContainer(CHESS_LIKE, id, inv, this, rows, columns);
+    }
+
+    @Override
+    public void writeExtraData(PacketBuffer buffer) {
+        FlexChestPacket packet = new FlexChestPacket(getItemFilter(), rows, columns);
+        packet.encode(buffer);
     }
 
     //@Override

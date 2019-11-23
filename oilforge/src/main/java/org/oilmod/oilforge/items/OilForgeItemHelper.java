@@ -1,6 +1,5 @@
 package org.oilmod.oilforge.items;
 
-import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.container.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
@@ -12,8 +11,7 @@ import org.oilmod.api.config.DataList;
 import org.oilmod.api.config.DataType;
 import org.oilmod.oilforge.config.nbttag.OilNBTCompound;
 import org.oilmod.oilforge.inventory.IItemFilter;
-import org.oilmod.oilforge.inventory.OilIInventory;
-import org.oilmod.oilforge.inventory.container.slot.OilSlot;
+import org.oilmod.oilforge.inventory.container.slot.OilSlotWrapper;
 
 import java.util.List;
 import java.util.Optional;
@@ -68,7 +66,7 @@ public class OilForgeItemHelper {
 
     public static Slot replaceSlot(Slot slot, IItemFilter filter, Predicate<Slot> predicate) {
         if (predicate.test(slot)) {
-            return new OilSlot(filter, slot);
+            return new OilSlotWrapper(filter, slot);
         }
         return slot;
     }

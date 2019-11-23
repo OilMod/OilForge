@@ -30,8 +30,8 @@ import org.oilmod.api.config.Compound;
 import org.oilmod.api.inventory.ModFurnaceInventoryObject;
 import org.oilmod.api.rep.inventory.InventoryHolderRep;
 import org.oilmod.api.util.ITicker;
-import org.oilmod.oilforge.inventory.container.OilContainerFurnace;
-import org.oilmod.oilforge.rep.location.WorldFR;
+import org.oilmod.oilforge.inventory.container.OilContainerType;
+import org.oilmod.oilforge.inventory.container.OilFurnaceContainer;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -43,22 +43,14 @@ import java.util.Map;
 public class OilInventoryFurnace extends OilInventoryBase<ModFurnaceInventoryObject> implements ISidedInventory, IRecipeHolder, IRecipeHelperPopulator {
     //OilSpigot start
 
-    private boolean wasBurning = false;
 
     //new TextComponentTranslation("container.furnace", new Object[0])
-    public OilInventoryFurnace(ContainerType<?> containerType, IRecipeType<? extends AbstractCookingRecipe> recipeType, InventoryHolderRep owner, String title, ITicker ticker, IItemFilter itemFilter) {
+    public OilInventoryFurnace(OilContainerType<?> containerType, IRecipeType<? extends AbstractCookingRecipe> recipeType, InventoryHolderRep owner, String title, ITicker ticker, IItemFilter itemFilter) {
         super(owner, title, 3, ticker, itemFilter, true);
         this.recipeType = recipeType;
         this.containerType = containerType;
     }
     //OilSpigot end
-
-
-    //OilSpigot start
-    public String getContainerLangKey() {
-        return "container.furnace";
-    }
-
 
 
     //OilSpigot end
@@ -170,7 +162,7 @@ public class OilInventoryFurnace extends OilInventoryBase<ModFurnaceInventoryObj
     };
 
     protected final IRecipeType<? extends AbstractCookingRecipe> recipeType;
-    protected final ContainerType<?> containerType;
+    protected final OilContainerType<?> containerType;
     private ITextComponent furnaceCustomName;
     private final Map<ResourceLocation, Integer> recipeUseCounts = Maps.newHashMap();
 
@@ -541,6 +533,6 @@ public class OilInventoryFurnace extends OilInventoryBase<ModFurnaceInventoryObj
     @Nullable
     @Override
     public Container createMenu(int id, PlayerInventory player, PlayerEntity p_createMenu_3_) {
-        return new OilContainerFurnace(containerType,recipeType, id, player, this, this.furnaceData);
+        return new OilFurnaceContainer(containerType,recipeType, id, player, this, this.furnaceData);
     }
 }

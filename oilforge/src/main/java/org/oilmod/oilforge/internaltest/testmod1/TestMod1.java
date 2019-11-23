@@ -11,6 +11,7 @@ public class TestMod1 extends OilMod {
         itemRegistry.register("testitem1", new TestItem1());
         itemRegistry.register("testitem2", new TestItem2());
         itemRegistry.register("testbackpack", new TestBackpackItem());
+        itemRegistry.register("kaban", new TestKabanItem());
         itemRegistry.register("testportablefurnance", new TestPortableFurnaceItem());
         itemRegistry.register("testpickaxe", new TestPickaxe());
         itemRegistry.register("testshovel", new TestShovel());

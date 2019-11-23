@@ -2,29 +2,21 @@ package org.oilmod.oilforge.inventory.container;
 
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.inventory.container.ChestContainer;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.ContainerType;
+import net.minecraft.item.crafting.IRecipeType;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.registry.Registry;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fml.network.IContainerFactory;
-import org.oilmod.oilforge.inventory.OilInventoryChest;
 
 import java.util.Set;
 
-import static net.minecraft.inventory.container.ContainerType.GENERIC_9X1;
-
 public class OilContainerType<T extends Container & IOilContainer> extends ContainerType<T> {
     public static final Set<OilContainerType> toBeRegistered = new ObjectOpenHashSet<>();
-    public static final OilContainerType<OilChestContainer> GENERIC_9X1 = register("generic_9x1", (c, id, p, e)->new OilChestContainer(c, id, p, 1, e));
-    public static final OilContainerType<OilChestContainer> GENERIC_9X2 = register("generic_9x2", (c, id, p, e)->new OilChestContainer(c, id, p, 2, e));
-    public static final OilContainerType<OilChestContainer> GENERIC_9X3 = register("generic_9x3", (c, id, p, e)->new OilChestContainer(c, id, p, 3, e));
-    public static final OilContainerType<OilChestContainer> GENERIC_9X4 = register("generic_9x4", (c, id, p, e)->new OilChestContainer(c, id, p, 4, e));
-    public static final OilContainerType<OilChestContainer> GENERIC_9X5 = register("generic_9x5", (c, id, p, e)->new OilChestContainer(c, id, p, 5, e));
-    public static final OilContainerType<OilChestContainer> GENERIC_9X6 = register("generic_9x6", (c, id, p, e)->new OilChestContainer(c, id, p, 6, e));
+    public static final OilContainerType<OilChestLikeContainer> CHESS_LIKE = register("chess_like", OilChestLikeContainer::new);
+    public static final OilContainerType<OilFurnaceContainer> FURNACE = register("furnace", (c, id, p, e)->new OilFurnaceContainer(c, IRecipeType.SMELTING, id, p, e));
 
 
     private static <T extends Container & IOilContainer> OilContainerType<T> register(String key, IOilFactory<T> factory) {
@@ -38,7 +30,7 @@ public class OilContainerType<T extends Container & IOilContainer> extends Conta
 
     public OilContainerType(String key , IContainerFactory<T> factory) {
         super(factory);
-        setRegistryName(new ResourceLocation("oilforgeapi", key));
+        setRegistryName(new ResourceLocation("oilmod", key)); //oilmod as implementation independent
     }
 
     public interface IOilFactory<T extends Container & IOilContainer> {

@@ -9,9 +9,9 @@ import org.oilmod.api.items.OilItemStack;
 public class TestBackpackItemStack extends OilItemStack {
     private ModInventoryObject inventory;
 
-    public TestBackpackItemStack(NMSItemStack nmsItemStack, OilItem item) {
+    public TestBackpackItemStack(NMSItemStack nmsItemStack, OilItem item, int rows, int columns) {
         super(nmsItemStack, item);
-        inventory = InventoryFactory.getInstance().createBasicInventory("items",this, 18, item.getDisplayName(), BackpackItemFilter.INSTANCE, true);
+        inventory = InventoryFactory.getInstance().createBasicInventory("items",this, rows, columns, item.getDisplayName(), BackpackItemFilter.INSTANCE, true);
     }
 
 
