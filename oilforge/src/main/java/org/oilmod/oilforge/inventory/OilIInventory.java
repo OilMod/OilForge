@@ -3,6 +3,7 @@ package org.oilmod.oilforge.inventory;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.item.ItemStack;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.ITickableTileEntity;
 import org.oilmod.api.config.CompoundSerializable;
 import org.oilmod.api.inventory.ModInventoryObjectBase;
@@ -59,4 +60,6 @@ public interface OilIInventory<APIObject extends ModInventoryObjectBase> extends
     default InventoryRep getBukkitInventory() {
         return toOil(this);
     }
+
+    void writeExtraData(PacketBuffer buffer);
 }

@@ -1,0 +1,8 @@
+
+###Registries
+org.oilmod.oilforge.inventory.ItemFilterRegistryHelper
+org.oilmod.oilforge.items.RealItemRegistryHelper
+
+#factories
+org.oilmod.oilforge.rep.itemstack.RealItemStackFactory
+

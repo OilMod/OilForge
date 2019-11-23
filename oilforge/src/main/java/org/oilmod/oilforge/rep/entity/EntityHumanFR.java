@@ -1,13 +1,16 @@
 package org.oilmod.oilforge.rep.entity;
 
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.container.INamedContainerProvider;
+import net.minecraftforge.fml.network.NetworkHooks;
 import org.apache.commons.lang3.NotImplementedException;
 import org.oilmod.api.rep.entity.EntityHumanRep;
 import org.oilmod.api.rep.inventory.InventoryRep;
 import org.oilmod.api.rep.inventory.InventoryUIRep;
 import org.oilmod.api.rep.itemstack.ItemStackRep;
+import org.oilmod.oilforge.inventory.OilIInventory;
 import org.oilmod.oilforge.rep.inventory.InventoryFR;
 
 import static org.oilmod.oilforge.Util.toOil;
@@ -34,7 +37,15 @@ public class EntityHumanFR extends LivingEntityBaseFR implements EntityHumanRep 
         IInventory inv = ((InventoryFR)inventory).getForge();
         PlayerEntity player = getForge();
         if (inv instanceof INamedContainerProvider) {
-            player.openContainer((INamedContainerProvider) inv);
+            if (player instanceof ServerPlayerEntity) {
+                ServerPlayerEntity splayer = (ServerPlayerEntity) player;
+                if (inv instanceof OilIInventory) {
+                    NetworkHooks.openGui((ServerPlayerEntity) player, (INamedContainerProvider) inv, ((OilIInventory) inv)::writeExtraData);
+                } else {
+                }
+            } else {
+                player.openContainer((INamedContainerProvider) inv);
+            }
             return null; //todo
         }
         throw new NotImplementedException("Does not know how to display inventory without associated UI"); //todo fix maybe

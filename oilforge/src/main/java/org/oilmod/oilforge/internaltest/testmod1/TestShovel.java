@@ -8,8 +8,8 @@ import org.oilmod.api.rep.providers.minecraft.MinecraftItem;
 import org.oilmod.api.util.OilKey;
 
 public class TestShovel extends OilItem implements IShovel, IDurable {
-    public TestShovel(OilKey key) {
-        super(key, MinecraftItem.CARROT, "I am so fast it hurts");
+    public TestShovel() {
+        super(MinecraftItem.CARROT, "I am so fast it hurts");
     }
 
     @Override

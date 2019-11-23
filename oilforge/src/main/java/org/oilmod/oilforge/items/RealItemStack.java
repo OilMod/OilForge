@@ -44,7 +44,10 @@ public class RealItemStack implements NMSItemStack, INBTSerializable<CompoundNBT
     private RealItemStack() {
         if (EMPTY != null) throw new IllegalStateException("Cannot use this constructor for anything but example empty instance");
         this.itemStack = ItemStack.EMPTY;
-        this.oilItemStack = new OilItemStack(this, new OilItem(OilMain.ModOilMod.createKey("empty_oilstate") ,MinecraftItem.STICK, "empty_oilstate"){});
+        OilItem fake = new OilItem(MinecraftItem.STICK, "empty_oilstate"){};
+        fake.setOilKey(OilMain.ModOilMod.createKey("empty_oilstate"));
+
+        this.oilItemStack = new OilItemStack(this, fake);
         this.itemStackRep = new OilModItemStackFR(this);
     }
 
@@ -138,7 +141,7 @@ public class RealItemStack implements NMSItemStack, INBTSerializable<CompoundNBT
 
     @Override
     public void deserializeNBT(CompoundNBT nbt) {
-        LOGGER.debug("deserialize item {} from NBT: {}", this::getItem, ()->nbt.toFormattedComponent().getFormattedText());
+        //LOGGER.debug("deserialize item {} from NBT: {}", this::getItem, ()->nbt.toFormattedComponent().getFormattedText());
         OilNBTCompound oilNBT = new OilNBTCompound(nbt);
         loadModData(oilNBT);
     }

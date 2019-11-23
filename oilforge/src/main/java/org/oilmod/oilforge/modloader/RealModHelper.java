@@ -3,6 +3,7 @@ package org.oilmod.oilforge.modloader;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.oilmod.api.OilMod;
+import org.oilmod.api.inventory.ItemFilterRegistry;
 import org.oilmod.api.items.ItemRegistry;
 import org.oilmod.oilforge.OilModContext;
 
@@ -28,12 +29,17 @@ public class RealModHelper extends OilMod.ModHelper {
         return super.createItemRegistry(mod);
     }
 
-    public static ItemRegistry getItemRegistry(OilMod mod) {
-        return OilMod.ModHelper.getItemRegistry(mod);
-    }
 
     public static void invokeRegisterItems(OilMod mod) {
-        OilMod.ModHelper.invokeRegisterItems(mod);
+        OilMod.ModHelper.invokeRegister(mod, ItemRegistry.class);
+    }
+
+    public static void invokeRegisterItemFilters(OilMod mod) {
+        OilMod.ModHelper.invokeRegister(mod, ItemFilterRegistry.class);
+    }
+
+    public static void invokeMissingRegistries(OilMod mod) {
+        OilMod.ModHelper.invokeMissingRegister(mod);
     }
 
     @Override

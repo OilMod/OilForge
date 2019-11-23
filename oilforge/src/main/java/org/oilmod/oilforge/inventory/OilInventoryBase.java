@@ -1,20 +1,24 @@
 package org.oilmod.oilforge.inventory;
 
+import io.netty.buffer.Unpooled;
 import net.minecraft.inventory.Inventory;
-import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.item.ItemStack;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.World;
 import org.apache.commons.lang3.NotImplementedException;
+import org.apache.commons.lang3.Validate;
 import org.oilmod.api.config.Compound;
 import org.oilmod.api.inventory.ModInventoryObjectBase;
 import org.oilmod.api.rep.inventory.InventoryHolderRep;
 import org.oilmod.api.userinterface.IInteractableUIElement;
 import org.oilmod.api.util.ITicker;
-import org.oilmod.oilforge.items.TempRealItemHelper;
+import org.oilmod.oilforge.inventory.container.SetItemFilterPacket;
+import org.oilmod.oilforge.items.OilForgeItemHelper;
 import org.oilmod.oilforge.rep.inventory.InventoryFR;
+import org.oilmod.oilforge.rep.location.WorldFR;
 
 import java.lang.ref.WeakReference;
 import java.lang.reflect.Field;
@@ -32,7 +36,6 @@ public abstract class OilInventoryBase<APIObject extends ModInventoryObjectBase>
     private WeakReference<APIObject> modInventoryObject;
     private ITicker ticker;
     private final boolean needsOwner;
-    private World world;
     private final InventoryFR inventoryRep;
     private ITextComponent displayName;
 
@@ -44,12 +47,17 @@ public abstract class OilInventoryBase<APIObject extends ModInventoryObjectBase>
         this.itemsReadOnly = Collections.unmodifiableList(this.items);
         this.owner = new WeakReference<>(owner);
         this.inventoryRep = new InventoryFR(this);
-        this.itemFilter = itemFilter==null?new NoItemFilter():itemFilter;
+        Validate.notNull(itemFilter);
+        this.itemFilter = itemFilter;
         this.ticker = ticker;
         this.needsOwner = needsOwner;
         if (isTickable() && ticker != null) {
             ticker.add(this);
         }
+    }
+
+    public World getWorld() {
+        return ((WorldFR)ticker.getMainWorld()).getForge();
     }
 
     private static final Field inventoryContentsField;
@@ -92,12 +100,12 @@ public abstract class OilInventoryBase<APIObject extends ModInventoryObjectBase>
 
     @Override
     public void load(Compound compound) {
-        TempRealItemHelper.loadItemsFromCompound(compound, this.items, "Items");
+        OilForgeItemHelper.loadItemsFromCompound(compound, this.items, "Items");
     }
 
     @Override
     public void save(Compound compound) {
-        TempRealItemHelper.saveItemsToCompound(compound, this.items, "Items");
+        OilForgeItemHelper.saveItemsToCompound(compound, this.items, "Items");
     }
 
     @Override
@@ -142,5 +150,11 @@ public abstract class OilInventoryBase<APIObject extends ModInventoryObjectBase>
     @Override
     public void setInventorySlotContents(int index, ItemStack stack) {
         super.setInventorySlotContents(index, stack);
+    }
+
+    @Override
+    public void writeExtraData(PacketBuffer buffer) {
+        SetItemFilterPacket packet = new SetItemFilterPacket(getItemFilter());
+        packet.encode(buffer);
     }
 }

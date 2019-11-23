@@ -7,28 +7,43 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.oilmod.api.items.ItemRegistry;
 import org.oilmod.api.items.OilItem;
+import org.oilmod.api.registry.InitRegisterCallback;
+import org.oilmod.api.registry.Registry;
+import org.oilmod.api.util.OilKey;
 import org.oilmod.oilforge.OilModContext;
+import org.oilmod.spi.dependencies.DependencyPipe;
 
 import java.util.Objects;
 import java.util.Set;
 
 import static org.oilmod.oilforge.Util.toForge;
 
-public class RealItemRegistryHelper extends ItemRegistry.ItemRegistryHelper {
+public class RealItemRegistryHelper extends ItemRegistry.RegistryHelper<RealItemRegistryHelper> {
+    public static RealItemRegistryHelper INSTANCE;
     private static final Logger LOGGER = LogManager.getLogger();
 
 
     private ItemStackRegistry register = ItemStackRegistry.getInstance();
-    private final RealItemClassMap itemClassMap;
+    private RealItemClassMap itemClassMap;
 
     public Set<Item> allRegistered = new ObjectOpenHashSet<>();
 
-    public RealItemRegistryHelper(RealItemClassMap itemClassMap) {
-        this.itemClassMap = itemClassMap;
+    @Override
+    public void addDependencies(DependencyPipe p) {
+        p.add(RealItemClassMap.class, i->itemClassMap=i);
+    }
+
+    public RealItemRegistryHelper() {
     }
 
     @Override
-    public <T extends OilItem> void register(ItemRegistry itemRegistry, T oilItem) {
+    public void allDepResolved() {
+        super.allDepResolved();
+        INSTANCE = this;
+    }
+
+    @Override
+    public <T extends OilItem> void register(OilKey key, ItemRegistry itemRegistry, T oilItem) {
         Item item = toForge(oilItem.getImplementationProvider().implement(oilItem));
         setNMSModItem(item, oilItem);
         itemClassMap.register(oilItem);
@@ -48,4 +63,5 @@ public class RealItemRegistryHelper extends ItemRegistry.ItemRegistryHelper {
         //register.register(creator);
         initRegisterCallback.callback(true, null);
     }
+
 }

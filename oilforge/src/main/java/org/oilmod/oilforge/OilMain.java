@@ -2,6 +2,7 @@ package org.oilmod.oilforge;
 
 
 import net.minecraftforge.common.MinecraftForge;
+import org.apache.commons.lang3.Validate;
 import org.oilmod.api.OilMod;
 import org.oilmod.api.blocks.BlockType;
 import org.oilmod.api.inventory.InventoryFactory;
@@ -17,10 +18,12 @@ import org.oilmod.api.util.OilUtil;
 import org.oilmod.oilforge.block.RealBlockTypeHelper;
 import org.oilmod.oilforge.enchantments.RealEnchantmentTypeHelper;
 import org.oilmod.oilforge.inventory.RealInventoryFactory;
+import org.oilmod.oilforge.inventory.container.ContainerPackageHandler;
 import org.oilmod.oilforge.items.*;
 import org.oilmod.oilforge.items.tools.RealTBBHelper;
 import org.oilmod.oilforge.modloader.RealModHelper;
 import org.oilmod.oilforge.rep.RepAPIImpl;
+import org.oilmod.spi.MPILoader;
 
 import static org.oilmod.api.OilMod.ModHelper.createInstance;
 import static org.oilmod.api.OilMod.ModHelper.getDefaultContext;
@@ -28,15 +31,18 @@ import static org.oilmod.api.OilMod.ModHelper.getDefaultContext;
 public class OilMain {
     public static OilMod ModMinecraft;
     public static OilMod ModOilMod;
-    public static RealItemRegistryHelper realItemRegistryHelper;
 
     public static void init() {
+        ContainerPackageHandler.registerPackets();
+        MPILoader.init(); //this gonna get more complicated in the future but its okay for now
         RepAPI.installImplementation(new RepAPIImpl());
 
 
         OilMod.ModHelper.setInstance(new RealModHelper());
         RealItemClassMap itemClassMap = new RealItemClassMap();
-        ItemRegistry.ItemRegistryHelper.setInstance(realItemRegistryHelper = new RealItemRegistryHelper(itemClassMap));
+        MPILoader.commitDependency(itemClassMap); //for RealItemRegistryHelper
+        Validate.notNull(RealItemRegistryHelper.INSTANCE);
+
         ModMinecraft  =  createInstance(OilMod.class, getDefaultContext(),"minecraft", "Minecraft");
         ModOilMod  =  createInstance(OilMod.class, getDefaultContext(),"oilmod", "OilMod");
 

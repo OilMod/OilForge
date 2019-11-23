@@ -44,14 +44,12 @@ public class OilInventoryFurnace extends OilInventoryBase<ModFurnaceInventoryObj
     //OilSpigot start
 
     private boolean wasBurning = false;
-    private World world;
 
     //new TextComponentTranslation("container.furnace", new Object[0])
     public OilInventoryFurnace(ContainerType<?> containerType, IRecipeType<? extends AbstractCookingRecipe> recipeType, InventoryHolderRep owner, String title, ITicker ticker, IItemFilter itemFilter) {
         super(owner, title, 3, ticker, itemFilter, true);
         this.recipeType = recipeType;
         this.containerType = containerType;
-        world = ((WorldFR)ticker.getMainWorld()).getForge();
     }
     //OilSpigot end
 
@@ -221,7 +219,7 @@ public class OilInventoryFurnace extends OilInventoryBase<ModFurnaceInventoryObj
 
 
     private IRecipe obtainRecipe() {
-        return this.world.getRecipeManager().getRecipe((IRecipeType<AbstractCookingRecipe>)this.recipeType, this, this.world).orElse(null);
+        return this.getWorld().getRecipeManager().getRecipe((IRecipeType<AbstractCookingRecipe>)this.recipeType, this, this.getWorld()).orElse(null);
     }
 
 
@@ -246,7 +244,7 @@ public class OilInventoryFurnace extends OilInventoryBase<ModFurnaceInventoryObj
             --this.burnTime;
         }
 
-        if (!this.world.isRemote) {
+        if (!this.getWorld().isRemote) {
             ItemStack itemstack = getStackInSlot(1);
             if (this.isBurning() || !itemstack.isEmpty() && !getStackInSlot(0).isEmpty()) {
                 IRecipe irecipe = obtainRecipe(); //OilForge
@@ -353,7 +351,7 @@ public class OilInventoryFurnace extends OilInventoryBase<ModFurnaceInventoryObj
                 itemstack2.grow(itemstack1.getCount());
             }
 
-            if (!this.world.isRemote) {
+            if (!this.getWorld().isRemote) {
                 this.setRecipeUsed(recipe);
             }
 
@@ -380,7 +378,7 @@ public class OilInventoryFurnace extends OilInventoryBase<ModFurnaceInventoryObj
     }
 
     protected int getCookTime() {
-        return this.world.getRecipeManager().getRecipe((IRecipeType<AbstractCookingRecipe>)this.recipeType, this, this.world).map(AbstractCookingRecipe::getCookTime).orElse(200);
+        return this.getWorld().getRecipeManager().getRecipe((IRecipeType<AbstractCookingRecipe>)this.recipeType, this, this.getWorld()).map(AbstractCookingRecipe::getCookTime).orElse(200);
     }
 
     public static boolean isFuel(ItemStack stack) {

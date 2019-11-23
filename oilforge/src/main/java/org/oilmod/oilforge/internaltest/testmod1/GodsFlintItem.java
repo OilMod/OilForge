@@ -14,9 +14,8 @@ import org.oilmod.api.util.OilKey;
 
 public class GodsFlintItem extends OilItem implements ITool { //Base class for all modded Items (Items=/=ItemStacks)
 
-    public GodsFlintItem(OilKey key) {
-        super(key, MinecraftBlock.STONE.get().getBlock().getItem(), "Godly stick flint");
-        //VanillaSees=Material.STICK, MaterialData=0, MaxStackSize=2, DisplayName="Basic Example Item"
+    public GodsFlintItem() {
+        super(MinecraftBlock.STONE.get().getBlock().getItem(), "Godly stick flint");
     }
 
     @Override

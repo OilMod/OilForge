@@ -14,6 +14,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemUseContext;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Hand;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.util.math.Vec3d;
@@ -32,11 +33,13 @@ import org.oilmod.api.rep.stdimpl.world.LocFactoryImpl;
 import org.oilmod.api.rep.world.*;
 import org.oilmod.api.util.InteractionResult;
 import net.minecraft.util.Direction;
+import org.oilmod.api.util.OilKey;
 import org.oilmod.oilforge.block.RealBlockTypeHelper;
 import org.oilmod.oilforge.enchantments.RealEnchantmentTypeHelper;
 import org.oilmod.oilforge.items.RealItemImplHelper;
 import org.oilmod.oilforge.items.RealItemStack;
 import org.oilmod.oilforge.items.capability.OilItemStackHandler;
+import org.oilmod.oilforge.modloader.RealModHelper;
 import org.oilmod.oilforge.rep.block.BlockFR;
 import org.oilmod.oilforge.rep.block.BlockStateFR;
 import org.oilmod.oilforge.rep.enchantment.EnchantmentFR;
@@ -268,5 +271,9 @@ public final class Util {
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
             throw new IllegalStateException(e);
         }
+    }
+
+    public static ResourceLocation toForge(OilKey key) {
+        return ((NMSKeyImpl)key.getNmsKey()).resourceLocation;
     }
 }

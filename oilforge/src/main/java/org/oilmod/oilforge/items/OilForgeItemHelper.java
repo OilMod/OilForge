@@ -1,5 +1,7 @@
 package org.oilmod.oilforge.items;
 
+import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.inventory.container.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.NonNullList;
@@ -9,12 +11,17 @@ import org.oilmod.api.config.Compound;
 import org.oilmod.api.config.DataList;
 import org.oilmod.api.config.DataType;
 import org.oilmod.oilforge.config.nbttag.OilNBTCompound;
+import org.oilmod.oilforge.inventory.IItemFilter;
+import org.oilmod.oilforge.inventory.OilIInventory;
+import org.oilmod.oilforge.inventory.container.slot.OilSlot;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.function.Predicate;
 
 import static org.oilmod.oilforge.config.ConfigUtil.copyTo;
 
-public class TempRealItemHelper {
+public class OilForgeItemHelper {
     public static final Logger LOGGER = LogManager.getLogger();
     public static void saveItemsToCompound(Compound compound, NonNullList<ItemStack> items, String key) {
         if (items.stream().allMatch(ItemStack::isEmpty)) return;
@@ -57,5 +64,16 @@ public class TempRealItemHelper {
                 items.set(j, ItemStack.read((CompoundNBT) compound1.nbtClone()));
             }
         }
+    }
+
+    public static Slot replaceSlot(Slot slot, IItemFilter filter, Predicate<Slot> predicate) {
+        if (predicate.test(slot)) {
+            return new OilSlot(filter, slot);
+        }
+        return slot;
+    }
+
+    public static void replaceSlots(List<Slot> inventorySlots, IItemFilter filter, Predicate<Slot> predicate) {
+        inventorySlots.replaceAll(slot -> replaceSlot(slot, filter, predicate));
     }
 }

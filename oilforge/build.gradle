@@ -5,6 +5,7 @@ version = '1.0' // http://maven.apache.org/guides/mini/guide-naming-conventions.
 
 dependencies {
     compileJars("org.oilmod:oilmod-api:1.0-SNAPSHOT")
+    compileJars('org.oilmod:oilspi:1.0-SNAPSHOT')
 
     compileOnly project(":oilforgemodloader")
     compileJars project(":forgeshared")

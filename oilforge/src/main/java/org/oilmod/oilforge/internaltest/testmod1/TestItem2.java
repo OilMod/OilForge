@@ -11,8 +11,8 @@ import org.oilmod.api.util.InteractionResult;
 import org.oilmod.api.util.OilKey;
 
 public class TestItem2 extends OilItem implements IUnique {
-    public TestItem2(OilKey key) {
-        super(key, MinecraftItem.APPLE, "Test Item 2");
+    public TestItem2() {
+        super(MinecraftItem.APPLE, "Test Item 2");
     }
 
     @Override

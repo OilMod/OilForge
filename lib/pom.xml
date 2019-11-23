@@ -3,11 +3,14 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.oilmod</groupId>
-    <artifactId>oilmod-libs</artifactId>
+    <artifactId>oilmod-parent</artifactId>
     <version>dev-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>OilMod (Parent)</name>
 
+    <properties>
+        <relativeOilModFolder>../run/oilmods/</relativeOilModFolder>
+    </properties>
 
     <build>
         <defaultGoal>install</defaultGoal>
@@ -19,4 +22,6 @@
         <module>OilMod-API</module>
         <module>OilMod-TestPlugin2</module>
     </modules>
+
+
 </project>

@@ -4,12 +4,14 @@ import org.oilmod.api.OilMod;
 import org.oilmod.api.items.ItemRegistry;
 
 public class RealItemRegistry extends ItemRegistry {
+
     /**
-     * Creates new instance of ItemRegistry
+     * Creates new instance of Registry
      *
-     * @param mod associated mod with this item registry
+     * @param mod            associated mod with this item registry
+     * @param registryHelper
      */
-    public RealItemRegistry(OilMod mod) {
-        super(mod);
+    protected RealItemRegistry(OilMod mod, RegistryHelper<?> registryHelper) {
+        super(mod, registryHelper);
     }
 }

@@ -12,10 +12,12 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.oilmod.api.inventory.ModInventoryObject;
 import org.oilmod.api.rep.inventory.InventoryHolderRep;
+import org.oilmod.oilforge.inventory.container.OilChestContainer;
 
 import javax.annotation.Nullable;
 
-import static net.minecraft.inventory.container.ContainerType.*;
+import static org.oilmod.oilforge.inventory.container.OilContainerType.*;
+
 
 /**
  * Created by sirati97 on 17.01.2016.
@@ -28,15 +30,15 @@ public class OilInventoryChest extends OilInventoryBase<ModInventoryObject> {
 
     public interface IFactory<T extends Container> {
         @OnlyIn(Dist.CLIENT)
-        T create(int id, PlayerInventory player, IInventory inv);
+        T create(int id, PlayerInventory player, OilInventoryChest inv);
     }
     private static final IFactory HOPPER = HopperContainer::new;
-    private static final IFactory Chest1Row = (id, p, i)->new ChestContainer(GENERIC_9X1, id, p, i, 1);
-    private static final IFactory Chest2Row = (id, p, i)->new ChestContainer(GENERIC_9X2, id, p, i, 2);
-    private static final IFactory Chest3Row = (id, p, i)->new ChestContainer(GENERIC_9X3, id, p, i, 3);
-    private static final IFactory Chest4Row = (id, p, i)->new ChestContainer(GENERIC_9X4, id, p, i, 4);
-    private static final IFactory Chest5Row = (id, p, i)->new ChestContainer(GENERIC_9X5, id, p, i, 5);
-    private static final IFactory Chest6Row = (id, p, i)->new ChestContainer(GENERIC_9X6, id, p, i, 6);
+    private static final IFactory Chest1Row = (id, p, i)->new OilChestContainer(GENERIC_9X1, id, p, i, 1);
+    private static final IFactory Chest2Row = (id, p, i)->new OilChestContainer(GENERIC_9X2, id, p, i, 2);
+    private static final IFactory Chest3Row = (id, p, i)->new OilChestContainer(GENERIC_9X3, id, p, i, 3);
+    private static final IFactory Chest4Row = (id, p, i)->new OilChestContainer(GENERIC_9X4, id, p, i, 4);
+    private static final IFactory Chest5Row = (id, p, i)->new OilChestContainer(GENERIC_9X5, id, p, i, 5);
+    private static final IFactory Chest6Row = (id, p, i)->new OilChestContainer(GENERIC_9X6, id, p, i, 6);
 
 
     private IFactory resolveContainer() {
@@ -55,7 +57,7 @@ public class OilInventoryChest extends OilInventoryBase<ModInventoryObject> {
         } else if (getSizeInventory() <= 56) {
             return Chest6Row;
         } else {
-            return (id, p, i)->new ChestContainer(GENERIC_9X6, id, p, i, id/9);
+            return (id, p, i)->new OilChestContainer(GENERIC_9X6, id, p, i, id/9);
         }
 
         //todo write inv ui api and make this automatic in standard case

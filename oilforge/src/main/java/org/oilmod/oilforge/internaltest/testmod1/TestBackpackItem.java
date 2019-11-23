@@ -19,8 +19,8 @@ import org.oilmod.oilforge.items.RealItemStack;
 import static org.oilmod.oilforge.Util.toForge;
 
 public class TestBackpackItem extends OilItem implements IUnique {
-    public TestBackpackItem(OilKey key) {
-        super(key, MinecraftItem.LEATHER, "Backpack");
+    public TestBackpackItem() {
+        super(MinecraftItem.LEATHER, "Backpack");
     }
 
     @Override

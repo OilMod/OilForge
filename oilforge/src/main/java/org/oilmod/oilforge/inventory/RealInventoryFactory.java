@@ -22,12 +22,12 @@ public class RealInventoryFactory extends InventoryFactory {
 
     @Override
     protected ObjectFactory<ModNMSIInventory<ModInventoryObject>> getBasicInventoryFactory(final OilItemStack oilItemStack, final int size, final String title, final ItemFilter filter) {
-        return () -> new OilInventoryChest(oilItemStack,size,title,createNMSFilter(filter));
+        return () -> new OilInventoryChest(oilItemStack,size,title,ItemFilterRegistryHelper.get(filter));
     }
 
     @Override
     protected ObjectFactory<ModNMSIInventory<ModFurnaceInventoryObject>> getFurnaceInventoryFactory(final OilItemStack oilItemStack, final String title, final ITicker ticker, final ItemFilter filter) {
-        return () -> new OilInventoryFurnace(ContainerType.FURNACE, IRecipeType.SMELTING, oilItemStack,title, ticker, createNMSFilter(filter));
+        return () -> new OilInventoryFurnace(ContainerType.FURNACE, IRecipeType.SMELTING, oilItemStack,title, ticker, ItemFilterRegistryHelper.get(filter));
     }
 
     @Override
@@ -38,7 +38,4 @@ public class RealInventoryFactory extends InventoryFactory {
         };
     }
 
-    public IItemFilter createNMSFilter(ItemFilter bukkitFilter) {
-        return bukkitFilter==null?NoItemFilter.INSTANCE:new ApiItemFilter(bukkitFilter);
-    }
 }

@@ -4,9 +4,12 @@ import net.minecraft.block.Block;
 import net.minecraft.client.renderer.model.IBakedModel;
 import net.minecraft.client.renderer.model.ModelResourceLocation;
 import net.minecraft.client.renderer.model.SimpleBakedModel;
+import net.minecraft.inventory.container.ContainerType;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.dimension.DimensionType;
+import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.client.event.ModelBakeEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
@@ -16,6 +19,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
+import net.minecraftforge.fml.event.server.FMLServerStoppedEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.IForgeRegistry;
 import org.apache.logging.log4j.LogManager;
@@ -26,10 +30,13 @@ import org.oilmod.api.rep.providers.minecraft.MinecraftItemProvider;
 import org.oilmod.oilforge.OilAPIInitEvent;
 import org.oilmod.oilforge.OilMain;
 import org.oilmod.oilforge.internaltest.testmod1.TestMod1;
+import org.oilmod.oilforge.inventory.container.OilContainerType;
 import org.oilmod.oilforge.items.RealItemImplHelper;
+import org.oilmod.oilforge.items.RealItemRegistryHelper;
 import org.oilmod.oilforge.items.capability.ModInventoryObjectProvider;
 import org.oilmod.oilforge.items.capability.OilItemStackHandler;
 import org.oilmod.oilforge.OilModContext;
+import org.oilmod.oilforge.modloading.ModUtil;
 import org.oilmod.oilforge.rep.minecraft.MC113ItemProvider;
 
 import java.util.Map;
@@ -41,6 +48,8 @@ import static org.oilmod.oilforge.Util.toReal;
 @Mod("oilforgeapi")@Mod.EventBusSubscriber
 public class OilModLoaderMod
 {
+    public static ServerWorld serverWorldDimOverworld; //this is just here temporary for debugging purposes
+
     // Directly reference a log4j logger.
     public static final Logger LOGGER = LogManager.getLogger();
     private TestMod1 mod1;
@@ -48,6 +57,7 @@ public class OilModLoaderMod
     public OilModLoaderMod() {
         FMLJavaModLoadingContext.get().getModEventBus().addGenericListener(Block.class, EventPriority.HIGHEST, this::registerBlocks);
         FMLJavaModLoadingContext.get().getModEventBus().addGenericListener(Item.class, EventPriority.HIGHEST, this::registerItems);
+        FMLJavaModLoadingContext.get().getModEventBus().addGenericListener(ContainerType.class, this::registerContainerType);
         //FMLJavaModLoadingContext.get().getModEventBus().addGenericListener(ItemStack.class, this::attackCapabilities);
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::commonSetup);
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::modelBakeEvent);
@@ -74,6 +84,8 @@ public class OilModLoaderMod
 
     public void commonSetup(FMLCommonSetupEvent event) {
         LOGGER.info("OilForgeApi received FMLCommonSetupEvent");
+
+        ModUtil.invokeMissingRegistries(mod1);
         OilItemStackHandler.register();
 
 
@@ -102,7 +114,6 @@ public class OilModLoaderMod
         MinecraftBlockProvider.init();
         // register a new block here
     }
-
     public void registerItems(RegistryEvent.Register<Item> event) {
         LOGGER.debug("OilForgeApi received RegistryEvent.Register<Item>, initialising item providers");
         IForgeRegistry<Item> itemRegistry = event.getRegistry();
@@ -113,10 +124,18 @@ public class OilModLoaderMod
         OilModContext context = (OilModContext) mod1.getContext();
         context.itemRegistry = itemRegistry;
 
+        RealModHelper.invokeRegisterItemFilters(mod1);
         RealModHelper.invokeRegisterItems(mod1);
 
         context.itemRegistry = null;
 
+    }
+
+
+
+    public void registerContainerType(RegistryEvent.Register<ContainerType<?>> event) {
+        IForgeRegistry<ContainerType<?>> reg = event.getRegistry();
+        OilContainerType.toBeRegistered.forEach(reg::register);
     }
 
     /*public void registerOilMod(OilModContainer container) {
@@ -133,7 +152,7 @@ public class OilModLoaderMod
         IBakedModel missing = event.getModelManager().getMissingModel();
         ResourceLocation missingNo = ((SimpleBakedModel)missing).getParticleTexture().getName();
 
-        for (Item item:OilMain.realItemRegistryHelper.allRegistered) {
+        for (Item item: RealItemRegistryHelper.INSTANCE.allRegistered) {
             Item from = ((RealItemImplHelper)item).getVanillaFakeItem(toReal(item.getDefaultInstance()));
             ModelResourceLocation to3 = new ModelResourceLocation(item.getRegistryName(), "inventory");
 
@@ -161,6 +180,13 @@ public class OilModLoaderMod
         public static void onServerStarting(FMLServerStartingEvent event) {
             // do something when the server starts
             LOGGER.info("HELLO from server starting");
+            serverWorldDimOverworld = event.getServer().getWorld(DimensionType.OVERWORLD);
+        }
+        @SubscribeEvent
+        public static void onServerStarting(FMLServerStoppedEvent event) {
+            // do something when the server starts
+            LOGGER.info("BYE from server stopped");
+            serverWorldDimOverworld = null;
         }
     }
 }

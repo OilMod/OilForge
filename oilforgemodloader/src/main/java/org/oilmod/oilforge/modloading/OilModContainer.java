@@ -1,7 +1,6 @@
 package org.oilmod.oilforge.modloading;
 
 import net.minecraft.item.Item;
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.EventBusErrorMessage;
 import net.minecraftforge.eventbus.api.BusBuilder;
@@ -82,6 +81,7 @@ public class OilModContainer extends ModContainer { //would like to overwrite fm
         OilModContext context = (OilModContext) modInstance.getContext();
         context.itemRegistry = itemRegistry;
 
+        ModUtil.invokeRegisterItemFilters(modInstance);
         ModUtil.invokeRegisterItems(modInstance);
 
         context.itemRegistry = null;
@@ -137,6 +137,7 @@ public class OilModContainer extends ModContainer { //would like to overwrite fm
 
     private void preinitMod(LifecycleEventProvider.LifecycleEvent lifecycleEvent)
     {
+        ModUtil.invokeMissingRegistries(modInstance);
     }
 
     private boolean oilAPIinit = false;

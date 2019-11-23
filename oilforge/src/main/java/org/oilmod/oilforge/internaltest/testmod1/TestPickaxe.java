@@ -20,8 +20,8 @@ import org.oilmod.api.util.OilKey;
 import static org.oilmod.oilforge.Util.toOil;
 
 public class TestPickaxe extends OilItem implements IPickaxe, IDurable, IChestplate {
-    public TestPickaxe(OilKey key) {
-        super(key, MinecraftItem.DIAMOND_PICKAXE, "I am so fast it hurts");
+    public TestPickaxe() {
+        super(MinecraftItem.DIAMOND_PICKAXE, "I am so fast it hurts");
     }
 
     @Override
