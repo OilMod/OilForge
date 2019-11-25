@@ -1,6 +1,7 @@
 package org.oilmod.oilforge.internaltest.testmod1;
 
 import org.oilmod.api.OilMod;
+import org.oilmod.api.UI.UIRegistry;
 import org.oilmod.api.inventory.ItemFilterRegistry;
 import org.oilmod.api.items.ItemRegistry;
 
@@ -16,10 +17,16 @@ public class TestMod1 extends OilMod {
         itemRegistry.register("testpickaxe", new TestPickaxe());
         itemRegistry.register("testshovel", new TestShovel());
         itemRegistry.register("gods_flint", new GodsFlintItem());
+        itemRegistry.register("ui_test", new UITestItem());
     }
 
     @Override
     protected void onRegisterItemFilter(ItemFilterRegistry registry) {
         registry.register("backpack_item_filter", BackpackItemFilter.INSTANCE);
+    }
+
+    @Override
+    protected void onRegisterUI(UIRegistry registry) {
+        registry.register("ui_test", UITest.INSTANCE);
     }
 }

@@ -7,8 +7,10 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.oilmod.oilforge.inventory.container.OilChestLikeContainer;
 import org.oilmod.oilforge.inventory.container.OilContainerType;
+import org.oilmod.oilforge.inventory.container.screen.CustomChestScreen;
 import org.oilmod.oilforge.inventory.container.screen.CustomUIScreen;
 import org.oilmod.oilforge.inventory.container.screen.OilFurnaceScreen;
+import org.oilmod.oilforge.ui.container.UIContainer;
 
 import static net.minecraft.client.gui.ScreenManager.registerFactory;
 
@@ -20,8 +22,9 @@ public class PhysicalClientEvents {
 
     static {
 
-        registerFactory(OilContainerType.CHESS_LIKE, CustomUIScreen<OilChestLikeContainer>::new);
+        registerFactory(OilContainerType.CHESS_LIKE, CustomChestScreen<OilChestLikeContainer>::new);
         registerFactory(OilContainerType.FURNACE, OilFurnaceScreen::new);
+        registerFactory(OilContainerType.CUSTOM_UI, CustomUIScreen<UIContainer>::new);
         LOGGER.debug("Registered menus!");
     }
 }

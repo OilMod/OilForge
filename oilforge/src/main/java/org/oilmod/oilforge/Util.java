@@ -26,6 +26,7 @@ import org.oilmod.api.items.OilItemStack;
 import org.oilmod.api.rep.block.BlockFaceRep;
 import org.oilmod.api.rep.enchant.EnchantmentRep;
 import org.oilmod.api.rep.entity.EntityLivingRep;
+import org.oilmod.api.rep.entity.EntityPlayerRep;
 import org.oilmod.api.rep.inventory.InventoryRep;
 import org.oilmod.api.rep.item.ItemRep;
 import org.oilmod.api.rep.itemstack.ItemStackRep;
@@ -39,12 +40,11 @@ import org.oilmod.oilforge.enchantments.RealEnchantmentTypeHelper;
 import org.oilmod.oilforge.items.RealItemImplHelper;
 import org.oilmod.oilforge.items.RealItemStack;
 import org.oilmod.oilforge.items.capability.OilItemStackHandler;
-import org.oilmod.oilforge.modloader.RealModHelper;
 import org.oilmod.oilforge.rep.block.BlockFR;
 import org.oilmod.oilforge.rep.block.BlockStateFR;
 import org.oilmod.oilforge.rep.enchantment.EnchantmentFR;
 import org.oilmod.oilforge.rep.entity.EntityFR;
-import org.oilmod.oilforge.rep.entity.EntityHumanFR;
+import org.oilmod.oilforge.rep.entity.EntityPlayerFR;
 import org.oilmod.oilforge.rep.entity.LivingEntityFR;
 import org.oilmod.oilforge.rep.inventory.IItemHandlerInventoryFR;
 import org.oilmod.oilforge.rep.inventory.InventoryFR;
@@ -159,8 +159,8 @@ public final class Util {
     public static LivingEntityFR toOil(MobEntity e) {
         return new LivingEntityFR(e);
     }
-    public static EntityHumanFR toOil(PlayerEntity e) {
-        return new EntityHumanFR(e);
+    public static EntityPlayerFR toOil(PlayerEntity e) {
+        return new EntityPlayerFR(e);
     }
 
     //block
@@ -198,11 +198,20 @@ public final class Util {
     public static InventoryRep toOil(IInventory inv) {
         return new InventoryFR(inv);
     }
+    public static IInventory toForge(InventoryRep inv) {
+        return ((InventoryFR)inv).getForge();
+    }
 
 
 
     public static LivingEntity toForge(EntityLivingRep entity) {
         return ((LivingEntityFR)entity).getForge();
+    }
+
+
+
+    public static PlayerEntity toForge(EntityPlayerRep entity) {
+        return ((EntityPlayerFR)entity).getForge();
     }
 
 

@@ -37,4 +37,9 @@ public class InventoryFR implements InventoryRep {
     public void setStored(int i, ItemStackRep stack) {
         getForge().setInventorySlotContents(i, ((ItemStackFR)stack).getForge());
     }
+
+    @Override
+    public boolean isNative() {
+        return true;
+    }
 }

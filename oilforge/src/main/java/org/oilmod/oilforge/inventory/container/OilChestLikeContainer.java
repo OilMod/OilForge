@@ -61,7 +61,7 @@ public class OilChestLikeContainer extends Container implements IOilContainer {
         int xOff = 8 + (numColumns<9?xDiffHalf:0);
         for(int j = 0; j < this.numRows; ++j) {
             for(int k = 0; k < this.numColumns; ++k) {
-                this.addSlot(new OilSlot(top, k + j * 9, xOff + k * GuiSlotSize, GuiSlotSize + j * GuiSlotSize, itemFilter));
+                this.addSlot(new OilSlot(top, k + j * numColumns, xOff + k * GuiSlotSize, GuiSlotSize + j * GuiSlotSize, itemFilter));
             }
         }
 

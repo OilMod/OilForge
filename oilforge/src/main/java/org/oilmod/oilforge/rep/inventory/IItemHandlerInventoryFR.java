@@ -37,4 +37,9 @@ public class IItemHandlerInventoryFR implements InventoryRep {
     public void setStored(int slot, ItemStackRep stack) {
         forge.insertItem(slot, toForge(stack), false);
     }
+
+    @Override
+    public boolean isNative() {
+        return false;
+    }
 }

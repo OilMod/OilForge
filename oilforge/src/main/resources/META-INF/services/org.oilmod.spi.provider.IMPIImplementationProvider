@@ -2,6 +2,9 @@
 ###Registries
 org.oilmod.oilforge.inventory.ItemFilterRegistryHelper
 org.oilmod.oilforge.items.RealItemRegistryHelper
+#UI
+org.oilmod.oilforge.ui.UIRegistryHelper
+org.oilmod.oilforge.ui.UIHelper
 
 #factories
 org.oilmod.oilforge.rep.itemstack.RealItemStackFactory

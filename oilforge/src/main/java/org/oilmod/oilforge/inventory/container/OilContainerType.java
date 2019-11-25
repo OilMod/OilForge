@@ -10,6 +10,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fml.network.IContainerFactory;
+import org.oilmod.oilforge.ui.container.UIContainer;
 
 import java.util.Set;
 
@@ -17,6 +18,7 @@ public class OilContainerType<T extends Container & IOilContainer> extends Conta
     public static final Set<OilContainerType> toBeRegistered = new ObjectOpenHashSet<>();
     public static final OilContainerType<OilChestLikeContainer> CHESS_LIKE = register("chess_like", OilChestLikeContainer::new);
     public static final OilContainerType<OilFurnaceContainer> FURNACE = register("furnace", (c, id, p, e)->new OilFurnaceContainer(c, IRecipeType.SMELTING, id, p, e));
+    public static final OilContainerType<UIContainer> CUSTOM_UI = register("custom_ui", UIContainer::new);
 
 
     private static <T extends Container & IOilContainer> OilContainerType<T> register(String key, IOilFactory<T> factory) {
