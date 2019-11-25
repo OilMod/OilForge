@@ -18,6 +18,8 @@ public class OilContainerType<T extends Container & IOilContainer> extends Conta
     public static final Set<OilContainerType> toBeRegistered = new ObjectOpenHashSet<>();
     public static final OilContainerType<OilChestLikeContainer> CHESS_LIKE = register("chess_like", OilChestLikeContainer::new);
     public static final OilContainerType<OilFurnaceContainer> FURNACE = register("furnace", (c, id, p, e)->new OilFurnaceContainer(c, IRecipeType.SMELTING, id, p, e));
+    public static final OilContainerType<OilFurnaceContainer> BLAST_FURNACE = register("blast_furnace", (c, id, p, e)->new OilFurnaceContainer(c, IRecipeType.BLASTING, id, p, e));
+    public static final OilContainerType<OilFurnaceContainer> SMOKER = register("smoker", (c, id, p, e)->new OilFurnaceContainer(c, IRecipeType.SMOKING, id, p, e));
     public static final OilContainerType<UIContainer> CUSTOM_UI = register("custom_ui", UIContainer::new);
 
 

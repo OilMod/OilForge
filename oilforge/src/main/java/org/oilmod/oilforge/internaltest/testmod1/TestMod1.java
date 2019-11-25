@@ -22,7 +22,7 @@ public class TestMod1 extends OilMod {
 
     @Override
     protected void onRegisterItemFilter(ItemFilterRegistry registry) {
-        registry.register("backpack_item_filter", BackpackItemFilter.INSTANCE);
+        registry.register("portable_item_filter", PortableInventoryFilter.INSTANCE);
     }
 
     @Override

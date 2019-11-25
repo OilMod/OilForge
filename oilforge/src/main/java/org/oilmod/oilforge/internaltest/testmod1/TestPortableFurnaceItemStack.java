@@ -74,7 +74,7 @@ public class TestPortableFurnaceItemStack extends OilItemStack {
 
     public TestPortableFurnaceItemStack(NMSItemStack nmsItemStack, OilItem item) {
         super(nmsItemStack, item);
-        inventory = InventoryFactory.getInstance().createFurnaceInventory("items",this, item.getDisplayName(), ticker, BackpackItemFilter.INSTANCE, true);
+        inventory = InventoryFactory.getInstance().createFurnaceInventory("items",this, item.getDisplayName(), ticker, PortableInventoryFilter.INSTANCE, true);
     }
 
 
