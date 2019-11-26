@@ -17,7 +17,7 @@ public class ClientContainerHelper {
         } else if (containerType == OilContainerType.SMOKER) {
             return Lists.newArrayList(RecipeBookCategories.SMOKER_SEARCH, RecipeBookCategories.SMOKER_FOOD);
         } else {
-            return Lists.newArrayList(RecipeBookCategories.SEARCH); //so we dont crash again
+            return Lists.newArrayList(RecipeBookCategories.SEARCH, RecipeBookCategories.FURNACE_FOOD, RecipeBookCategories.FURNACE_BLOCKS, RecipeBookCategories.FURNACE_MISC, RecipeBookCategories.EQUIPMENT); //so we dont crash again
         }
     }
 }

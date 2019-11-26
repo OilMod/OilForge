@@ -28,7 +28,7 @@ public class UITestItem extends OilItem implements IUnique {
 
     @Override
     protected OilItemStack createOilItemStackInstance(NMSItemStack nmsItemStack) {
-        return new TestBackpackItemStack(nmsItemStack, this, 2, 4);
+        return new TestBackpackItemStack(nmsItemStack, this, 4*4+1, 1);
     }
 
     @Override

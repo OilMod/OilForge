@@ -1,26 +1,40 @@
 package org.oilmod.oilforge.ui.container;
 
+import cpw.mods.modlauncher.api.LamdbaExceptionUtils;
+import net.minecraft.client.util.RecipeBookCategories;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.container.Container;
+import net.minecraft.inventory.container.ContainerType;
+import net.minecraft.inventory.container.RecipeBookContainer;
 import net.minecraft.inventory.container.Slot;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.crafting.IRecipe;
+import net.minecraft.item.crafting.RecipeItemHelper;
 import net.minecraft.network.PacketBuffer;
+import net.minecraftforge.fml.DistExecutor;
 import org.apache.commons.lang3.Validate;
 import org.oilmod.api.UI.IItemElement;
 import org.oilmod.api.UI.UI;
 import org.oilmod.oilforge.inventory.IItemFilter;
 import org.oilmod.oilforge.inventory.NoItemFilter;
+import org.oilmod.oilforge.inventory.container.ClientContainerHelper;
 import org.oilmod.oilforge.inventory.container.IOilContainer;
 import org.oilmod.oilforge.inventory.container.OilContainerType;
-import org.oilmod.oilforge.inventory.container.slot.OilSlot;
 import org.oilmod.oilforge.ui.RealItemRef;
 import org.oilmod.oilforge.ui.container.slot.UISlot;
 
+import java.lang.reflect.Field;
+import java.util.Collections;
+import java.util.List;
+
+import static org.oilmod.oilforge.ReflectionUtil.setFinal;
+import static org.oilmod.oilforge.Util.toOil;
 import static org.oilmod.oilforge.inventory.container.ContainerUtil.GuiOffSide;
 import static org.oilmod.oilforge.inventory.container.ContainerUtil.GuiSlotSize;
 
-public class UIContainer extends Container implements IOilContainer {
+public class UIContainer extends RecipeBookContainer<IInventory> implements IOilContainer {
     private final PlayerInventory playerInventory;
     private IItemFilter itemFilter;
     private final UI<?> ui;
@@ -32,7 +46,7 @@ public class UIContainer extends Container implements IOilContainer {
 
 
     public UIContainer(OilContainerType<UIContainer> type, int id, PlayerInventory player, PacketBuffer buffer) {
-        this(type, id, player, new SetUIPacket(buffer));
+        this(type, id, player, new SetUIPacket(toOil(player.player), buffer));
     }
     public UIContainer(OilContainerType<UIContainer> type, int id, PlayerInventory player, SetUIPacket info) {
         this(null, type, id, player, info.createUI());
@@ -142,9 +156,6 @@ public class UIContainer extends Container implements IOilContainer {
         //this.top.closeInventory(playerIn); //todo
     }
 
-    public int getWidth() {
-        return GuiOffSide*2+ui.getTopWidth();
-    }
 
     public int getTopHeight() {
         return ui.getTopHeight();
@@ -175,6 +186,57 @@ public class UIContainer extends Container implements IOilContainer {
 
     @Override
     public void setItemFilter(IItemFilter filter) {
-        this.itemFilter = filter;
+        UIContainer.this.itemFilter = filter;
     }
+
+    public int getGuiWidth() {
+        return GuiOffSide*2+ui.getTopWidth();
+    }
+
+    public int getGuiHeight() {
+        return getTopHeight() +126+5*18; //todo change when we allow changing the player inv
+    }
+
+    //<editor-fold desc="RecipeBookContainer" defaultstate="collapsed">
+
+    @Override
+    public void func_201771_a(RecipeItemHelper p_201771_1_) {
+
+    }
+
+    public void clear() {
+
+    }
+
+    @Override
+    public boolean matches(IRecipe recipeIn) {
+        return false;
+    }
+
+    @Override
+    public int getOutputSlot() {
+        return 16;
+    }
+
+    @Override
+    public int getWidth() {
+        return 4;
+    }
+
+    @Override
+    public int getHeight() {
+        return 4;
+    }
+
+    @Override
+    public int getSize() {
+        return 16;
+    }
+
+    @Override
+    public List<RecipeBookCategories> getRecipeBookCategories() {
+        return DistExecutor.runForDist(()->()-> ClientContainerHelper.getRecipeBookCategories((OilContainerType) getType()), ()-> Collections::emptyList);
+    }
+
+    //</editor-fold>
 }

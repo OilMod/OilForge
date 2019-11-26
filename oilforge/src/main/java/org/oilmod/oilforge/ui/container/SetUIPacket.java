@@ -11,6 +11,7 @@ import org.oilmod.api.UI.UI;
 import org.oilmod.api.UI.UIFactory;
 import org.oilmod.api.data.DataParent;
 import org.oilmod.api.data.IData;
+import org.oilmod.api.rep.entity.EntityPlayerRep;
 import org.oilmod.oilforge.config.nbttag.OilNBTCompound;
 import org.oilmod.oilforge.inventory.container.ContainerPackageHandler;
 import org.oilmod.oilforge.ui.UIRegistryHelper;
@@ -29,9 +30,9 @@ public class SetUIPacket {
         this.context = context;
     }
 
-    public SetUIPacket(PacketBuffer buffer) {
+    public SetUIPacket(EntityPlayerRep player,  PacketBuffer buffer) {
         this.uiFactory = UIRegistryHelper.get(buffer.readResourceLocation());
-        DataParent data = uiFactory.createDataParent();
+        DataParent data = uiFactory.createDataParent(player);
         OilNBTCompound compound = new OilNBTCompound(buffer.readCompoundTag());
         data.getRegisteredIData().forEach((s, iData) -> iData.loadFrom(compound, s));
         this.context = uiFactory.getContext(data);

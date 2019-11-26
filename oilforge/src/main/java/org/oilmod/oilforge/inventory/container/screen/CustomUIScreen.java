@@ -1,30 +1,40 @@
 package org.oilmod.oilforge.inventory.container.screen;
 
 import com.mojang.blaze3d.platform.GlStateManager;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
+import net.minecraft.client.gui.recipebook.FurnaceRecipeGui;
+import net.minecraft.client.gui.recipebook.IRecipeShownListener;
+import net.minecraft.client.gui.recipebook.RecipeBookGui;
 import net.minecraft.client.gui.screen.inventory.ContainerScreen;
+import net.minecraft.client.gui.widget.button.ImageButton;
 import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.inventory.container.ClickType;
+import net.minecraft.inventory.container.Container;
+import net.minecraft.inventory.container.Slot;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.oilmod.api.UI.IItemElement;
 import org.oilmod.api.UI.UI;
-import org.oilmod.oilforge.inventory.container.OilChestLikeContainer;
 import org.oilmod.oilforge.ui.container.UIContainer;
 
+import java.util.List;
 import java.util.Set;
 
 import static org.oilmod.oilforge.inventory.container.ContainerUtil.*;
 
 @OnlyIn(Dist.CLIENT)
-public class CustomUIScreen<T extends UIContainer>extends ContainerScreen<T> {
+public class CustomUIScreen<T extends UIContainer>extends ContainerScreen<T> implements IRecipeShownListener {
     private static final ResourceLocation CHEST_GUI_TEXTURE = new ResourceLocation("textures/gui/container/generic_54.png");
-    private static final ResourceLocation DISPENSER_GUI_TEXTURES = new ResourceLocation("textures/gui/container/dispenser.png");
+    private static final ResourceLocation DISPENSER_GUI_TEXTURE = new ResourceLocation("textures/gui/container/dispenser.png");
+    private static final ResourceLocation RECIPE_BUTTON_TEXTURE = new ResourceLocation("textures/gui/recipe_button.png");
 
     private final DrawCallBuffer<CustomUIScreen> chestBuffer = new DrawCallBuffer<>(this, CHEST_GUI_TEXTURE);
-    private final DrawCallBuffer<CustomUIScreen> dispenserBuffer = new DrawCallBuffer<>(this, DISPENSER_GUI_TEXTURES);
-
+    private final DrawCallBuffer<CustomUIScreen> dispenserBuffer = new DrawCallBuffer<>(this, DISPENSER_GUI_TEXTURE);
+    private final List<IRenderable> renderables = new ObjectArrayList<>(); //todo think about super.children
+    
     private UI<?> ui;
 
     public CustomUIScreen(T screenContainer, PlayerInventory inv, ITextComponent titleIn) {
@@ -35,14 +45,54 @@ public class CustomUIScreen<T extends UIContainer>extends ContainerScreen<T> {
         int i = 222;
         int j = 114;
         this.ySize = 114 + screenContainer.getTopHeight();
-        this.xSize = screenContainer.getWidth();
+        this.xSize = Math.max(xSize, screenContainer.getGuiWidth());
+        RecipeBookRenderable renderable = new RecipeBookRenderable(recipeBookGui);
+        addRenderable(renderable);
     }
 
+    public boolean displayCompact() {
+        return func_194310_f() != null && this.width < xSize + GuiRecipeBookSize;
+    }
 
-    public void render(int p_render_1_, int p_render_2_, float p_render_3_) {
+    public void addRenderable(IRenderable renderable) {
+        renderable.setScreen(this);
+        children.add(renderable.getEventListener());
+        renderables.add(renderable);
+    }
+
+    
+    private RecipeBookGui recipeBookGui = new CustomRecipeBookGui();
+
+    @Override
+    protected void init() {
+        super.init();
+        recipeBookGui.func_201520_a(this.width, this.height, this.minecraft, displayCompact(), this.container);
+
+        this.guiLeft = this.recipeBookGui.updateScreenPosition(displayCompact(), this.width, this.xSize);
+        this.addButton((new ImageButton(this.guiLeft + 20, this.height / 2 - 49, 20, 18, 0, 0, 19, RECIPE_BUTTON_TEXTURE, (p_214087_1_) -> {
+            recipeBookGui.func_201518_a(displayCompact());
+            recipeBookGui.toggleVisibility();
+            this.guiLeft = recipeBookGui.updateScreenPosition(displayCompact(), this.width, this.xSize);
+            ((ImageButton)p_214087_1_).setPosition(this.guiLeft + 20, this.height / 2 - 49);
+        })));
+    }
+
+    public void render(int mouseX, int mouseY, float last) {
         this.renderBackground();
-        super.render(p_render_1_, p_render_2_, p_render_3_);
-        this.renderHoveredToolTip(p_render_1_, p_render_2_);
+        for(IRenderable renderable: renderables) {
+            renderable.renderBackground( mouseX, mouseY, last);
+        }
+        super.render(mouseX, mouseY, last);
+        for(IRenderable renderable: renderables) {
+            renderable.renderItemStacks( mouseX, mouseY, last);
+        }
+        for(IRenderable renderable: renderables) {
+            renderable.renderForeground(mouseX, mouseY, 1); //todo change to last
+        }
+        this.renderHoveredToolTip(mouseX, mouseY);
+        for(IRenderable renderable: renderables) {
+            renderable.renderToolTips( mouseX, mouseY, last);
+        }
     }
 
     /**
@@ -51,8 +101,11 @@ public class CustomUIScreen<T extends UIContainer>extends ContainerScreen<T> {
     protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
         this.font.drawString(this.title.getFormattedText(), 8.0F, 6.0F, 4210752);
 
+
         int xOff = container.getBottomXDiffHalf();
         this.font.drawString(this.playerInventory.getDisplayName().getFormattedText(), 8.0F + xOff, (float)(this.ySize - 96 + 2), 4210752);
+
+
     }
 
     private Set<DrawString> scheduled = new ObjectOpenHashSet<>();
@@ -60,31 +113,29 @@ public class CustomUIScreen<T extends UIContainer>extends ContainerScreen<T> {
     @Override
     protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
         GlStateManager.color4f(1.0F, 1.0F, 1.0F, 1.0F);
-        int originalI = (this.width - xSize) / 2;
-        int originalJ = (this.height - this.ySize) / 2;
-        int j = originalJ;
-        int i = originalI;
+        int left = guiLeft;
+        int top = guiTop;
         //fill background
 
         //draw top
-        j = drawInvBorder(i, j, 0, GuiOffTop, true);
-        fillBackGround(i + GuiOffSide, j, ui.getTopWidth(), ui.getTopHeight());
-        drawSides(j, ui.getTopWidth(), ui.getTopHeight());
+        top = drawInvBorder(left, top, 0, GuiOffTop, true);
+        fillBackGround(left + GuiOffSide, top, Math.max(ui.getTopWidth(), xSize-2*GuiOffSide), ui.getTopHeight());
+        drawSides(left, top, ui.getTopWidth(), ui.getTopHeight());
 
-        i += GuiOffSide; //no border drawn yet
+        left = guiLeft + GuiOffSide + container.getTopXDiffHalf(); //no border drawn yet
         int elementCounter = 0;
         for (IItemElement el:ui.getItemElements()) {
-            drawInv(i + el.getLeft(), j + el.getTop(), el.getRows(), el.getColumns());
-            new DrawString(elementCounter++ + "", 6 + i + el.getLeft(), 6 + j + el.getTop(), 0x00FF00, scheduled);
+            drawInv(left + el.getLeft(), top + el.getTop(), el.getRows(), el.getColumns());
+            new DrawString(elementCounter++ + "", 6 + left + el.getLeft(), 6 + top + el.getTop(), 0x00FF00, scheduled);
         }
-        i -= GuiOffSide; //no border drawn yet
+        left = guiLeft; //no border drawn yet
 
 
-        j += container.getTopHeight();
+        top += container.getTopHeight();
 
         int yOff = 0;
         if (container.isBottomSmaller()) {
-            j = drawInvBorder(i, j, 126+5*18, GuiOffSide, true); //top height + player inf height - GuiOffSide
+            top = drawInvBorder(left, top, 126+5*18, GuiOffSide, true); //top height + player inf height - GuiOffSide
             yOff = GuiOffSide;
         }
 
@@ -92,14 +143,14 @@ public class CustomUIScreen<T extends UIContainer>extends ContainerScreen<T> {
         //this.blit(i, j + (inventoryRows-remainingRows) * guiSlotSize + GuiOffTop, 0, 0, 176, guiSlotSize + GuiOffTop);
 
         //draw player
-        i = originalI + container.getBottomXDiffHalf();
+        left = guiLeft + container.getBottomXDiffHalf();
         int cornerArt = 3;
-        i=  drawVerticalSegment(i, j , 0, 126 + yOff, cornerArt, 96 + yOff, chestBuffer);
-        i = drawVerticalSegment(i, j - yOff , cornerArt, 126, StdXSize - cornerArt*2, 96, chestBuffer);
-        i = drawVerticalSegment(i, j , StdXSize - cornerArt, 126 + yOff, cornerArt, 96 + yOff, chestBuffer);
+        left=  drawVerticalSegment(left, top , 0, 126 + yOff, cornerArt, 96 + yOff, chestBuffer);
+        left = drawVerticalSegment(left, top - yOff , cornerArt, 126, StdXSize - cornerArt*2, 96, chestBuffer);
+        left = drawVerticalSegment(left, top , StdXSize - cornerArt, 126 + yOff, cornerArt, 96 + yOff, chestBuffer);
 
-        i = originalI;
-        j = originalJ;
+        left = guiLeft;
+        top = guiTop;
 
 
 
@@ -124,9 +175,8 @@ public class CustomUIScreen<T extends UIContainer>extends ContainerScreen<T> {
         }
     }
 
-    private void drawSides(int top, int width, int height) {
+    private void drawSides(int left, int top, int width, int height) {
         int heightDone = 0;
-        int left = (this.width - xSize) / 2;
 
         while (heightDone < height) {
             int thisRoundH = Math.min(6 * GuiSlotSize, height-heightDone);
@@ -189,6 +239,16 @@ public class CustomUIScreen<T extends UIContainer>extends ContainerScreen<T> {
         return i + GuiOffSide;
     }
 
+    @Override
+    public void recipesUpdated() {
+        
+    }
+
+    @Override
+    public RecipeBookGui func_194310_f() {
+        return recipeBookGui;//should return currently active gui maybe check via get focus
+    }
+
 
     class DrawString {
         private final String text;
@@ -211,4 +271,137 @@ public class CustomUIScreen<T extends UIContainer>extends ContainerScreen<T> {
             CustomUIScreen.this.font.drawString(text, x, y, color);
         }
     }
+
+
+
+    //<editor-fold desc="Listeners" defaultstate="collapsed">
+
+
+    @Override
+    public void tick() {
+        super.tick();
+        for(IRenderable renderable: renderables) {
+            renderable.tick();
+        }
+    }
+
+    protected void handleMouseClick(Slot slotIn, int slotId, int mouseButton, ClickType type) {
+        super.handleMouseClick(slotIn, slotId, mouseButton, type);
+
+        for(IRenderable renderable: renderables) {
+            renderable.handleMouseClick(slotIn, slotId, mouseButton, type);
+        }
+    }
+
+    protected boolean hasClickedOutside(double arg1, double arg3, int arg5, int arg6, int arg7) {
+
+        boolean flag;
+        for(IRenderable renderable: renderables) {
+            flag = !renderable.hasClickedInside(arg1, arg3, arg5, arg6, arg7);
+            if (flag)return true;
+        }
+        return super.hasClickedOutside(arg1, arg3, arg5, arg6, arg7);
+    }
+    
+    
+    
+    @Override
+    public void mouseMoved(double arg1, double arg3) {
+        super.mouseMoved(arg1, arg3);
+        for(IRenderable renderable: renderables) {
+            renderable.getEventListener().mouseMoved(arg1, arg3);
+        }
+    }
+
+    @Override
+    public boolean mouseClicked(double arg1, double arg3, int arg5) {
+        boolean flag;
+        for(IRenderable renderable: renderables) {
+            flag = renderable.getEventListener().mouseClicked(arg1, arg3, arg5);
+            if (flag)return true;
+        }
+        return super.mouseClicked(arg1, arg3, arg5);
+    }
+
+    @Override
+    public boolean mouseReleased(double arg1, double arg3, int arg5) {
+        boolean flag;
+        for(IRenderable renderable: renderables) {
+            flag = renderable.getEventListener().mouseReleased(arg1, arg3, arg5);
+            if (flag)return true;
+        }
+        return super.mouseReleased(arg1, arg3, arg5);
+    }
+
+    @Override
+    public boolean mouseDragged(double arg1, double arg3, int arg5, double arg6, double arg8) {
+        boolean flag;
+        for(IRenderable renderable: renderables) {
+            flag = renderable.getEventListener().mouseDragged(arg1, arg3, arg5, arg6, arg8);
+            if (flag)return true;
+        }
+        return super.mouseDragged(arg1, arg3, arg5, arg6, arg8);
+    }
+
+    @Override
+    public boolean mouseScrolled(double arg1, double arg3, double arg5) {
+        boolean flag;
+        for(IRenderable renderable: renderables) {
+            flag = renderable.getEventListener().mouseScrolled(arg1, arg3, arg5);
+            if (flag)return true;
+        }
+        return super.mouseScrolled(arg1, arg3, arg5);
+    }
+
+    @Override
+    public boolean keyPressed(int arg1, int arg2, int arg3) {
+        boolean flag;
+        for(IRenderable renderable: renderables) {
+            flag = renderable.getEventListener().keyPressed(arg1, arg2, arg3);
+            if (flag)return true;
+        }
+        return super.keyPressed(arg1, arg2, arg3);
+    }
+
+    @Override
+    public boolean keyReleased(int arg1, int arg2, int arg3) {
+        boolean flag;
+        for(IRenderable renderable: renderables) {
+            flag = renderable.getEventListener().keyReleased(arg1, arg2, arg3);
+            if (flag)return true;
+        }
+        return super.keyReleased(arg1, arg2, arg3);
+    }
+
+    @Override
+    public boolean charTyped(char arg1, int arg2) {
+        boolean flag;
+        for(IRenderable renderable: renderables) {
+            flag = renderable.getEventListener().charTyped(arg1, arg2);
+            if (flag)return true;
+        }
+        return super.charTyped(arg1, arg2);
+    }
+
+    @Override
+    public boolean changeFocus(boolean arg1) {
+        boolean flag;
+        for(IRenderable renderable: renderables) {
+            flag = renderable.getEventListener().changeFocus(arg1);
+            if (flag)return true;
+        }
+        return super.changeFocus(arg1);
+    }
+
+    @Override
+    public boolean isMouseOver(double arg1, double arg3) {
+        boolean flag;
+        for(IRenderable renderable: renderables) {
+            flag = renderable.getEventListener().isMouseOver(arg1, arg3);
+            if (flag)return true;
+        }
+        return super.isMouseOver(arg1, arg3);
+    }
+
+    //</editor-fold>
 }
