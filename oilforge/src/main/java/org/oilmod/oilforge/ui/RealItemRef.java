@@ -8,6 +8,7 @@ import org.apache.commons.lang3.Validate;
 import org.oilmod.api.UI.IItemElement;
 import org.oilmod.api.UI.IItemInteractionHandler;
 import org.oilmod.api.UI.IItemRef;
+import org.oilmod.api.UI.slot.ISlotType;
 import org.oilmod.api.rep.inventory.InventoryRep;
 import org.oilmod.api.rep.inventory.InventoryView;
 import org.oilmod.api.rep.itemstack.ItemStackRep;
@@ -24,6 +25,7 @@ public class RealItemRef implements IItemRef {
     private boolean isNative;
     private InventoryRep invCustom;
     private IInventory invNative;
+    private ISlotType type;
     private final List<IItemElement> trace = new ObjectArrayList<>();
     private int slotId;
     private int localRow;
@@ -105,18 +107,20 @@ public class RealItemRef implements IItemRef {
         Validate.isTrue(invCustom == null && invNative == null, "Cannot set resolving inventory more than once");
     }
 
-    public void setNative(IInventory inv) {
+    public void setNative(IInventory inv, ISlotType type) {
         assertUntouched();
         isNative = true;
         invNative = inv;
         handler = UIHelper.nativeHandler;
+        this.type = type;
     }
 
 
-    public void setCustom(InventoryRep inv) {
+    public void setCustom(InventoryRep inv, ISlotType type) {
         assertUntouched();
         isNative = false;
         invCustom = inv;
+        this.type = type;
         throw new NotImplementedException("todo");
     }
 
@@ -151,6 +155,9 @@ public class RealItemRef implements IItemRef {
         handler = null;
     }
 
+    public ISlotType getSlotType() {
+        return type;
+    }
 
     public IInventory getInvNative() {
         return invNative;

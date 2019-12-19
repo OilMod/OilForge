@@ -12,12 +12,14 @@ import org.oilmod.api.UI.IItemInteractionHandler;
 import org.oilmod.api.UI.IItemRef;
 import org.oilmod.api.UI.UI;
 import org.oilmod.api.UI.UIMPI;
+import org.oilmod.api.UI.slot.ISlotType;
 import org.oilmod.api.rep.entity.EntityPlayerRep;
 import org.oilmod.api.rep.inventory.InventoryRep;
 import org.oilmod.api.rep.inventory.InventoryView;
 import org.oilmod.oilforge.inventory.container.OilContainerType;
 import org.oilmod.oilforge.ui.container.SetUIPacket;
 import org.oilmod.oilforge.ui.container.UIContainer;
+import org.oilmod.oilforge.ui.container.slot.RealSlotTypeBase;
 
 import javax.annotation.Nullable;
 
@@ -54,19 +56,19 @@ public class UIHelper extends UIMPI.Helper<UIHelper> {
     }
 
     @Override
-    protected void handleNative(IItemRef handle, InventoryRep inv) {
+    protected void handleNative(IItemRef handle, InventoryRep inv, ISlotType type) {
         RealItemRef ref = (RealItemRef) handle;
         if (inv instanceof InventoryView) {
             InventoryView view = (InventoryView) inv;
             ref.fixIndexForView(view);
             inv = view.getRoot();
         }
-        ref.setNative(toForge(inv));
+        ref.setNative(toForge(inv), type);
     }
 
     @Override
-    protected void handleCustom(IItemRef handle, InventoryRep inv) {
-        ((RealItemRef)handle).setCustom(inv);
+    protected void handleCustom(IItemRef handle, InventoryRep inv, ISlotType type) {
+        ((RealItemRef)handle).setCustom(inv, type);
 
     }
 
@@ -94,5 +96,50 @@ public class UIHelper extends UIMPI.Helper<UIHelper> {
     @Override
     protected int getSizeItemRender() {
         return 16;
+    }
+
+    @Override
+    protected ISlotType getNormalSlotType() {
+        return new RealSlotTypeBase() {
+            @Override
+            public boolean isSettable() {
+                return true;
+            }
+
+            @Override
+            public boolean isTakeable() {
+                return true;
+            }
+        };
+    }
+
+    @Override
+    protected ISlotType getTakeOnlySlotType() {
+        return new RealSlotTypeBase() {
+            @Override
+            public boolean isSettable() {
+                return false;
+            }
+
+            @Override
+            public boolean isTakeable() {
+                return true;
+            }
+        };
+    }
+
+    @Override
+    protected ISlotType getProcessingSlotType() {
+        return new RealSlotTypeBase() {
+            @Override
+            public boolean isSettable() {
+                return false;
+            }
+
+            @Override
+            public boolean isTakeable() {
+                return true;
+            }
+        };
     }
 }

@@ -115,4 +115,9 @@ public class ItemStackFR implements ItemStackRep {
     public boolean isEmpty() {
         return forge.isEmpty();
     }
+
+    @Override
+    public String toString() {
+        return forge.toString();
+    }
 }

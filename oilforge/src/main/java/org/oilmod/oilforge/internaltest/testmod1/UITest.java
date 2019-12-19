@@ -21,7 +21,7 @@ public class UITest extends UIFactory<OilItemStack> {
         //ui.addElement(new SlotPanel(0, 0, 3, 2, 0, stack.getInventory()));
         //ui.addElement(new SlotPanel(UIMPI.getSizeSlots()*7, 0, 2, 4, 0, stack.getInventory()));
         ui.addElement(new SlotPanel((int) (UIMPI.getSizeSlots()*1.5), 0, 4, 4, 0, stack.getInventory()));
-        ui.addElement(new SlotPanel((int) (UIMPI.getSizeSlots()*6.5), (int) (UIMPI.getSizeSlots()*1.5), 1, 1, 16, stack.getInventory()));
+        ui.addElement(new SlotPanel((int) (UIMPI.getSizeSlots()*6.5), (int) (UIMPI.getSizeSlots()*1.5), 1, 1, 16, stack.getInventory(), UIMPI.getProcessingSlotType()));
         return ui;
     }
 

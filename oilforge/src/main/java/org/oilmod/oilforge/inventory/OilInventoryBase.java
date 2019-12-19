@@ -105,7 +105,7 @@ public abstract class OilInventoryBase<APIObject extends ModInventoryObjectBase<
     @Override
     public void load(Compound compound) {
         OilForgeItemHelper.loadItemsFromCompound(compound, this.items, "Items");
-        markDirty();
+        //markDirty();
     }
 
     @Override

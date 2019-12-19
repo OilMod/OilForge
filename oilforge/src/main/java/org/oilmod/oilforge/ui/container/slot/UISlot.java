@@ -34,7 +34,7 @@ public class UISlot extends Slot {
 
     @Override
     public boolean isItemValid(ItemStack stack) {
-        return rref().getHandler().isItemValid(ref, stack) && filter.allowed(stack);
+        return rref().getSlotType().isSettable() && ref.getHandler().isItemValid(ref, stack) && filter.allowed(stack);
     }
 
 
@@ -123,11 +123,11 @@ public class UISlot extends Slot {
      * Return whether this slot's stack can be taken from this slot.
      */
     public boolean canTakeStack(PlayerEntity playerIn) {
-        return rref().getHandler().canTakeStack(ref, playerIn);
+        return rref().getSlotType().isTakeable() && ref.getHandler().canTakeStack(ref, playerIn);
     }
 
     /**
-     * Actualy only call when we want to render the white square effect over the slots. Return always True, except for
+     * Actually only call when we want to render the white square effect over the slots. Return always True, except for
      * the armor slot of the Donkey/Mule (we can't interact with the Undead and Skeleton horses)
      */
     @OnlyIn(Dist.CLIENT)
