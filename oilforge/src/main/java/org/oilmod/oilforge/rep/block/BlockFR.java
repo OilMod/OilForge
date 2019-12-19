@@ -38,4 +38,12 @@ public class BlockFR implements BlockRep {
         return new StandardBlockStateFR(forge);
         //todo: implement with mixins or otherwise
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        BlockFR blockFR = (BlockFR) o;
+        return forge.equals(blockFR.forge);
+    }
 }

@@ -21,6 +21,7 @@ import org.oilmod.api.items.OilItem;
 import org.oilmod.api.items.type.IDurable;
 import org.oilmod.api.items.type.IPickaxe;
 import org.oilmod.api.items.type.IToolBlockBreaking;
+import org.oilmod.api.items.type.TBBType;
 import org.oilmod.oilforge.NMSKeyImpl;
 import org.oilmod.oilforge.items.RealItemImplHelper;
 
@@ -54,7 +55,7 @@ public class RealShovel extends ShovelItem implements RealItemImplHelper {
 
             @Override
             public int getHarvestLevel() {
-                return (oilItem instanceof IPickaxe)?((IPickaxe)oilItem).getPickaxeStrength():0;
+                return (oilItem instanceof IToolBlockBreaking)?((IToolBlockBreaking)oilItem).getToolStrength(null, TBBType.SHOVEL):0;//this is called by the pickaxe class, we overwrite it
             }
 
             @Override
@@ -66,8 +67,8 @@ public class RealShovel extends ShovelItem implements RealItemImplHelper {
             public Ingredient getRepairMaterial() {
                 return null;
             }
-        }, 0, 1, createBuilder(oilItem).addToolType(ToolType.SHOVEL, 0));
-        //forge knows harvest levels for all kinda of tools! consider
+        }, 0, 1, createBuilder(oilItem));
+        //todo forge knows harvest levels for all kinda of tools! consider, might be good to add all of the tools with a static method
         this.apiItem = oilItem;
         setRegistryName(((NMSKeyImpl) apiItem.getOilKey().getNmsKey()).resourceLocation);
     }

@@ -9,6 +9,7 @@ import org.oilmod.api.UI.IItemElement;
 import org.oilmod.api.UI.IItemInteractionHandler;
 import org.oilmod.api.UI.IItemRef;
 import org.oilmod.api.rep.inventory.InventoryRep;
+import org.oilmod.api.rep.inventory.InventoryView;
 import org.oilmod.api.rep.itemstack.ItemStackRep;
 
 import java.util.List;
@@ -93,6 +94,11 @@ public class RealItemRef implements IItemRef {
         localColumn = column;
         trace.add(element);
         element.handle(this);
+    }
+
+    public void fixIndexForView(InventoryView view) {
+        localRow += view.getTopOff();
+        localColumn += view.getLeftOff();
     }
 
     private void assertUntouched() {

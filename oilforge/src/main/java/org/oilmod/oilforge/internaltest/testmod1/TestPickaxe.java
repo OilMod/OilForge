@@ -1,10 +1,7 @@
 package org.oilmod.oilforge.internaltest.testmod1;
 
 import org.oilmod.api.items.*;
-import org.oilmod.api.items.type.IChestplate;
-import org.oilmod.api.items.type.IDurable;
-import org.oilmod.api.items.type.IPickaxe;
-import org.oilmod.api.items.type.ImplementationProvider;
+import org.oilmod.api.items.type.*;
 import org.oilmod.api.rep.block.BlockFaceRep;
 import org.oilmod.api.rep.entity.EntityHumanRep;
 import org.oilmod.api.rep.entity.EntityLivingRep;
@@ -25,7 +22,7 @@ public class TestPickaxe extends OilItem implements IPickaxe, IDurable, IChestpl
     }
 
     @Override
-    public int getPickaxeStrength() {
+    public int getToolStrength(OilItemStack stack, TBBType tooltype) {
         return 3;
     }
 

@@ -18,6 +18,7 @@ import org.oilmod.api.items.type.ImplementationProvider;
 import org.oilmod.api.rep.block.BlockFaceRep;
 import org.oilmod.api.rep.block.BlockStateRep;
 import org.oilmod.api.rep.entity.EntityLivingRep;
+import org.oilmod.api.rep.entity.EntityPlayerRep;
 import org.oilmod.api.rep.world.LocationBlockRep;
 import org.oilmod.api.util.InteractionResult;
 import org.oilmod.oilforge.Util;
@@ -31,7 +32,7 @@ public class TBBShovel extends RealTBBTool {
     }
 
     @Override
-    protected boolean canHarvestBlock(IToolBlockBreaking item, OilItemStack oilItemStack, BlockStateRep blockStateRep, BlockType blockType) {
+    protected boolean canHarvestBlock(IToolBlockBreaking item, OilItemStack stack, BlockStateRep blockStateRep, BlockType blockType) {
         BlockState blockIn = ((BlockStateFR)blockStateRep).getForge();
 
         //todo change to match for OilMaterials oil tools etc
@@ -46,7 +47,7 @@ public class TBBShovel extends RealTBBTool {
     @Override
     protected InteractionResult onItemUseOnBlock(IToolBlockBreaking item, OilItemStack stack, EntityLivingRep LivingEntity, LocationBlockRep loc, boolean offhand, BlockFaceRep face, float hitX, float hitY, float hitZ) {
         BlockRayTraceResult rayTraceResult = new BlockRayTraceResult(new Vec3d(hitX, hitY, hitZ), toForge(face), toForge(loc), false); //todo this actually seems to be a useful item, consider copying also the last flag
-        PlayerEntity player = (PlayerEntity) toForge(LivingEntity);
+        PlayerEntity player = toForge((EntityPlayerRep) LivingEntity);
         
         //Use mixin to use real shovel method instead directly
         ItemUseContext context = createItemUseContext(toForge(loc.getWorld()), player, offhand? Hand.OFF_HAND:Hand.MAIN_HAND, toForge(stack), rayTraceResult);

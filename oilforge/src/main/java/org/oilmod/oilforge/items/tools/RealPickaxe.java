@@ -17,10 +17,12 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ToolType;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
+import org.apache.commons.lang3.NotImplementedException;
 import org.oilmod.api.items.OilItem;
 import org.oilmod.api.items.type.IDurable;
 import org.oilmod.api.items.type.IPickaxe;
 import org.oilmod.api.items.type.IToolBlockBreaking;
+import org.oilmod.api.items.type.TBBType;
 import org.oilmod.oilforge.NMSKeyImpl;
 import org.oilmod.oilforge.items.RealItemImplHelper;
 
@@ -44,6 +46,7 @@ public class RealPickaxe extends PickaxeItem implements RealItemImplHelper {
 
             @Override
             public float getEfficiency() {
+                System.out.println("fake item trier getEfficiency got called");
                 return (oilItem instanceof IToolBlockBreaking)?((IToolBlockBreaking)oilItem).getDestroySpeed(null):0;
             }
 
@@ -54,7 +57,8 @@ public class RealPickaxe extends PickaxeItem implements RealItemImplHelper {
 
             @Override
             public int getHarvestLevel() {
-                return (oilItem instanceof IPickaxe)?((IPickaxe)oilItem).getPickaxeStrength():0;
+                return (oilItem instanceof IToolBlockBreaking)?((IToolBlockBreaking)oilItem).getToolStrength(null, TBBType.PICKAXE):0;//this is called by the pickaxe class, we overwrite it
+                //throw new NotImplementedException("not supposed to be called");
             }
 
             @Override
@@ -66,7 +70,7 @@ public class RealPickaxe extends PickaxeItem implements RealItemImplHelper {
             public Ingredient getRepairMaterial() {
                 return null;
             }
-        }, 0, 1, createBuilder(oilItem).addToolType(ToolType.PICKAXE, (oilItem instanceof IPickaxe)?((IPickaxe)oilItem).getPickaxeStrength():0));
+        }, 0, 1, createBuilder(oilItem));
         this.apiItem = oilItem;
         setRegistryName(((NMSKeyImpl) apiItem.getOilKey().getNmsKey()).resourceLocation);
     }
@@ -78,7 +82,6 @@ public class RealPickaxe extends PickaxeItem implements RealItemImplHelper {
 
 
     //Connect interface
-
 
 
     public boolean canHarvestBlock(ItemStack stack, BlockState state) {

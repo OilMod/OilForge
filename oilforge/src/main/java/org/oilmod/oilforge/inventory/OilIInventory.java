@@ -15,7 +15,7 @@ import static org.oilmod.oilforge.Util.toOil;
 /**
  * Created by sirati97 on 13.02.2016.
  */
-public interface OilIInventory<APIObject extends ModInventoryObjectBase> extends IInventory, CompoundSerializable, ModNMSIInventory<APIObject>, FilteredInventory, ITickableTileEntity, INamedContainerProvider {
+public interface OilIInventory<APIObject extends ModInventoryObjectBase<APIObject>> extends IInventory, CompoundSerializable, ModNMSIInventory<APIObject>, FilteredInventory, ITickableTileEntity, INamedContainerProvider {
     boolean isValid();
     IItemFilter getItemFilter();
 
@@ -54,11 +54,6 @@ public interface OilIInventory<APIObject extends ModInventoryObjectBase> extends
     @Override
     default boolean isTickable() {
         return false;
-    }
-
-    //@Override
-    default InventoryRep getBukkitInventory() {
-        return toOil(this);
     }
 
     void writeExtraData(PacketBuffer buffer);

@@ -31,4 +31,12 @@ public class ItemFR implements ItemRep {
         ItemFR other = (ItemFR)itemProvider.getProvidedItem();
         return getForge() == other.getForge();
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof ItemFR)) return false;
+        ItemFR itemFR = (ItemFR) o;
+        return forge.equals(itemFR.forge);
+    }
 }

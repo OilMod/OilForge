@@ -1,6 +1,5 @@
 package org.oilmod.oilforge.inventory;
 
-import io.netty.buffer.Unpooled;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
@@ -11,8 +10,10 @@ import net.minecraft.world.World;
 import org.apache.commons.lang3.NotImplementedException;
 import org.apache.commons.lang3.Validate;
 import org.oilmod.api.config.Compound;
+import org.oilmod.api.crafting.ICraftingProcessor;
 import org.oilmod.api.inventory.ModInventoryObjectBase;
 import org.oilmod.api.rep.inventory.InventoryHolderRep;
+import org.oilmod.api.rep.inventory.InventoryRep;
 import org.oilmod.api.userinterface.IInteractableUIElement;
 import org.oilmod.api.util.ITicker;
 import org.oilmod.oilforge.inventory.container.SetItemFilterPacket;
@@ -24,11 +25,12 @@ import java.lang.ref.WeakReference;
 import java.lang.reflect.Field;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Function;
 
 /**
  * Created by sirati97 on 13.02.2016.
  */
-public abstract class OilInventoryBase<APIObject extends ModInventoryObjectBase> extends Inventory implements OilIInventory<APIObject> {
+public abstract class OilInventoryBase<APIObject extends ModInventoryObjectBase<APIObject>> extends Inventory implements OilIInventory<APIObject> {
     private final WeakReference<InventoryHolderRep> owner;
     private final IItemFilter itemFilter;
     private final NonNullList<ItemStack> items;
@@ -38,19 +40,21 @@ public abstract class OilInventoryBase<APIObject extends ModInventoryObjectBase>
     private final boolean needsOwner;
     private final InventoryFR inventoryRep;
     private ITextComponent displayName;
+    private final ICraftingProcessor[] craftingProcessors;
 
 
-    public OilInventoryBase(InventoryHolderRep owner, String title, int size, ITicker ticker, IItemFilter itemFilter, boolean needsOwner) {
+    public OilInventoryBase(InventoryHolderRep owner, String title, int size, ITicker ticker, IItemFilter itemFilter, boolean needsOwner, Function<InventoryRep, ICraftingProcessor[]> processorFactory) {
         super(size);
         setTitle(title);
         this.items = extractItems();
         this.itemsReadOnly = Collections.unmodifiableList(this.items);
         this.owner = new WeakReference<>(owner);
-        this.inventoryRep = new InventoryFR(this);
+        this.inventoryRep = InventoryFR.createInventory(this);
         Validate.notNull(itemFilter);
         this.itemFilter = itemFilter;
         this.ticker = ticker;
         this.needsOwner = needsOwner;
+        this.craftingProcessors = processorFactory.apply(getInventoryRep());
         if (isTickable() && ticker != null) {
             ticker.add(this);
         }
@@ -101,6 +105,7 @@ public abstract class OilInventoryBase<APIObject extends ModInventoryObjectBase>
     @Override
     public void load(Compound compound) {
         OilForgeItemHelper.loadItemsFromCompound(compound, this.items, "Items");
+        markDirty();
     }
 
     @Override
@@ -121,11 +126,6 @@ public abstract class OilInventoryBase<APIObject extends ModInventoryObjectBase>
     public IInteractableUIElement createUIElement() {
         throw new NotImplementedException("todo"); //todo
         //return new OilInventoryViewSlot(this);
-    }
-
-    @Override
-    public void clear() {
-        items.clear();
     }
 
     public List<ItemStack> getItems() {
@@ -156,5 +156,19 @@ public abstract class OilInventoryBase<APIObject extends ModInventoryObjectBase>
     public void writeExtraData(PacketBuffer buffer) {
         SetItemFilterPacket packet = new SetItemFilterPacket(getItemFilter());
         packet.encode(buffer);
+    }
+
+
+    private boolean markDirtyFlag;
+    @Override
+    public void markDirty() {
+        if (markDirtyFlag)return; //if the craftingProcessor updates the inventory, we are good, we are going to push the listeners later anyway
+        markDirtyFlag = true;
+        for (ICraftingProcessor processor:craftingProcessors) {
+            processor.updateRecipe(true);
+        }
+        markDirtyFlag = false;
+
+        super.markDirty();
     }
 }

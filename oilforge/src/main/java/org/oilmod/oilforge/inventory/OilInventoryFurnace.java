@@ -27,8 +27,10 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.world.World;
 import org.oilmod.api.config.Compound;
+import org.oilmod.api.crafting.ICraftingProcessor;
 import org.oilmod.api.inventory.ModFurnaceInventoryObject;
 import org.oilmod.api.rep.inventory.InventoryHolderRep;
+import org.oilmod.api.rep.inventory.InventoryRep;
 import org.oilmod.api.util.ITicker;
 import org.oilmod.oilforge.inventory.container.OilContainerType;
 import org.oilmod.oilforge.inventory.container.OilFurnaceContainer;
@@ -36,6 +38,7 @@ import org.oilmod.oilforge.inventory.container.OilFurnaceContainer;
 import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 
 /**
  * Created by sirati97 on 13.02.2016.
@@ -45,8 +48,8 @@ public class OilInventoryFurnace extends OilInventoryBase<ModFurnaceInventoryObj
 
 
     //new TextComponentTranslation("container.furnace", new Object[0])
-    public OilInventoryFurnace(OilContainerType<?> containerType, IRecipeType<? extends AbstractCookingRecipe> recipeType, InventoryHolderRep owner, String title, ITicker ticker, IItemFilter itemFilter) {
-        super(owner, title, 3, ticker, itemFilter, true);
+    public OilInventoryFurnace(OilContainerType<?> containerType, IRecipeType<? extends AbstractCookingRecipe> recipeType, InventoryHolderRep owner, String title, ITicker ticker, IItemFilter itemFilter, Function<InventoryRep, ICraftingProcessor[]> processorFactory) {
+        super(owner, title, 3, ticker, itemFilter, true, processorFactory);
         this.recipeType = recipeType;
         this.containerType = containerType;
     }

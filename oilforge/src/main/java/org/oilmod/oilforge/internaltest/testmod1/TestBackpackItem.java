@@ -1,6 +1,8 @@
 package org.oilmod.oilforge.internaltest.testmod1;
 
 import net.minecraft.item.ItemStack;
+import org.oilmod.api.inventory.InventoryFactory;
+import org.oilmod.api.inventory.ModInventoryObject;
 import org.oilmod.api.items.ItemInteractionResult;
 import org.oilmod.api.items.NMSItemStack;
 import org.oilmod.api.items.OilItem;
@@ -19,13 +21,22 @@ import org.oilmod.oilforge.items.RealItemStack;
 import static org.oilmod.oilforge.Util.toForge;
 
 public class TestBackpackItem extends OilItem implements IUnique {
+    private final InventoryFactory.Builder<ModInventoryObject> invBuilder;
+
     public TestBackpackItem() {
         super(MinecraftItem.LEATHER, "Backpack");
+        invBuilder = InventoryFactory
+                .builder("items")
+                .standardTitle("Backpack")
+                .size(7, 11)
+                .filter(PortableInventoryFilter.INSTANCE)
+                .mainInventory()
+                .basic();
     }
 
     @Override
     protected OilItemStack createOilItemStackInstance(NMSItemStack nmsItemStack) {
-        return new TestBackpackItemStack(nmsItemStack, this, 7, 11);
+        return new TestBackpackItemStack(nmsItemStack, this, invBuilder);
     }
 
     @Override
@@ -38,7 +49,7 @@ public class TestBackpackItem extends OilItem implements IUnique {
         boolean hasInv = Inventory.RESOLVER.isApplicable(stack.asBukkitItemStack().getItemStackState());
         if (hasInv) {
             InventoryRep inv = Inventory.get(stack.asBukkitItemStack());
-            for (int i = 0; i < inv.getStorageSize(); i++) {
+            for (int i = 0; i < inv.getSize(); i++) {
                 ItemStackRep stack2 = inv.getStored(i);
                 if (stack2.isEmpty())continue;
 
@@ -47,9 +58,6 @@ public class TestBackpackItem extends OilItem implements IUnique {
         } else {
             System.out.println("no inventory found huh");
         }
-
-
-
 
         return new ItemInteractionResult(InteractionResult.SUCCESS, stack);
     }

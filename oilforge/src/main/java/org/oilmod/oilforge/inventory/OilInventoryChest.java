@@ -4,12 +4,16 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.network.PacketBuffer;
+import org.oilmod.api.crafting.ICraftingProcessor;
 import org.oilmod.api.inventory.ModInventoryObject;
 import org.oilmod.api.rep.inventory.InventoryHolderRep;
+import org.oilmod.api.rep.inventory.InventoryRep;
 import org.oilmod.oilforge.inventory.container.FlexChestPacket;
 import org.oilmod.oilforge.inventory.container.OilChestLikeContainer;
 
 import javax.annotation.Nullable;
+
+import java.util.function.Function;
 
 import static org.oilmod.oilforge.inventory.container.OilContainerType.*;
 
@@ -21,8 +25,8 @@ public class OilInventoryChest extends OilInventoryBase<ModInventoryObject> {
     private final int rows;
     private final int columns;
 
-    public OilInventoryChest(InventoryHolderRep owner, int rows, int columns, String title, IItemFilter itemFilter) {
-        super(owner, title, rows * columns, null, itemFilter, true);
+    public OilInventoryChest(InventoryHolderRep owner, int rows, int columns, String title, IItemFilter itemFilter, Function<InventoryRep, ICraftingProcessor[]> processorFactory) {
+        super(owner, title, rows * columns, null, itemFilter, true, processorFactory);
         this.rows = rows;
         this.columns = columns;
     }
@@ -39,6 +43,10 @@ public class OilInventoryChest extends OilInventoryBase<ModInventoryObject> {
     public void writeExtraData(PacketBuffer buffer) {
         FlexChestPacket packet = new FlexChestPacket(getItemFilter(), rows, columns);
         packet.encode(buffer);
+    }
+
+    public int getRows() {
+        return rows;
     }
 
     //@Override

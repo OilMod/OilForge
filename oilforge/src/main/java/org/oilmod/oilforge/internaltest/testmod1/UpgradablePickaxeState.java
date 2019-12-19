@@ -1,18 +1,18 @@
 package org.oilmod.oilforge.internaltest.testmod1;
 
+import org.oilmod.api.data.IntegerData;
 import org.oilmod.api.inventory.InventoryFactory;
 import org.oilmod.api.inventory.ModInventoryObject;
 import org.oilmod.api.items.NMSItemStack;
 import org.oilmod.api.items.OilItem;
 import org.oilmod.api.items.OilItemStack;
 
-public class TestBackpackItemStack extends OilItemStack {
-    private ModInventoryObject inventory;
+public class UpgradablePickaxeState extends OilItemStack {
+    public IntegerData intData;
 
-
-    public TestBackpackItemStack(NMSItemStack nmsItemStack, OilItem item, InventoryFactory.Builder<ModInventoryObject> invBuilder) {
+    public UpgradablePickaxeState(NMSItemStack nmsItemStack, OilItem item) {
         super(nmsItemStack, item);
-        inventory = invBuilder.create(this);
+        intData = new IntegerData("upgrade", this);
     }
 
 

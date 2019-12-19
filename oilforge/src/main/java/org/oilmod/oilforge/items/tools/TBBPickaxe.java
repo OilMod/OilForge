@@ -5,6 +5,7 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.material.Material;
 import net.minecraft.item.Items;
 import net.minecraft.item.ToolItem;
+import net.minecraftforge.common.ToolType;
 import org.oilmod.api.blocks.BlockType;
 import org.oilmod.api.items.OilItemStack;
 import org.oilmod.api.items.type.IPickaxe;
@@ -20,14 +21,16 @@ public class TBBPickaxe extends RealTBBTool {
     }
 
     @Override
-    protected boolean canHarvestBlock(IToolBlockBreaking item, OilItemStack oilItemStack, BlockStateRep blockStateRep, BlockType blockType) {
+    protected boolean canHarvestBlock(IToolBlockBreaking item, OilItemStack stack, BlockStateRep blockStateRep, BlockType blockType) {
         BlockState blockIn = ((BlockStateFR)blockStateRep).getForge();
         IPickaxe pickaxe = (IPickaxe) item;
 
         //todo change to match for OilMaterials oil tools etc
         Block block = blockIn.getBlock();
-        int i = pickaxe.getPickaxeStrength();
-        if (blockIn.getHarvestTool() == net.minecraftforge.common.ToolType.PICKAXE) {
+        int i = pickaxe.getToolStrength(stack, this); //todo, do this for all RealTBB
+
+        ToolType blockToolType = blockIn.getHarvestTool();
+        if (blockToolType == null || blockToolType == net.minecraftforge.common.ToolType.PICKAXE) {
             return i >= blockIn.getHarvestLevel();
         }
         Material material = blockIn.getMaterial();

@@ -17,7 +17,7 @@ public class ModInventoryObjectIItemHandler implements IItemHandler {
 
     @Override
     public int getSlots() {
-        return inv.getBukkitInventory().getStorageSize();
+        return inv.getBukkitInventory().getSize();
     }
 
     @Nonnull

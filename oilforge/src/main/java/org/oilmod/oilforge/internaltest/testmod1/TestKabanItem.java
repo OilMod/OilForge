@@ -1,6 +1,8 @@
 package org.oilmod.oilforge.internaltest.testmod1;
 
 import net.minecraft.item.ItemStack;
+import org.oilmod.api.inventory.InventoryFactory;
+import org.oilmod.api.inventory.ModInventoryObject;
 import org.oilmod.api.items.ItemInteractionResult;
 import org.oilmod.api.items.NMSItemStack;
 import org.oilmod.api.items.OilItem;
@@ -18,13 +20,22 @@ import org.oilmod.oilforge.items.RealItemStack;
 import static org.oilmod.oilforge.Util.toForge;
 
 public class TestKabanItem extends OilItem implements IUnique {
+    private final InventoryFactory.Builder<ModInventoryObject> invBuilder;
+
     public TestKabanItem() {
         super(MinecraftItem.LEATHER, "Kaban");
+        invBuilder = InventoryFactory
+                .builder("items")
+                .standardTitle("Kaban")
+                .size(3, 2)
+                .filter(PortableInventoryFilter.INSTANCE)
+                .mainInventory()
+                .basic();
     }
 
     @Override
     protected OilItemStack createOilItemStackInstance(NMSItemStack nmsItemStack) {
-        return new TestBackpackItemStack(nmsItemStack, this, 3, 2);
+        return new TestBackpackItemStack(nmsItemStack, this, invBuilder);
     }
 
     @Override

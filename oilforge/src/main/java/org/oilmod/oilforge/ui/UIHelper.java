@@ -14,6 +14,7 @@ import org.oilmod.api.UI.UI;
 import org.oilmod.api.UI.UIMPI;
 import org.oilmod.api.rep.entity.EntityPlayerRep;
 import org.oilmod.api.rep.inventory.InventoryRep;
+import org.oilmod.api.rep.inventory.InventoryView;
 import org.oilmod.oilforge.inventory.container.OilContainerType;
 import org.oilmod.oilforge.ui.container.SetUIPacket;
 import org.oilmod.oilforge.ui.container.UIContainer;
@@ -54,7 +55,13 @@ public class UIHelper extends UIMPI.Helper<UIHelper> {
 
     @Override
     protected void handleNative(IItemRef handle, InventoryRep inv) {
-        ((RealItemRef)handle).setNative(toForge(inv));
+        RealItemRef ref = (RealItemRef) handle;
+        if (inv instanceof InventoryView) {
+            InventoryView view = (InventoryView) inv;
+            ref.fixIndexForView(view);
+            inv = view.getRoot();
+        }
+        ref.setNative(toForge(inv));
     }
 
     @Override

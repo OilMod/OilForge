@@ -37,6 +37,7 @@ import net.minecraft.util.Direction;
 import org.oilmod.api.util.OilKey;
 import org.oilmod.oilforge.block.RealBlockTypeHelper;
 import org.oilmod.oilforge.enchantments.RealEnchantmentTypeHelper;
+import org.oilmod.oilforge.inventory.OilIInventory;
 import org.oilmod.oilforge.items.RealItemImplHelper;
 import org.oilmod.oilforge.items.RealItemStack;
 import org.oilmod.oilforge.items.capability.OilItemStackHandler;
@@ -196,13 +197,12 @@ public final class Util {
 
     //inventory
     public static InventoryRep toOil(IInventory inv) {
-        return new InventoryFR(inv);
+        return inv instanceof OilIInventory?((OilIInventory<?>) inv).getInventoryRep():InventoryFR.createInventory(inv);
     }
+
     public static IInventory toForge(InventoryRep inv) {
         return ((InventoryFR)inv).getForge();
     }
-
-
 
     public static LivingEntity toForge(EntityLivingRep entity) {
         return ((LivingEntityFR)entity).getForge();

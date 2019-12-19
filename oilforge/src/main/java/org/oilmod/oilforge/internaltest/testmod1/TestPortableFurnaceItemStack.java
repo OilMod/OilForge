@@ -72,9 +72,18 @@ public class TestPortableFurnaceItemStack extends OilItemStack {
     }; //for now so we dont get a null pointer
     private ModFurnaceInventoryObject inventory;
 
+
+    private final static InventoryFactory.Builder<ModFurnaceInventoryObject> invBuilder = InventoryFactory
+            .builder("items")
+            .standardTitle("Portable Furnace")
+            .ticker(ticker)
+            .filter(PortableInventoryFilter.INSTANCE)
+            .mainInventory()
+            .furnace();
+
     public TestPortableFurnaceItemStack(NMSItemStack nmsItemStack, OilItem item) {
         super(nmsItemStack, item);
-        inventory = InventoryFactory.getInstance().createFurnaceInventory("items",this, item.getDisplayName(), ticker, PortableInventoryFilter.INSTANCE, true);
+        inventory = invBuilder.create(this);
     }
 
 

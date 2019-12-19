@@ -19,13 +19,13 @@ public class IItemHandlerInventoryFR implements InventoryRep {
     }
 
     @Override
-    public int getStorageSize() {
+    public int getWidth() {
         return forge.getSlots();
     }
 
     @Override
-    public int getTotalSize() {
-        return forge.getSlots();
+    public int getHeight() {
+        return 0;
     }
 
     @Override
