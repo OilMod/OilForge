@@ -1,24 +1,28 @@
-
-
-version = '1.0' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
-
-
-dependencies {
-    compileJars("org.oilmod:oilmod-api:1.0-SNAPSHOT")
-    compileJars('org.oilmod:oilspi:1.0-SNAPSHOT')
-
-    compileOnly project(":oilforgemodloader")
-    compileJars project(":forgeshared")
-    compile 'com.electronwill.night-config:json:3.6.0' //remove after figuring out big jar
-}
+apply plugin: 'net.minecraftforge.gradle'
 
 minecraft {
-    // The mappings can be changed at any time, and must be in the following format.
-    // snapshot_YYYYMMDD   Snapshot are built nightly.
-    // stable_#            Stables are built at the discretion of the MCP team.
-    // Use non-default mappings at your own risk. they may not always work.
-    // Simply re-run your setup task after changing the mappings to update your workspace.
     mappings channel: 'snapshot', version: '20190719-1.14.3'
+}
+
+dependencies {
+    minecraft 'net.minecraftforge:forge:1.14.4-28.1.90'
+}
+
+version = '1.0' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
+isDepForge = true;
+
+def delayedSetup() {
+    dependencies {
+        compileJars project(":lib:OilMod-API")
+
+        compileOnly project(":oilforgemodloader")
+        compileJars project(":forgeshared")
+        compile 'com.electronwill.night-config:json:3.6.0' //remove after figuring out big jar
+    }
+}
+
+
+minecraft {
     // makeObfSourceJar = false // an Srg named sources jar is made by default. uncomment this to disable.
 
     // accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
@@ -78,4 +82,8 @@ minecraft {
         }
         //dependsOn ':oilforgemodloader:jar'
     }
+}
+
+def setupForge() {
+
 }

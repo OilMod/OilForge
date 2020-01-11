@@ -1,2 +1,2 @@
 rootProject.name = 'oilforgegradleroot'
-include('oilforge', 'oilforgemodloader', 'forgeshared')
+include('oilforge', 'oilforgemodloader', 'forgeshared', 'lib:OilSPI', 'lib:OilRep-API', 'lib:OilMod-API', 'lib:OilMod-TestPlugin2')

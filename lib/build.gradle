@@ -1,0 +1,26 @@
+
+import com.lazan.gradlemavenshare.*
+def shareAction = { ResolvedPom pom, Project proj, ProjectResolver resolver ->
+    //println "Sharing $pom.artifactId with $proj.name"
+    /*pom.dependencies.forEach({org.apache.maven.model.Dependency dep ->
+        println "$proj.name depends on $dep"
+    })*/
+    //proj.dependencies.
+
+} as ShareAction
+
+subprojects {
+    isMaven = true
+    afterEvaluate { project -> println "Maven subproject $project.name" }
+    delayedSetup = {
+        //println "run delayed setup for $project.name"
+        mavenShare {
+            doLast shareAction
+        }
+    }
+}
+
+subprojects {
+    task mavenDeps(type: DependencyReportTask) {}
+}
+

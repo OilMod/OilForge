@@ -1,8 +1,19 @@
+apply plugin: 'net.minecraftforge.gradle'
 
+minecraft {
+    mappings channel: 'snapshot', version: '20190719-1.14.3'
+}
+
+dependencies {
+    minecraft 'net.minecraftforge:forge:1.14.4-28.1.90'
+}
 
 version = '1.0'
 fmlmodtype = 'NONE'
+isDepForge = true;
 
-dependencies {
-    compileOnly ("org.oilmod:oilmod-api:1.0-SNAPSHOT")
+def delayedSetup() {
+    dependencies {
+        compileOnly project(":lib:OilMod-API")
+    }
 }
