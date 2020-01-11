@@ -42,4 +42,9 @@ public class IItemHandlerInventoryFR implements InventoryRep {
     public boolean isNative() {
         return false;
     }
+
+    @Override
+    public int getMaxStack(int slot) {
+        return forge.getSlotLimit(slot);
+    }
 }

@@ -17,6 +17,8 @@ import net.minecraftforge.fml.DistExecutor;
 import org.apache.commons.lang3.Validate;
 import org.oilmod.api.UI.IItemElement;
 import org.oilmod.api.UI.UI;
+import org.oilmod.api.crafting.ICraftingProcessor;
+import org.oilmod.api.rep.itemstack.state.ItemStackStateRep;
 import org.oilmod.oilforge.inventory.IItemFilter;
 import org.oilmod.oilforge.inventory.NoItemFilter;
 import org.oilmod.oilforge.inventory.container.ClientContainerHelper;
@@ -30,7 +32,9 @@ import java.util.Collections;
 import java.util.List;
 
 import static org.oilmod.oilforge.ReflectionUtil.setFinal;
+import static org.oilmod.oilforge.Util.toForge;
 import static org.oilmod.oilforge.Util.toOil;
+import static org.oilmod.oilforge.block.RealBlockTypeHelper.toNMS;
 import static org.oilmod.oilforge.inventory.container.ContainerUtil.GuiOffSide;
 import static org.oilmod.oilforge.inventory.container.ContainerUtil.GuiSlotSize;
 
@@ -130,7 +134,42 @@ public class UIContainer extends RecipeBookContainer<IInventory> implements IOil
         if (slot != null && slot.getHasStack()) {
             ItemStack itemstack1 = slot.getStack();
             itemstack = itemstack1.copy();
+            //todo check if we have a processing stack
             if (index < topSlots) {
+                UISlot uiSlot = (UISlot) slot;
+                ICraftingProcessor processor=uiSlot.getCraftingProcessor();
+                if (processor!= null) {
+                    int max;
+                    do {
+                        max = findSpace(itemstack,  topSlots, this.inventorySlots.size());
+                        max = processor.tryCrafting(max, (stack, multiplier, testRun) -> false, true);
+                        max = processor.tryCrafting(max, (oilStack, multiplier, testRun) -> {
+                            if (testRun) return false;
+                            int stackLimit =oilStack.getMaxStackSize();
+                            int total = (oilStack.getAmount()*multiplier);
+                            int stacks = total/stackLimit;
+                            int rest = total-stacks*stackLimit;
+                            ItemStack stack = toForge(oilStack);
+                            stack.setCount(stackLimit);
+                            for (int i = 0; i < total; i++) {
+                                playerIn.dropItem(stack.copy(), false);
+                            }
+                            if (rest!=0) {
+                                stack.setCount(rest);
+                                playerIn.dropItem(stack, false);
+                            }
+                            return true;
+                        }, false);
+
+                        itemstack1 = slot.getStack();
+                        itemstack = itemstack1.copy();
+                        if (!this.mergeItemStack(itemstack1, topSlots, this.inventorySlots.size(), true)) {
+                            return ItemStack.EMPTY;
+                        }
+                    } while (max > 0);
+
+                }
+
                 if (!this.mergeItemStack(itemstack1, topSlots, this.inventorySlots.size(), true)) {
                     return ItemStack.EMPTY;
                 }
@@ -146,6 +185,23 @@ public class UIContainer extends RecipeBookContainer<IInventory> implements IOil
         }
 
         return itemstack;
+    }
+
+    public int findSpace(ItemStack stackType, int from, int toEx) {
+        int total = 0;
+        int stackLimit = stackType.getMaxStackSize();
+        for (int i = from; i < toEx; i++) {
+            Slot slot = this.inventorySlots.get(i);
+            ItemStack stack = slot.getStack();
+
+            if (stack.isEmpty()) {
+                total += Math.min(stackLimit, slot.getSlotStackLimit());
+            } else if (areItemsAndTagsEqual(stackType, stack)) {
+                total += Math.max(0, Math.min(stackLimit, slot.getSlotStackLimit())-stack.getCount());
+            }
+        }
+
+        return total;
     }
 
     /**

@@ -6,8 +6,11 @@ import net.minecraft.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.oilmod.api.UI.IItemElement;
+import org.oilmod.api.UI.slot.ISlotType;
+import org.oilmod.api.crafting.ICraftingProcessor;
 import org.oilmod.oilforge.inventory.IItemFilter;
 import org.oilmod.oilforge.ui.RealItemRef;
+import org.oilmod.oilforge.ui.SlotTypeProcessing;
 
 public class UISlot extends Slot {
     private final RealItemRef ref;
@@ -67,7 +70,15 @@ public class UISlot extends Slot {
 
     public ItemStack onTake(PlayerEntity thePlayer, ItemStack stack) {
         this.onSlotChanged();
-        return rref().getHandler().onTake(ref, thePlayer, stack);
+
+        ISlotType slotType = rref().getSlotType();
+        if (slotType instanceof SlotTypeProcessing) {
+            ICraftingProcessor processor = ((SlotTypeProcessing) slotType).getProcessor();
+            processor.onSlotTake();
+        }
+
+        return ref.getHandler().onTake(ref, thePlayer, stack);
+        //todo add crafting logic
     }
 
     /**
@@ -135,6 +146,10 @@ public class UISlot extends Slot {
         return rref().getHandler().isEnabled(ref);
     }
 
+    public ICraftingProcessor getCraftingProcessor() {
+        ISlotType type = rref().getSlotType();
+        return type instanceof SlotTypeProcessing?((SlotTypeProcessing) type).getProcessor():null;
+    }
 
     /**
      * Checks if the other slot is in the same inventory, by comparing the inventory reference.

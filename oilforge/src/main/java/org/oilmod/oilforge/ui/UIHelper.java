@@ -13,6 +13,7 @@ import org.oilmod.api.UI.IItemRef;
 import org.oilmod.api.UI.UI;
 import org.oilmod.api.UI.UIMPI;
 import org.oilmod.api.UI.slot.ISlotType;
+import org.oilmod.api.crafting.ICraftingProcessor;
 import org.oilmod.api.rep.entity.EntityPlayerRep;
 import org.oilmod.api.rep.inventory.InventoryRep;
 import org.oilmod.api.rep.inventory.InventoryView;
@@ -129,17 +130,7 @@ public class UIHelper extends UIMPI.Helper<UIHelper> {
     }
 
     @Override
-    protected ISlotType getProcessingSlotType() {
-        return new RealSlotTypeBase() {
-            @Override
-            public boolean isSettable() {
-                return false;
-            }
-
-            @Override
-            public boolean isTakeable() {
-                return true;
-            }
-        };
+    protected ISlotType getProcessingSlotType(ICraftingProcessor processor) {
+        return new SlotTypeProcessing(processor);
     }
 }

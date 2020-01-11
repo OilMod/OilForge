@@ -76,7 +76,7 @@ public class ItemStackFR implements ItemStackRep {
 
     @Override
     public ItemStackRep copy() {
-        return null;
+        return new ItemStackFR(forge.copy());
     }
 
     @Override

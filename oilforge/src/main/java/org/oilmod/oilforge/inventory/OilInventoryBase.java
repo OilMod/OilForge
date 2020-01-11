@@ -23,8 +23,7 @@ import org.oilmod.oilforge.rep.location.WorldFR;
 
 import java.lang.ref.WeakReference;
 import java.lang.reflect.Field;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import java.util.function.Function;
 
 /**
@@ -170,5 +169,10 @@ public abstract class OilInventoryBase<APIObject extends ModInventoryObjectBase<
         markDirtyFlag = false;
 
         super.markDirty();
+    }
+
+    @Override
+    public Collection<ICraftingProcessor> getProcessors() {
+        return Collections.unmodifiableCollection(Arrays.asList(craftingProcessors));
     }
 }

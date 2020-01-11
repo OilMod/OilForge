@@ -79,4 +79,9 @@ public class InventoryFR implements InventoryRep {
         return true;
     }
 
+    @Override
+    public int getMaxStack(int slot) {
+        return getForge().getInventoryStackLimit();
+    }
+
 }

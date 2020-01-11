@@ -32,7 +32,6 @@ public interface IRealItemInteractionHandler {
     void onCrafting(RealItemRef ref, ItemStack stack);
 
     default ItemStack onTake(RealItemRef ref, PlayerEntity thePlayer, ItemStack stack) {
-        this.onSlotChanged(ref);
         return stack;
     }
 
