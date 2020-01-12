@@ -64,7 +64,7 @@ public class RealBlockType extends BlockType {
     @Override
     public boolean breakablePickaxe(BlockStateRep blockstate) {
         Block block = ((BlockFR)blockstate.getBlock()).getForge();
-        switch (getBlockTypeEnum()) {
+        switch (getTypeEnum()) {
             case ANVIL: //Inferred by ItemPickaxe KEEPSYNC
             case IRON:
             case ROCK:
@@ -82,7 +82,7 @@ public class RealBlockType extends BlockType {
     @Override
     public boolean breakableAxe(BlockStateRep blockstate) {
         Block block = ((BlockFR)blockstate.getBlock()).getForge();
-        switch (getBlockTypeEnum()) {
+        switch (getTypeEnum()) {
             case WOOD: //Inferred by ItemAxe KEEPSYNC
             case PLANTS:
             case VINE:
@@ -98,7 +98,7 @@ public class RealBlockType extends BlockType {
     @Override
     public boolean breakableShovel(BlockStateRep blockstate) {
         Block block = ((BlockFR)blockstate.getBlock()).getForge();
-        switch (getBlockTypeEnum()) {
+        switch (getTypeEnum()) {
             case SAND: //Inferred by blocks ItemSpade KEEPSYNC
             case GROUND:
             case CRAFTED_SNOW:
@@ -115,7 +115,7 @@ public class RealBlockType extends BlockType {
 
     @Override
     public boolean breakableShears(BlockStateRep block) {
-        switch (getBlockTypeEnum()) {
+        switch (getTypeEnum()) {
             case PLANTS: //Inferred by blocks ItemShears KEEPSYNC
             case VINE:
             case LEAVES:
@@ -131,7 +131,7 @@ public class RealBlockType extends BlockType {
 
     @Override
     public boolean breakableBlade(BlockStateRep block) {
-        switch (getBlockTypeEnum()) {
+        switch (getTypeEnum()) {
             case PLANTS: //Inferred by ItemSword KEEPSYNC
             case VINE:
             case CORAL:

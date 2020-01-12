@@ -8,7 +8,6 @@ import org.apache.logging.log4j.Logger;
 import org.oilmod.api.items.ItemRegistry;
 import org.oilmod.api.items.OilItem;
 import org.oilmod.api.registry.InitRegisterCallback;
-import org.oilmod.api.registry.Registry;
 import org.oilmod.api.util.OilKey;
 import org.oilmod.oilforge.OilModContext;
 import org.oilmod.spi.dependencies.DependencyPipe;
@@ -18,7 +17,7 @@ import java.util.Set;
 
 import static org.oilmod.oilforge.Util.toForge;
 
-public class RealItemRegistryHelper extends ItemRegistry.RegistryHelper<RealItemRegistryHelper> {
+public class RealItemRegistryHelper extends ItemRegistry.Helper<RealItemRegistryHelper> {
     public static RealItemRegistryHelper INSTANCE;
     private static final Logger LOGGER = LogManager.getLogger();
 
@@ -43,12 +42,12 @@ public class RealItemRegistryHelper extends ItemRegistry.RegistryHelper<RealItem
     }
 
     @Override
-    public <T extends OilItem> void register(OilKey key, ItemRegistry itemRegistry, T oilItem) {
+    public <T extends OilItem> void onRegister(OilKey key, ItemRegistry itemRegistry, T oilItem) {
         Item item = toForge(oilItem.getImplementationProvider().implement(oilItem));
         setNMSModItem(item, oilItem);
         itemClassMap.register(oilItem);
 
-        OilModContext context = (OilModContext) itemRegistry.getMod().getContext();
+        OilModContext context = (OilModContext) itemRegistry.getMod().getContext(); //todo actually this is what Registry.nmsObject is supposed for, use that instead
         Validate.notNull(context.itemRegistry, "ItemRegistry not set for modcontext, out of order registration?");
         context.itemRegistry.register(item);
 

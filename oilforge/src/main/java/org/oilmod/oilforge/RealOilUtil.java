@@ -22,7 +22,7 @@ import org.oilmod.oilforge.rep.location.WorldFR;
 import java.util.List;
 import java.util.Random;
 
-public class RealOilUtil  extends OilUtil.UtilImpl {
+public class RealOilUtil extends OilUtil.UtilImpl<RealOilUtil> {
     @Override
     protected ItemStackRep[] getDrops(WorldRep worldRep, BlockStateRep blockStateRep) {
         throw new NotImplementedException("soon");

@@ -1,11 +1,26 @@
 
 ###Registries
+#Items
 org.oilmod.oilforge.inventory.ItemFilterRegistryHelper
 org.oilmod.oilforge.items.RealItemRegistryHelper
+
+#Blocks
+org.oilmod.oilforge.block.RealBlockRegistryHelper
+org.oilmod.oilforge.block.RealBlockTypeHelper
+
 #UI
 org.oilmod.oilforge.ui.UIRegistryHelper
 org.oilmod.oilforge.ui.UIHelper
 
-#factories
+
+
+###Factories
 org.oilmod.oilforge.rep.itemstack.RealItemStackFactory
+
+
+
+###Other
+#Mods
+org.oilmod.oilforge.modloader.RealModHelper
+org.oilmod.oilforge.RealOilUtil
 

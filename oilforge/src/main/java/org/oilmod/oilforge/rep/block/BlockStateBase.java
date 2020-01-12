@@ -1,6 +1,6 @@
 package org.oilmod.oilforge.rep.block;
 
-import gnu.trove.set.hash.THashSet;
+import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import net.minecraft.block.BlockState;
 import net.minecraft.state.IProperty;
 import org.oilmod.api.rep.block.BlockRep;
@@ -40,8 +40,8 @@ public abstract class BlockStateBase implements BlockStateRep {
         BlockState f2 = otherBS.getForge();
         //might be bad performace
 
-        THashSet<IProperty> s1 = new THashSet<>(f1.getProperties());
-        THashSet<IProperty> s2 = new THashSet<>(f2.getProperties());
+        ObjectOpenHashSet<IProperty> s1 = new ObjectOpenHashSet<>(f1.getProperties());
+        ObjectOpenHashSet<IProperty> s2 = new ObjectOpenHashSet<>(f2.getProperties());
 
         //is this even correct?
         return f1.getBlock() == f2.getBlock() && s1.equals(s2);

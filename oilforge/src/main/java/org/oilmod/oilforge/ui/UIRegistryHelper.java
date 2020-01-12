@@ -17,14 +17,14 @@ import java.util.Map;
 import static org.oilmod.oilforge.Util.toForge;
 
 public class UIRegistryHelper extends UIRegistry.RegistryHelper<UIRegistryHelper> {
-    private static Map<ResourceLocation, UIFactory> map = new Object2ObjectOpenHashMap<>();
+    private static Map<ResourceLocation, UIFactory<?>> map = new Object2ObjectOpenHashMap<>();
 
     @Override
-    public <T extends UIFactory> void register(OilKey key, UIRegistry register, T entry) {
+    public <T extends UIFactory<?>> void onRegister(OilKey key, UIRegistry register, T entry) {
         map.put(toForge(entry.getOilKey()), entry);
     }
 
-    public static UIFactory get(ResourceLocation key) {
+    public static UIFactory<?> get(ResourceLocation key) {
         return map.computeIfAbsent(key, (k)->{throw new IllegalStateException("There is no UI with key " + k.toString());});
     }
 }

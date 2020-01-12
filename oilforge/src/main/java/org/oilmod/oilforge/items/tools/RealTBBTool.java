@@ -1,6 +1,6 @@
 package org.oilmod.oilforge.items.tools;
 
-import gnu.trove.set.hash.THashSet;
+import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.item.ItemStack;
@@ -87,7 +87,7 @@ public abstract class RealTBBTool extends TBBType {
 
     private static Set<Block> extractEffectiveOnSet(ToolItem tool) {
         if (tool == null) {
-            return new THashSet<>();
+            return new ObjectOpenHashSet<>();
         }
         try {
             return (Set<Block>) effectiveBlocksField.get(tool);

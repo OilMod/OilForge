@@ -3,6 +3,7 @@ package org.oilmod.oilforge;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.material.Material;
+import net.minecraft.block.material.MaterialColor;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
@@ -21,6 +22,7 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.items.IItemHandler;
 import org.oilmod.api.blocks.BlockType;
+import org.oilmod.api.blocks.MapColor;
 import org.oilmod.api.items.EnchantmentType;
 import org.oilmod.api.items.OilItemStack;
 import org.oilmod.api.rep.block.BlockFaceRep;
@@ -35,6 +37,7 @@ import org.oilmod.api.rep.world.*;
 import org.oilmod.api.util.InteractionResult;
 import net.minecraft.util.Direction;
 import org.oilmod.api.util.OilKey;
+import org.oilmod.oilforge.block.RealBlockType;
 import org.oilmod.oilforge.block.RealBlockTypeHelper;
 import org.oilmod.oilforge.enchantments.RealEnchantmentTypeHelper;
 import org.oilmod.oilforge.inventory.OilIInventory;
@@ -173,7 +176,7 @@ public final class Util {
     }
 
     public static BlockType toOil(Material mat) {
-        return ((RealBlockTypeHelper)BlockType.BlockTypeHelper.getInstance()).get(mat);
+        return ((RealBlockTypeHelper) BlockType.Helper.getInstance()).get(mat);
     }
 
     public static BlockFaceRep toOil(Direction notch) {
@@ -192,6 +195,14 @@ public final class Util {
                 return BlockFaceRep.EAST;
         }
         throw new IllegalStateException("invalid blockface");
+    }
+
+    public static Material toForge(BlockType blockType) {
+        return ((RealBlockType)blockType).getForge();
+    }
+
+    public static MaterialColor toForge(MapColor blockType) {
+        return MaterialColor.ADOBE;//todo add logic, placeholder
     }
 
 

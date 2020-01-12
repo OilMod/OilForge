@@ -1,13 +1,11 @@
 package org.oilmod.oilforge;
 
 
-import net.minecraftforge.common.MinecraftForge;
 import org.apache.commons.lang3.Validate;
 import org.oilmod.api.OilMod;
 import org.oilmod.api.blocks.BlockType;
 import org.oilmod.api.inventory.InventoryFactory;
 import org.oilmod.api.items.EnchantmentType;
-import org.oilmod.api.items.ItemRegistry;
 import org.oilmod.api.items.internal.ItemClassMap;
 import org.oilmod.api.items.internal.ItemFactory;
 import org.oilmod.api.items.type.ImplementationProvider;
@@ -32,28 +30,25 @@ public class OilMain {
     public static OilMod ModMinecraft;
     public static OilMod ModOilMod;
 
+
     public static void init() {
         ContainerPackageHandler.registerPackets();
         MPILoader.init(); //this gonna get more complicated in the future but its okay for now
         RepAPI.installImplementation(new RepAPIImpl());
 
 
-        OilMod.ModHelper.setInstance(new RealModHelper());
         RealItemClassMap itemClassMap = new RealItemClassMap();
         MPILoader.commitDependency(itemClassMap); //for RealItemRegistryHelper
         Validate.notNull(RealItemRegistryHelper.INSTANCE);
 
-        ModMinecraft  =  createInstance(OilMod.class, getDefaultContext(),"minecraft", "Minecraft");
-        ModOilMod  =  createInstance(OilMod.class, getDefaultContext(),"oilmod", "OilMod");
+
 
         ItemFactory.setInstance(new RealItemFactory());
         ItemClassMap.setInstance(itemClassMap);
-        OilUtil.UtilImpl.setInstance(new RealOilUtil());
         InventoryFactory.setInstance(new RealInventoryFactory());
         ImplementationProvider.IPHelper.setInstance(new RealIPHelper());
         /*UIHelper.setInstance(new RealUIHelper());
         ItemCraftingFactory.setInstance(new RealItemCraftingFactory());*/
-        BlockType.BlockTypeHelper.setInstance(new RealBlockTypeHelper());
         EnchantmentType.EnchantmentTypeHelper.setInstance(new RealEnchantmentTypeHelper());
         ItemTypeHelper.setInstance(new RealItemTypeHelper());
         TBBType.TBBHelper.setInstance(new RealTBBHelper());

@@ -1,6 +1,6 @@
 package org.oilmod.oilforge.items;
 
-import gnu.trove.map.hash.THashMap;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -15,7 +15,7 @@ public class ItemStackRegistry {
         return instance;
     }
 
-    private Map<String, ItemStackCreator> register = new THashMap<String, ItemStackCreator>();
+    private Map<String, ItemStackCreator> register = new Object2ObjectOpenHashMap<String, ItemStackCreator>();
 
     public void register(ItemStackCreator itemStackCreator) {
         Matcher matcher = NAME_CHECKER.matcher(itemStackCreator.getInternalName());

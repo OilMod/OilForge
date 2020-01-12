@@ -1,7 +1,7 @@
 package org.oilmod.oilforge.block;
 
-import gnu.trove.map.TMap;
-import gnu.trove.map.hash.THashMap;
+
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.material.PushReaction;
 import org.apache.commons.lang3.Validate;
@@ -9,14 +9,18 @@ import org.oilmod.api.blocks.BlockType;
 import org.oilmod.api.blocks.PistonReaction;
 import org.oilmod.api.blocks.nms.NMSBlockType;
 
+import java.util.Map;
+
 import static org.oilmod.api.blocks.BlockType.BlockTypeEnum.*;
 
-public class RealBlockTypeHelper  extends BlockType.BlockTypeHelper {
-    private TMap<Material, BlockType> map = new THashMap<>();
+public class RealBlockTypeHelper extends BlockType.Helper<RealBlockTypeHelper> {
+    private Map<Material, BlockType> map = new Object2ObjectOpenHashMap<>();
     private boolean initialised;
 
     private void register(Material mat, BlockType.BlockTypeEnum blockTypeEnum) {
-        map.put(mat, new RealBlockType(mat, blockTypeEnum));
+        RealBlockType realBlockType = new RealBlockType(mat, blockTypeEnum);
+        map.put(mat, realBlockType);
+        getGameRegistry().register(realBlockType.getOilKey(), realBlockType);
     }
 
     public BlockType get(Material mat) {
@@ -78,7 +82,7 @@ public class RealBlockTypeHelper  extends BlockType.BlockTypeHelper {
 
     @Override
     protected BlockType getVanillaBlockType(BlockType.BlockTypeEnum blockType) {
-        BlockType result = BlockType.getStandard(blockType);
+        BlockType result = get(blockType);
         Validate.notNull(result, "Misses implementation for vanilla block type " + blockType.toString());
         return result;
     }

@@ -1,8 +1,8 @@
 package org.oilmod.oilforge.items;
 
-import gnu.trove.map.TMap;
-import gnu.trove.map.hash.THashMap;
-import gnu.trove.set.hash.THashSet;
+
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import org.oilmod.api.items.OilItem;
 import org.oilmod.api.items.internal.ItemClassMap;
@@ -22,7 +22,7 @@ public class RealItemClassMap extends ItemClassMap {
 
     public <T extends OilItem> void register(T item) {
         Class<T> clazz = (Class<T>) item.getClass();
-        Set<T> newSet = new THashSet<>();
+        Set<T> newSet = new ObjectOpenHashSet<>();
         Set<T> set = (Set<T>) itemClassMap.putIfAbsent(clazz, newSet);
         set = set==null?newSet:set;
         set.add(item);

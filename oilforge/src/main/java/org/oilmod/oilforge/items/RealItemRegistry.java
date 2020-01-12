@@ -11,7 +11,7 @@ public class RealItemRegistry extends ItemRegistry {
      * @param mod            associated mod with this item registry
      * @param registryHelper
      */
-    protected RealItemRegistry(OilMod mod, RegistryHelper<?> registryHelper) {
+    protected RealItemRegistry(OilMod mod, Helper<?> registryHelper) {
         super(mod, registryHelper);
     }
 }

@@ -36,7 +36,7 @@ public class RealItem extends Item implements NMSItem, RealItemImplHelper {
             b.defaultMaxDamage(((IDurable) oilItem).getMaxDurability());
         }
         b.group(ItemGroup.TRANSPORTATION);
-        b.setTEISR(() -> () -> ((ItemFR)oilItem.getVanillaItem(null)).getForge().getTileEntityItemStackRenderer());
+        b.setTEISR(() -> () -> ((ItemFR)oilItem.getVanillaItem(null).getProvidedItem()).getForge().getTileEntityItemStackRenderer());
         return b;
     }
 

@@ -17,7 +17,7 @@ public class ItemFilterRegistryHelper extends ItemFilterRegistry.RegistryHelper<
     private static Map<ItemFilter, IItemFilter> filterMap = new Object2ObjectOpenHashMap<>();
 
     @Override
-    public <T extends ItemFilter> void register(OilKey key, ItemFilterRegistry register, T entry) {
+    public <T extends ItemFilter> void onRegister(OilKey key, ItemFilterRegistry register, T entry) {
         IItemFilter forge = new ApiItemFilter(entry, toForge(key));
         map.put(forge.getKey(), forge);
         filterMap.put(entry,forge);

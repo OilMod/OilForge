@@ -40,7 +40,7 @@ public interface RealItemImplHelper extends NMSItem, IForgeItem {
 
 
     default Item getVanillaFakeItem(RealItemStack stack) {
-        return ((ItemFR)getApiItem().getVanillaItem(stack.getOilItemStack())).getForge();
+        return ((ItemFR)getApiItem().getVanillaItem(stack.getOilItemStack()).getProvidedItem()).getForge();
     }
 
     OilItem getApiItem();
