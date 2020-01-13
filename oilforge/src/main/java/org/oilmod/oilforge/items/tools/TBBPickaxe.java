@@ -10,7 +10,7 @@ import org.oilmod.api.blocks.BlockType;
 import org.oilmod.api.items.OilItemStack;
 import org.oilmod.api.items.type.IPickaxe;
 import org.oilmod.api.items.type.IToolBlockBreaking;
-import org.oilmod.api.items.type.ImplementationProvider;
+import org.oilmod.api.items.type.ItemImplementationProvider;
 import org.oilmod.api.items.type.TBBType;
 import org.oilmod.api.rep.block.BlockStateRep;
 import org.oilmod.oilforge.rep.block.BlockStateFR;
@@ -52,7 +52,7 @@ public class TBBPickaxe extends RealTBBTool {
     }
 
     @Override
-    protected ImplementationProvider getImplementationProvider() {
-        return ImplementationProvider.PICKAXE;
+    protected ItemImplementationProvider getImplementationProvider() {
+        return  ItemImplementationProvider.PICKAXE.getValue();
     }
 }

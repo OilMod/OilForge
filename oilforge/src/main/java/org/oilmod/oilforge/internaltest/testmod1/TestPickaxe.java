@@ -12,7 +12,6 @@ import org.oilmod.api.rep.providers.minecraft.MinecraftItem;
 import org.oilmod.api.rep.world.LocationBlockRep;
 import org.oilmod.api.rep.world.WorldRep;
 import org.oilmod.api.util.InteractionResult;
-import org.oilmod.api.util.OilKey;
 
 import static org.oilmod.oilforge.Util.toOil;
 
@@ -83,7 +82,7 @@ public class TestPickaxe extends OilItem implements IPickaxe, IDurable, IChestpl
     }
 
     @Override
-    public ImplementationProvider getImplementationProvider() {
+    public ItemImplementationProvider getImplementationProvider() {
         return IPickaxe.super.getImplementationProvider();
     }
 

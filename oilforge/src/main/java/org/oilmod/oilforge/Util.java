@@ -26,6 +26,7 @@ import org.oilmod.api.blocks.MapColor;
 import org.oilmod.api.items.EnchantmentType;
 import org.oilmod.api.items.OilItemStack;
 import org.oilmod.api.rep.block.BlockFaceRep;
+import org.oilmod.api.rep.block.BlockRep;
 import org.oilmod.api.rep.enchant.EnchantmentRep;
 import org.oilmod.api.rep.entity.EntityLivingRep;
 import org.oilmod.api.rep.entity.EntityPlayerRep;
@@ -171,6 +172,10 @@ public final class Util {
     public static BlockFR toOil(Block block) {
         return new BlockFR(block);
     }
+    public static Block toForge(BlockRep blockRep) {
+        return ((BlockFR)blockRep).getForge();
+    }
+
     public static BlockStateFR toOil(BlockState state) {
         return new BlockStateFR(state);
     }

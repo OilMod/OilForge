@@ -31,6 +31,8 @@ import org.oilmod.oilforge.rep.itemstack.ItemStackFR;
 
 import javax.annotation.Nullable;
 
+import java.util.Objects;
+
 import static org.oilmod.oilforge.Util.*;
 
 public interface RealItemImplHelper extends NMSItem, IForgeItem {
@@ -166,10 +168,8 @@ public interface RealItemImplHelper extends NMSItem, IForgeItem {
         return getApiItem().getEnchantmentType().containsEnchantment(enchRep) || getApiItem().canEnchantSpecial(enchRep, false);
     }
 
-    boolean isInGroup(ItemGroup group);
-
     default void fillItemGroup(ItemGroup group, NonNullList<ItemStack> items) {
-        if (isInGroup(group)) {
+        if (Objects.equals(getItem().getGroup(), group)) { //todo use isInGroup (requires access transformer)
             for (OilItemStackFactory factory:getApiItem().getCreativeItems()) {
                 items.add(toForge(factory.create()));
             }

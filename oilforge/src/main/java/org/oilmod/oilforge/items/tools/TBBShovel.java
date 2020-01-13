@@ -14,14 +14,13 @@ import net.minecraft.util.math.Vec3d;
 import org.oilmod.api.blocks.BlockType;
 import org.oilmod.api.items.OilItemStack;
 import org.oilmod.api.items.type.IToolBlockBreaking;
-import org.oilmod.api.items.type.ImplementationProvider;
+import org.oilmod.api.items.type.ItemImplementationProvider;
 import org.oilmod.api.rep.block.BlockFaceRep;
 import org.oilmod.api.rep.block.BlockStateRep;
 import org.oilmod.api.rep.entity.EntityLivingRep;
 import org.oilmod.api.rep.entity.EntityPlayerRep;
 import org.oilmod.api.rep.world.LocationBlockRep;
 import org.oilmod.api.util.InteractionResult;
-import org.oilmod.oilforge.Util;
 import org.oilmod.oilforge.rep.block.BlockStateFR;
 
 import static org.oilmod.oilforge.Util.*;
@@ -58,7 +57,7 @@ public class TBBShovel extends RealTBBTool {
 
 
     @Override
-    protected ImplementationProvider getImplementationProvider() {
-        return ImplementationProvider.SHOVEL;
+    protected ItemImplementationProvider getImplementationProvider() {
+        return  ItemImplementationProvider.SHOVEL.getValue();
     }
 }

@@ -3,7 +3,7 @@ package org.oilmod.oilforge.items.tools;
 import org.oilmod.api.blocks.BlockType;
 import org.oilmod.api.items.OilItemStack;
 import org.oilmod.api.items.type.IToolBlockBreaking;
-import org.oilmod.api.items.type.ImplementationProvider;
+import org.oilmod.api.items.type.ItemImplementationProvider;
 import org.oilmod.api.items.type.TBBType;
 import org.oilmod.api.rep.block.BlockFaceRep;
 import org.oilmod.api.rep.block.BlockStateRep;
@@ -62,8 +62,8 @@ public class RealTBBHelper extends TBBType.TBBHelper {
                         }
 
                         @Override
-                        protected ImplementationProvider getImplementationProvider() {
-                            return ImplementationProvider.TOOL_CUSTOM;
+                        protected ItemImplementationProvider getImplementationProvider() {
+                            return  ItemImplementationProvider.TOOL_CUSTOM.getValue();
                         }
                     };
         }

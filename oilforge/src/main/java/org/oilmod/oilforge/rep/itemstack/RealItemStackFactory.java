@@ -23,6 +23,10 @@ public class RealItemStackFactory extends ItemStackFactory<RealItemStackFactory>
         return new ItemStackFR((ItemFR)item, (ItemStackStateFR) state, amount);
     }
 
+    @Override
+    public void onReady() {
+        INSTANCE = this;
+    }
 
     public ItemStackFR create(ItemStack stack) {
         return stack.isEmpty()?EMPTY:Util.isModStack(stack)? Util.toReal(stack).asItemStackRep():new ItemStackFR(stack);

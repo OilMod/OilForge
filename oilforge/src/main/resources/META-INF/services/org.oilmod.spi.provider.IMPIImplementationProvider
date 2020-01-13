@@ -3,10 +3,12 @@
 #Items
 org.oilmod.oilforge.inventory.ItemFilterRegistryHelper
 org.oilmod.oilforge.items.RealItemRegistryHelper
+org.oilmod.oilforge.items.RealIIPHelper
 
 #Blocks
 org.oilmod.oilforge.block.RealBlockRegistryHelper
 org.oilmod.oilforge.block.RealBlockTypeHelper
+org.oilmod.oilforge.block.RealBIPHelper
 
 #UI
 org.oilmod.oilforge.ui.UIRegistryHelper

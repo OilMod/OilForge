@@ -19,10 +19,6 @@ import org.oilmod.oilforge.rep.minecraft.MC113BlockProvider;
 import org.oilmod.oilforge.rep.minecraft.MC113ItemProvider;
 
 public class RepAPIImpl extends RepAPI {
-    @Override
-    protected ItemStackFactory createItemStackFactory() {
-        return new RealItemStackFactory();
-    }
 
     @Override
     protected MinecraftBlockProvider createMCBlockProvider() {
@@ -58,7 +54,6 @@ public class RepAPIImpl extends RepAPI {
     protected void setAll() {
         LocFactoryImpl.setInstance(new LocFactoryFR());
         super.setAll();
-        RealItemStackFactory.INSTANCE = (RealItemStackFactory) getItemStackFactory();
     }
 
     @Override
