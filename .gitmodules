@@ -10,3 +10,6 @@
 [submodule "lib/OilSPI"]
 	path = lib/OilSPI
 	url = git@github.com:OilMod/OilSPI.git
+[submodule "lib/minherit"]
+	path = lib/minherit
+	url = git@github.com:sirati97/minherit.git
