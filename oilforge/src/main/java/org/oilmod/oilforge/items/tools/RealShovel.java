@@ -7,7 +7,6 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.*;
-import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.ActionResultType;
@@ -15,13 +14,8 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraftforge.common.ToolType;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import org.oilmod.api.items.OilItem;
-import org.oilmod.api.items.type.IDurable;
-import org.oilmod.api.items.type.IPickaxe;
-import org.oilmod.api.items.type.IToolBlockBreaking;
-import org.oilmod.api.items.type.TBBType;
 import org.oilmod.oilforge.NMSKeyImpl;
 import org.oilmod.oilforge.items.RealItemImplHelper;
 
@@ -37,37 +31,7 @@ public class RealShovel extends ShovelItem implements RealItemImplHelper {
 
 
     public RealShovel(OilItem oilItem) {
-        super(new IItemTier() {
-            @Override
-            public int getMaxUses() {
-                return (oilItem instanceof IDurable)?((IDurable)oilItem).getMaxDurability():0;
-            }
-
-            @Override
-            public float getEfficiency() {
-                return (oilItem instanceof IToolBlockBreaking)?((IToolBlockBreaking)oilItem).getDestroySpeed(null):0;
-            }
-
-            @Override
-            public float getAttackDamage() {
-                return 0;
-            }
-
-            @Override
-            public int getHarvestLevel() {
-                return (oilItem instanceof IToolBlockBreaking)?((IToolBlockBreaking)oilItem).getToolStrength(null, TBBType.SHOVEL):0;//this is called by the pickaxe class, we overwrite it
-            }
-
-            @Override
-            public int getEnchantability() {
-                return oilItem.getItemEnchantability();
-            }
-
-            @Override
-            public Ingredient getRepairMaterial() {
-                return null;
-            }
-        }, 0, 1, createBuilder(oilItem));
+        super(new OilItemTier(oilItem), 0, 1, createBuilder(oilItem));
         //todo forge knows harvest levels for all kinda of tools! consider, might be good to add all of the tools with a static method
         this.apiItem = oilItem;
         setRegistryName(((NMSKeyImpl) apiItem.getOilKey().getNmsKey()).resourceLocation);
@@ -163,4 +127,5 @@ public class RealShovel extends ShovelItem implements RealItemImplHelper {
     public boolean shouldCauseReequipAnimation(ItemStack oldStack, ItemStack newStack, boolean slotChanged) {
         return RealItemImplHelper.super.shouldCauseReequipAnimation(oldStack, newStack, slotChanged);
     }
+
 }

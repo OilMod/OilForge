@@ -1,7 +1,10 @@
 package org.oilmod.oilforge;
 
 
+import cpw.mods.modlauncher.TransformingClassLoader;
+import de.sirati97.minherit.Processor;
 import org.apache.commons.lang3.Validate;
+import org.objectweb.asm.ClassReader;
 import org.oilmod.api.OilMod;
 import org.oilmod.api.inventory.InventoryFactory;
 import org.oilmod.api.items.EnchantmentType;
@@ -19,12 +22,33 @@ import org.oilmod.oilforge.items.tools.RealTBBHelper;
 import org.oilmod.oilforge.rep.RepAPIImpl;
 import org.oilmod.spi.MPILoader;
 
+import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+
 public class OilMain {
     public static OilMod ModMinecraft;
     public static OilMod ModOilMod;
 
 
     public static void init() {
+        Processor.readClass = (clazz) -> {
+            try {
+                ClassLoader cl = clazz.getClassLoader();
+                if (cl instanceof TransformingClassLoader) {
+                    Method m = TransformingClassLoader.class.getDeclaredMethod("buildTransformedClassNodeFor", String.class, String.class);
+                    m.setAccessible(true);
+                    byte[] bytes = (byte[]) m.invoke(cl, clazz.getName(), "classloading");
+                    return new ClassReader(bytes);
+                }
+                return new ClassReader(clazz.getResourceAsStream(clazz.getSimpleName() + ".class"));
+            } catch (IOException | NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
+                throw new IllegalStateException(e);
+            }
+        };
+
+
+
         ContainerPackageHandler.registerPackets();
         MPILoader.init(); //this gonna get more complicated in the future but its okay for now
         RepAPI.installImplementation(new RepAPIImpl());
