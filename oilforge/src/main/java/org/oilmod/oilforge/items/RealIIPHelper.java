@@ -1,20 +1,20 @@
 package org.oilmod.oilforge.items;
 
-import cpw.mods.modlauncher.api.LamdbaExceptionUtils;
 import de.sirati97.minherit.IMapper;
 import de.sirati97.minherit.Processor;
 import net.minecraft.item.*;
+import org.apache.commons.lang3.NotImplementedException;
 import org.oilmod.api.items.OilItem;
 import org.oilmod.api.items.type.ItemImplementationProvider;
 import org.oilmod.api.rep.item.ItemRep;
 import org.oilmod.oilforge.items.tools.OilItemTier;
-import org.oilmod.oilforge.items.tools.RealPickaxe;
-import org.oilmod.oilforge.items.tools.RealShovel;
 
 import java.lang.reflect.Constructor;
 import java.util.function.Supplier;
 
 import static cpw.mods.modlauncher.api.LamdbaExceptionUtils.*;
+import static org.oilmod.api.items.type.ItemImplementationProvider.TypeEnum.CUSTOM;
+import static org.oilmod.api.items.type.ItemImplementationProvider.TypeEnum.FOOD;
 import static org.oilmod.oilforge.Util.toOil;
 import static org.oilmod.oilforge.items.RealItem.createBuilder;
 
@@ -82,7 +82,6 @@ public class RealIIPHelper extends ItemImplementationProvider.Helper<RealIIPHelp
     //todo assign keys to implementation provider
     @SuppressWarnings("unchecked")
     private static class ToolMapper implements IMapper {
-        //        public AxeItem(IItemTier tier, float attackDamageIn, float attackSpeedIn, Item.Properties builder) {
         private OilItem oilItem;
 
         @Override
@@ -119,31 +118,70 @@ public class RealIIPHelper extends ItemImplementationProvider.Helper<RealIIPHelp
 
     @Override
     protected ItemImplementationProvider getProvider(ItemImplementationProvider.TypeEnum t) {
+        if (t == CUSTOM || t == FOOD) {
+            return new DIP(t, RealItem::new);
+        } else {
+            return new DIPTransforming(t, getImplBase(t), getMapper(t));
+        }
+    }
+
+    private Class<? extends Item> getImplBase(ItemImplementationProvider.TypeEnum t) {
         switch (t) {
             case PICKAXE:
-                //return new DIP(t, RealPickaxe::new);
-                return new DIPTransforming(t, PickaxeItem.class, ToolMapper::new);
+                return  PickaxeItem.class;
             case SHOVEL:
-                //return new DIP(t, RealShovel::new);
-                return new DIPTransforming(t, ShovelItem.class, ToolMapper::new);
+                return ShovelItem.class;
             case AXE:
-                return new DIPTransforming(t, AxeItem.class, ToolMapper::new);
+                return AxeItem.class;
             case SHEARS:
+                return ShearsItem.class;
             case HOE:
+                return HoeItem.class;
             case TOOL_CUSTOM:
+                return ToolItem.class;
             case SWORD:
+                return SwordItem.class;
             case MELEE_WEAPON_CUSTOM:
+                return TieredItem.class;
             case BOW:
+                return BowItem.class;
             case BOW_CUSTOM:
-            case FOOD:
+                return ShootableItem.class;
             case ARMOR_HELMET:
             case ARMOR_CHESTPLATE:
             case ARMOR_LEGGINGS:
             case ARMOR_SHOES:
             case ARMOR_CUSTOM:
+                return ArmorItem.class;
+            case FOOD:
             case CUSTOM:
             default:
-                return new DIP(t, RealItem::new);
+                throw new IllegalStateException(t + "does not require special impl");
+        }
+    }
+    private Supplier<IMapper> getMapper(ItemImplementationProvider.TypeEnum t) {
+        switch (t) {
+            case PICKAXE:
+            case SHOVEL:
+            case AXE:
+            case SWORD:
+                return ToolMapper::new;
+            case SHEARS:
+            case HOE:
+            case TOOL_CUSTOM:
+            case MELEE_WEAPON_CUSTOM:
+            case BOW:
+            case BOW_CUSTOM:
+            case ARMOR_HELMET:
+            case ARMOR_CHESTPLATE:
+            case ARMOR_LEGGINGS:
+            case ARMOR_SHOES:
+            case ARMOR_CUSTOM:
+                throw new NotImplementedException("todo"); //todo
+            case FOOD:
+            case CUSTOM:
+            default:
+                throw new IllegalStateException(t + "does not require special impl");
         }
     }
 }
