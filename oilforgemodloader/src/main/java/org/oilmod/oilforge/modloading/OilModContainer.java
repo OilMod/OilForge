@@ -1,5 +1,6 @@
 package org.oilmod.oilforge.modloading;
 
+import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.EventBusErrorMessage;
@@ -68,7 +69,8 @@ public class OilModContainer extends ModContainer { //would like to overwrite fm
 
 
         OilAPIInitEvent.addListener(this::onOilAPIInitEvent);
-        eventBus.addGenericListener(Item.class, this::registerItems); //if this fails, its indicated that classloader stuff went wrong (this class cannot be classloaded by AppClassLoader etc must be e.g. TransformingClassLoader)
+        eventBus.addGenericListener(Item.class, this::registerItems); //if this fails, its indicated that classloader stuff went wrong (this class cannot be classloaded by e.g. AppClassLoader etc must be TransformingClassLoader)
+        eventBus.addGenericListener(Block.class, this::registerBlocks); 
     }
 
     private void checkConstructState(LifecycleEventProvider.LifecycleEvent lifecycleEvent) {
@@ -85,7 +87,17 @@ public class OilModContainer extends ModContainer { //would like to overwrite fm
         ModUtil.invokeRegisterItems(modInstance);
 
         context.itemRegistry = null;
+    }
 
+    //OilMod
+    public void registerBlocks(RegistryEvent.Register<Block> event) {
+        IForgeRegistry<Block> blockRegistry = event.getRegistry();
+        OilModContext context = (OilModContext) modInstance.getContext();
+        context.blockRegistry = blockRegistry;
+
+        ModUtil.invokeRegisterBlocks(modInstance);
+
+        context.blockRegistry = null;
     }
 
 

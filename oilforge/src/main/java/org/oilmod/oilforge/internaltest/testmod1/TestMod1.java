@@ -2,6 +2,7 @@ package org.oilmod.oilforge.internaltest.testmod1;
 
 import org.oilmod.api.OilMod;
 import org.oilmod.api.UI.UIRegistry;
+import org.oilmod.api.blocks.BlockRegistry;
 import org.oilmod.api.crafting.custom.CustomCraftingManager;
 import org.oilmod.api.crafting.custom.RecipeBuilder;
 import org.oilmod.api.crafting.custom.Transformation;
@@ -10,6 +11,10 @@ import org.oilmod.api.items.ItemRegistry;
 import org.oilmod.api.items.crafting.VanillaMaterialIngredient;
 import org.oilmod.api.rep.crafting.*;
 import org.oilmod.api.rep.itemstack.ItemStackFactory;
+import org.oilmod.oilforge.internaltest.testmod1.blocks.TestBlock;
+import org.oilmod.oilforge.internaltest.testmod1.items.*;
+import org.oilmod.oilforge.internaltest.testmod1.ui.UITest;
+import org.oilmod.oilforge.internaltest.testmod1.ui.UITestItem;
 
 import static org.oilmod.api.rep.providers.minecraft.MinecraftItem.*;
 
@@ -45,6 +50,11 @@ public class TestMod1 extends OilMod {
 
 
 
+    }
+
+    @Override
+    protected void onRegisterBlocks(BlockRegistry registry) {
+        registry.register("testblock", new TestBlock());
     }
 
     @Override

@@ -121,7 +121,11 @@ public class RealIIPHelper extends ItemImplementationProvider.Helper<RealIIPHelp
         if (t == CUSTOM || t == FOOD) {
             return new DIP(t, RealItem::new);
         } else {
-            return new DIPTransforming(t, getImplBase(t), getMapper(t));
+            try {
+                return new DIPTransforming(t, getImplBase(t), getMapper(t));
+            } catch (NotImplementedException e) { //todo get rid of this
+                return new DIP(t, RealItem::new);
+            }
         }
     }
 

@@ -4,7 +4,7 @@ import net.minecraft.block.material.Material;
 import net.minecraft.block.material.MaterialColor;
 import org.oilmod.api.blocks.BlockType;
 
-import static org.oilmod.oilforge.block.RealBlockTypeHelper.toNMS;
+import static org.oilmod.oilforge.block.RealBlockTypeHelper.toForge;
 
 public class RealCustomMaterial extends MaterialWrapper {
     private final BlockType blockType;
@@ -18,7 +18,7 @@ public class RealCustomMaterial extends MaterialWrapper {
                 blockType.isAlwaysDestroyable(),
                 blockType.isFlammable(),
                 blockType.isReplaceable(),
-                toNMS(blockType.getPistonReaction())));
+                toForge(blockType.getPistonReaction())));
         this.blockType = blockType;
     }
 

@@ -1,6 +1,7 @@
 package org.oilmod.oilforge.modloader;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockState;
 import net.minecraft.client.renderer.model.IBakedModel;
 import net.minecraft.client.renderer.model.ModelResourceLocation;
 import net.minecraft.client.renderer.model.SimpleBakedModel;
@@ -29,6 +30,8 @@ import org.oilmod.api.rep.providers.minecraft.MinecraftBlockProvider;
 import org.oilmod.api.rep.providers.minecraft.MinecraftItemProvider;
 import org.oilmod.oilforge.OilAPIInitEvent;
 import org.oilmod.oilforge.OilMain;
+import org.oilmod.oilforge.block.RealBlockImplHelper;
+import org.oilmod.oilforge.block.RealBlockRegistryHelper;
 import org.oilmod.oilforge.internaltest.testmod1.TestMod1;
 import org.oilmod.oilforge.inventory.container.OilContainerType;
 import org.oilmod.oilforge.items.RealItemImplHelper;
@@ -113,6 +116,12 @@ public class OilModLoaderMod
         LOGGER.debug("OilForgeApi received RegistryEvent.Register<Block>, initialising block providers");
         MinecraftBlockProvider.init();
         // register a new block here
+        OilModContext context = (OilModContext) mod1.getContext();
+        context.blockRegistry = blockRegistryEvent.getRegistry();
+
+        ModUtil.invokeRegisterBlocks(mod1);
+
+        context.blockRegistry = null;
     }
     public void registerItems(RegistryEvent.Register<Item> event) {
         LOGGER.debug("OilForgeApi received RegistryEvent.Register<Item>, initialising item providers");
@@ -120,7 +129,7 @@ public class OilModLoaderMod
         ((MC113ItemProvider)MinecraftItemProvider.getInstance()).setItemRegistry(itemRegistry);
         MinecraftItemProvider.init();
 
-        //
+        //register a new item here
         OilModContext context = (OilModContext) mod1.getContext();
         context.itemRegistry = itemRegistry;
 
@@ -170,6 +179,26 @@ public class OilModLoaderMod
 
 
             LOGGER.debug("tried to copy model from {} to {}, copied model: {}", from::getRegistryName, item::getRegistryName, model::toString);
+        }
+
+
+        for (Block block: RealBlockRegistryHelper.INSTANCE.allRegistered) {
+            Block from = ((RealBlockImplHelper)block).getVanillaFakeBlock().getBlock();
+            ModelResourceLocation to3 = new ModelResourceLocation(block.getRegistryName(), "");
+
+            IBakedModel proviced =models.get(to3);
+            if (!(proviced instanceof SimpleBakedModel && ((SimpleBakedModel)proviced).getParticleTexture().getName().equals(missingNo))) {
+                LOGGER.debug("skipped adding copying model for {} as texture was provided: {}", block::getRegistryName, ()->proviced);
+                continue;
+            }
+
+            ModelResourceLocation form3 = new ModelResourceLocation(from.getBlock().getRegistryName(), "");
+
+            IBakedModel model = models.get(form3);
+            models.put(to3, model);
+
+
+            LOGGER.debug("tried to copy model from {} to {}, copied model: {}", from::getRegistryName, block::getRegistryName, model::toString);
         }
     }
 

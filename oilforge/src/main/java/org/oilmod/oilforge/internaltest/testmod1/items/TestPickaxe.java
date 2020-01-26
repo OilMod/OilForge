@@ -1,4 +1,4 @@
-package org.oilmod.oilforge.internaltest.testmod1;
+package org.oilmod.oilforge.internaltest.testmod1.items;
 
 import org.oilmod.api.items.*;
 import org.oilmod.api.items.type.*;

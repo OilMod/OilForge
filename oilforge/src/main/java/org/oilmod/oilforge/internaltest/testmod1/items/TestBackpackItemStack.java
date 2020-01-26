@@ -1,4 +1,4 @@
-package org.oilmod.oilforge.internaltest.testmod1;
+package org.oilmod.oilforge.internaltest.testmod1.items;
 
 import org.oilmod.api.inventory.InventoryFactory;
 import org.oilmod.api.inventory.ModInventoryObject;

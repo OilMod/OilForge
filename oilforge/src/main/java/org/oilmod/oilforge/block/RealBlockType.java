@@ -12,7 +12,7 @@ import org.oilmod.oilforge.rep.block.BlockFR;
 
 public class RealBlockType extends BlockType {
     public RealBlockType(Material material, BlockTypeEnum blockTypeEnum) {
-        super(new MaterialWrapper(material), OilMain.ModMinecraft.createKey(blockTypeEnum.toString().toLowerCase()), blockTypeEnum);
+        super(new MaterialWrapper(material), blockTypeEnum);
     }
 
     @Override

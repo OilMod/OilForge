@@ -1,5 +1,6 @@
 package org.oilmod.oilforge.items.tools;
 
+import net.minecraftforge.common.ToolType;
 import org.oilmod.api.blocks.BlockType;
 import org.oilmod.api.items.OilItemStack;
 import org.oilmod.api.items.type.IToolBlockBreaking;
@@ -10,8 +11,9 @@ import org.oilmod.api.rep.block.BlockStateRep;
 import org.oilmod.api.rep.entity.EntityLivingRep;
 import org.oilmod.api.rep.world.LocationBlockRep;
 import org.oilmod.api.util.InteractionResult;
+import org.oilmod.api.util.OilKey;
 
-public class RealTBBHelper extends TBBType.TBBHelper {
+public class RealTBBHelper extends TBBType.Helper<RealTBBHelper> {
     @Override
     protected void apiInit() {
         
@@ -23,12 +25,24 @@ public class RealTBBHelper extends TBBType.TBBHelper {
     }
 
     @Override
-    protected TBBType getVanilla(TBBType.TBBEnum tbbEnum) {
+    protected <T extends TBBType> void onRegister2(OilKey key, TBBType.Registry registry, T entry) {
+        super.onRegister2(key, registry, entry);
+        if (entry instanceof RealTBBTool) {
+            entry.setNMS(((RealTBBTool) entry).getForge());
+        } else {
+            entry.setNMS(ToolType.get(entry.getOilKey().getKeyString())); //todo shall we consider namespace or not?
+        }
+    }
+
+    @Override
+    protected TBBType getProvider(TBBType.TBBEnum tbbEnum) {
         switch (tbbEnum) {
             case PICKAXE:
                 return new TBBPickaxe();
             case SHOVEL:
                 return new TBBShovel();
+            case NONE:
+                return new TBBTypeNone();
             case AXE:
             case SHEARS:
             case SWORD:

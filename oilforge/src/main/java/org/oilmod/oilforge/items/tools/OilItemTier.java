@@ -31,7 +31,7 @@ public class OilItemTier implements IItemTier {
 
     @Override
     public int getHarvestLevel() {
-        return (oilItem instanceof IToolBlockBreaking)?((IToolBlockBreaking) oilItem).getToolStrength(null, TBBType.SHOVEL):0;//this is called by the pickaxe class, we overwrite it
+        return (oilItem instanceof IToolBlockBreaking)?((IToolBlockBreaking) oilItem).getToolStrength(null, TBBType.SHOVEL.getValue()):0;//this is called by the pickaxe class, we overwrite it
     }
 
     @Override

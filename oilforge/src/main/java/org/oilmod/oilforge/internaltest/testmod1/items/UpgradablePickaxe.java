@@ -1,18 +1,11 @@
-package org.oilmod.oilforge.internaltest.testmod1;
+package org.oilmod.oilforge.internaltest.testmod1.items;
 
 import org.oilmod.api.items.*;
 import org.oilmod.api.items.type.*;
-import org.oilmod.api.rep.block.BlockFaceRep;
 import org.oilmod.api.rep.block.BlockStateRep;
-import org.oilmod.api.rep.entity.EntityHumanRep;
 import org.oilmod.api.rep.entity.EntityLivingRep;
-import org.oilmod.api.rep.itemstack.ItemStackRep;
-import org.oilmod.api.rep.itemstack.state.DisplayName;
-import org.oilmod.api.rep.itemstack.state.Enchantments;
 import org.oilmod.api.rep.providers.minecraft.MinecraftItem;
 import org.oilmod.api.rep.world.LocationBlockRep;
-import org.oilmod.api.rep.world.WorldRep;
-import org.oilmod.api.util.InteractionResult;
 
 import static org.oilmod.api.rep.providers.minecraft.MinecraftBlock.GOLD_BLOCK;
 import static org.oilmod.oilforge.Util.toOil;

@@ -4,6 +4,7 @@
 org.oilmod.oilforge.inventory.ItemFilterRegistryHelper
 org.oilmod.oilforge.items.RealItemRegistryHelper
 org.oilmod.oilforge.items.RealIIPHelper
+org.oilmod.oilforge.items.tools.RealTBBHelper
 
 #Blocks
 org.oilmod.oilforge.block.RealBlockRegistryHelper

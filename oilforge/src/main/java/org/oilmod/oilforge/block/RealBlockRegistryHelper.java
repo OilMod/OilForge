@@ -43,11 +43,11 @@ public class RealBlockRegistryHelper extends BlockRegistry.RegistryHelper<RealBl
         setNMSModBlock(block, oilBlock);
 
         OilModContext context = (OilModContext) registry.getMod().getContext();
-        Validate.notNull(context.itemRegistry, "BlockRegistry not set for modcontext, out of order registration?");
+        Validate.notNull(context.blockRegistry, "BlockRegistry not set for modcontext, out of order registration?");
         context.blockRegistry.register(block);
 
         LOGGER.debug("mod {} registered {}", ()->oilBlock.getOilKey().getMod().getDisplayName(), Objects.requireNonNull(block.getRegistryName())::toString);
-        allRegistered.add(block); //try to get better solution to access all registered items*/
+        allRegistered.add(block); //try to get better solution to access all registered blocks*/
     }
 
     @Override

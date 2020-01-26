@@ -1,7 +1,6 @@
-package org.oilmod.oilforge.internaltest.testmod1;
+package org.oilmod.oilforge.internaltest.testmod1.items;
 
-import org.oilmod.api.UI.UIMPI;
-import org.oilmod.api.crafting.ResultSlotCraftingProcessor;
+import net.minecraft.item.ItemStack;
 import org.oilmod.api.inventory.InventoryFactory;
 import org.oilmod.api.inventory.ModInventoryObject;
 import org.oilmod.api.items.ItemInteractionResult;
@@ -9,33 +8,28 @@ import org.oilmod.api.items.NMSItemStack;
 import org.oilmod.api.items.OilItem;
 import org.oilmod.api.items.OilItemStack;
 import org.oilmod.api.items.type.IUnique;
-import org.oilmod.api.rep.crafting.IngredientSupplierImpl;
 import org.oilmod.api.rep.entity.EntityHumanRep;
-import org.oilmod.api.rep.entity.EntityPlayerRep;
+import org.oilmod.api.rep.inventory.InventoryRep;
+import org.oilmod.api.rep.itemstack.ItemStackRep;
+import org.oilmod.api.rep.itemstack.state.Inventory;
 import org.oilmod.api.rep.providers.minecraft.MinecraftItem;
 import org.oilmod.api.rep.world.WorldRep;
 import org.oilmod.api.util.InteractionResult;
-
-import java.util.Collections;
+import org.oilmod.oilforge.items.RealItemStack;
 
 import static org.oilmod.oilforge.Util.toForge;
-import static org.oilmod.oilforge.internaltest.testmod1.TestMod1.*;
 
-public class UITestItem extends OilItem implements IUnique {
-    public static UITestItem INSTANCE;
+public class TestBackpackItem extends OilItem implements IUnique {
     private final InventoryFactory.Builder<ModInventoryObject> invBuilder;
 
-    public UITestItem() {
-        super(MinecraftItem.LEATHER, "UI Test Item");
-        INSTANCE = this;
-
+    public TestBackpackItem() {
+        super(MinecraftItem.LEATHER, "Backpack");
         invBuilder = InventoryFactory
                 .builder("items")
-                .standardTitle("UI Test Item")
-                .size(4*4+1)
+                .standardTitle("Backpack")
+                .size(7, 11)
                 .filter(PortableInventoryFilter.INSTANCE)
                 .mainInventory()
-                .processors((inv)-> new ResultSlotCraftingProcessor(Collections.singletonMap(TestIngredientCategory, inv.createView2d(0, 4, 4)), Collections.singletonMap(TestResultCategory, inv.createView(16, 1)), CraftingManager))
                 .basic();
     }
 
@@ -46,7 +40,23 @@ public class UITestItem extends OilItem implements IUnique {
 
     @Override
     public ItemInteractionResult onItemRightClick(OilItemStack stack, WorldRep world, EntityHumanRep human, boolean offhand) {
-        UIMPI.openUI((EntityPlayerRep) human, UITest.INSTANCE.create(stack));
+        human.openInventory(stack.getInventory());
+
+        RealItemStack ris = ((RealItemStack)stack.getNmsItemStack());
+        ItemStack nms = ris.getForgeItemStack();
+
+        boolean hasInv = Inventory.RESOLVER.isApplicable(stack.asBukkitItemStack().getItemStackState());
+        if (hasInv) {
+            InventoryRep inv = Inventory.get(stack.asBukkitItemStack());
+            for (int i = 0; i < inv.getSize(); i++) {
+                ItemStackRep stack2 = inv.getStored(i);
+                if (stack2.isEmpty())continue;
+
+                System.out.println("item slot " + i + " + " + toForge(stack2).toString());
+            }
+        } else {
+            System.out.println("no inventory found huh");
+        }
 
         return new ItemInteractionResult(InteractionResult.SUCCESS, stack);
     }

@@ -4,6 +4,8 @@ package org.oilmod.oilforge;
 import cpw.mods.modlauncher.TransformingClassLoader;
 import de.sirati97.minherit.Processor;
 import org.apache.commons.lang3.Validate;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.objectweb.asm.ClassReader;
 import org.oilmod.api.OilMod;
 import org.oilmod.api.inventory.InventoryFactory;
@@ -25,24 +27,37 @@ import org.oilmod.spi.MPILoader;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.time.Duration;
+import java.time.Instant;
 
 public class OilMain {
+    public static final Logger LOGGER = LogManager.getLogger();
     public static OilMod ModMinecraft;
     public static OilMod ModOilMod;
 
+    private static final Method m;
+
+    static {
+        try {
+            m = TransformingClassLoader.class.getDeclaredMethod("buildTransformedClassNodeFor", String.class, String.class);
+        } catch (NoSuchMethodException e) {
+            throw new IllegalStateException(e);
+        }
+    }
 
     public static void init() {
+        Instant start = Instant.now();
         Processor.readClass = (clazz) -> {
             try {
                 ClassLoader cl = clazz.getClassLoader();
                 if (cl instanceof TransformingClassLoader) {
-                    Method m = TransformingClassLoader.class.getDeclaredMethod("buildTransformedClassNodeFor", String.class, String.class);
                     m.setAccessible(true);
                     byte[] bytes = (byte[]) m.invoke(cl, clazz.getName(), "classloading");
+                    m.setAccessible(false);
                     return new ClassReader(bytes);
                 }
                 return new ClassReader(clazz.getResourceAsStream(clazz.getSimpleName() + ".class"));
-            } catch (IOException | NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
+            } catch (IOException | IllegalAccessException | InvocationTargetException e) {
                 throw new IllegalStateException(e);
             }
         };
@@ -66,12 +81,15 @@ public class OilMain {
 
         EnchantmentType.EnchantmentTypeHelper.setInstance(new RealEnchantmentTypeHelper());
         ItemTypeHelper.setInstance(new RealItemTypeHelper());
-        TBBType.TBBHelper.setInstance(new RealTBBHelper());
         initReflection();
         //YBase.registerYAMLClasses();
 
-        OilAPIInitEvent.fire();
         //todo by here API should be completely initialised, i.e. no hanging dependencies MPILoader.xXX()
+
+        long timeElapsed = Duration.between(start, Instant.now()).toMillis();  //in millis
+        LOGGER.info("Initialising OilMod-API took {} ms", timeElapsed);
+
+        OilAPIInitEvent.fire();
     }
 
     public static void printTrace(String text) {

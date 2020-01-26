@@ -1,12 +1,10 @@
-package org.oilmod.oilforge.internaltest.testmod1;
+package org.oilmod.oilforge.internaltest.testmod1.items;
 
 import net.minecraft.client.Minecraft;
-import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.common.thread.SidedThreadGroups;
 import org.oilmod.api.OilMod;
 import org.oilmod.api.inventory.InventoryFactory;
 import org.oilmod.api.inventory.ModFurnaceInventoryObject;
-import org.oilmod.api.inventory.ModInventoryObject;
 import org.oilmod.api.items.NMSItemStack;
 import org.oilmod.api.items.OilItem;
 import org.oilmod.api.items.OilItemStack;

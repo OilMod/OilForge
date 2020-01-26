@@ -11,6 +11,7 @@ import net.minecraft.item.ToolItem;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.util.math.Vec3d;
+import net.minecraftforge.common.ToolType;
 import org.oilmod.api.blocks.BlockType;
 import org.oilmod.api.items.OilItemStack;
 import org.oilmod.api.items.type.IToolBlockBreaking;
@@ -41,6 +42,11 @@ public class TBBShovel extends RealTBBTool {
         return material == Material.SNOW ||
                 block == Blocks.SNOW || block == Blocks.SNOW_BLOCK ||
                 (/*!block.isVanilla() && */blockType.breakableShovel(blockStateRep));
+    }
+
+    @Override
+    public ToolType getForge() {
+        return ToolType.SHOVEL;
     }
 
     @Override

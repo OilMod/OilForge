@@ -6,6 +6,7 @@ import net.minecraft.block.BlockState;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ToolItem;
 import net.minecraft.world.World;
+import net.minecraftforge.common.ToolType;
 import org.oilmod.api.blocks.BlockType;
 import org.oilmod.api.items.OilItem;
 import org.oilmod.api.items.OilItemStack;
@@ -30,6 +31,7 @@ public abstract class RealTBBTool extends TBBType {
     private final int entityToolDamage;
     protected final Set<Block> effectiveBlocks;
 
+    public abstract ToolType getForge();
 
     protected RealTBBTool(TBBEnum tbbEnum, int blockToolDamage, int entityToolDamage, ToolItem copyEffectiveOnItem) {
         super(tbbEnum);

@@ -39,6 +39,11 @@ public class TBBPickaxe extends RealTBBTool {
     }
 
     @Override
+    public ToolType getForge() {
+        return ToolType.PICKAXE;
+    }
+
+    @Override
     protected float getDestroySpeed(IToolBlockBreaking item, OilItemStack stack, BlockStateRep blockStateRep, BlockType blockType) {
         BlockState state = ((BlockStateFR)blockStateRep).getForge();
 

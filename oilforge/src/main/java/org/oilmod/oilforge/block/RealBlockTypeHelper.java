@@ -20,7 +20,6 @@ public class RealBlockTypeHelper extends BlockType.Helper<RealBlockTypeHelper> {
     private void register(Material mat, BlockType.BlockTypeEnum blockTypeEnum) {
         RealBlockType realBlockType = new RealBlockType(mat, blockTypeEnum);
         map.put(mat, realBlockType);
-        getGameRegistry().register(realBlockType.getOilKey(), realBlockType);
     }
 
     public BlockType get(Material mat) {
@@ -53,10 +52,10 @@ public class RealBlockTypeHelper extends BlockType.Helper<RealBlockTypeHelper> {
         register(Material.PACKED_ICE, PACKED_ICE);
         register(Material.SAND, SAND);
         register(Material.SPONGE, SPONGE);
-        register(Material.SHULKER, ENUM_MISSING);
+        register(Material.SHULKER, ENUM_MISSING); //todo
         register(Material.WOOD, WOOD);
-        register(Material.BAMBOO_SAPLING, ENUM_MISSING);
-        register(Material.BAMBOO, ENUM_MISSING);
+        register(Material.BAMBOO_SAPLING, ENUM_MISSING); //todo
+        register(Material.BAMBOO, ENUM_MISSING); //todo
         register(Material.WOOL, CLOTH);
         register(Material.TNT, TNT);
         register(Material.LEAVES, LEAVES);
@@ -94,7 +93,7 @@ public class RealBlockTypeHelper extends BlockType.Helper<RealBlockTypeHelper> {
         return result;
     }
 
-    public  static PushReaction toNMS(PistonReaction pistonReaction) {
+    public static PushReaction toForge(PistonReaction pistonReaction) {
         switch (pistonReaction) {
             case BLOCK: return PushReaction.BLOCK;
             case DESTROY: return PushReaction.DESTROY;
@@ -105,7 +104,7 @@ public class RealBlockTypeHelper extends BlockType.Helper<RealBlockTypeHelper> {
         }
     }
 
-    public  static PistonReaction toOil(PushReaction pistonReaction) {
+    public static PistonReaction toOil(PushReaction pistonReaction) {
         switch (pistonReaction) {
             case BLOCK: return PistonReaction.BLOCK;
             case DESTROY: return PistonReaction.DESTROY;

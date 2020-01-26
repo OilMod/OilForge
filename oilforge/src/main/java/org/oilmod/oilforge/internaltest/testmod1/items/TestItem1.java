@@ -1,4 +1,4 @@
-package org.oilmod.oilforge.internaltest.testmod1;
+package org.oilmod.oilforge.internaltest.testmod1.items;
 
 import org.oilmod.api.items.OilItem;
 import org.oilmod.api.rep.providers.minecraft.MinecraftItem;

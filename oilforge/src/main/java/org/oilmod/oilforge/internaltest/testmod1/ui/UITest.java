@@ -1,4 +1,4 @@
-package org.oilmod.oilforge.internaltest.testmod1;
+package org.oilmod.oilforge.internaltest.testmod1.ui;
 
 import org.oilmod.api.UI.SlotPanel;
 import org.oilmod.api.UI.UI;

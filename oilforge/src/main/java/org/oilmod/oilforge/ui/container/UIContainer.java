@@ -1,12 +1,9 @@
 package org.oilmod.oilforge.ui.container;
 
-import cpw.mods.modlauncher.api.LamdbaExceptionUtils;
 import net.minecraft.client.util.RecipeBookCategories;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.IInventory;
-import net.minecraft.inventory.container.Container;
-import net.minecraft.inventory.container.ContainerType;
 import net.minecraft.inventory.container.RecipeBookContainer;
 import net.minecraft.inventory.container.Slot;
 import net.minecraft.item.ItemStack;
@@ -18,7 +15,6 @@ import org.apache.commons.lang3.Validate;
 import org.oilmod.api.UI.IItemElement;
 import org.oilmod.api.UI.UI;
 import org.oilmod.api.crafting.ICraftingProcessor;
-import org.oilmod.api.rep.itemstack.state.ItemStackStateRep;
 import org.oilmod.oilforge.inventory.IItemFilter;
 import org.oilmod.oilforge.inventory.NoItemFilter;
 import org.oilmod.oilforge.inventory.container.ClientContainerHelper;
@@ -27,14 +23,11 @@ import org.oilmod.oilforge.inventory.container.OilContainerType;
 import org.oilmod.oilforge.ui.RealItemRef;
 import org.oilmod.oilforge.ui.container.slot.UISlot;
 
-import java.lang.reflect.Field;
 import java.util.Collections;
 import java.util.List;
 
-import static org.oilmod.oilforge.ReflectionUtil.setFinal;
 import static org.oilmod.oilforge.Util.toForge;
 import static org.oilmod.oilforge.Util.toOil;
-import static org.oilmod.oilforge.block.RealBlockTypeHelper.toNMS;
 import static org.oilmod.oilforge.inventory.container.ContainerUtil.GuiOffSide;
 import static org.oilmod.oilforge.inventory.container.ContainerUtil.GuiSlotSize;
 

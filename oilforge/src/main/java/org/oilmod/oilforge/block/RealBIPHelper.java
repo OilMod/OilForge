@@ -10,8 +10,6 @@ import org.oilmod.api.rep.block.BlockRep;
 import org.oilmod.api.rep.item.ItemRep;
 import org.oilmod.oilforge.items.RealItem;
 import org.oilmod.oilforge.items.RealItemImplHelper;
-import org.oilmod.oilforge.items.tools.RealPickaxe;
-import org.oilmod.oilforge.items.tools.RealShovel;
 
 import static org.oilmod.oilforge.Util.toOil;
 
