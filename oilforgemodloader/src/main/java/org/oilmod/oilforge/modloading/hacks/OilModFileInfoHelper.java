@@ -10,6 +10,7 @@ import net.minecraftforge.fml.loading.moddiscovery.ModFile;
 import net.minecraftforge.fml.loading.moddiscovery.ModFileInfo;
 import net.minecraftforge.fml.loading.moddiscovery.ModInfo;
 import net.minecraftforge.forgespi.language.IModInfo;
+import net.minecraftforge.forgespi.locating.IModFile;
 import org.oilmod.oilforge.modloading.OilModFile;
 import org.oilmod.oilforge.modloading.OilModInfo;
 
@@ -27,6 +28,7 @@ import static net.minecraft.world.biome.Biome.LOGGER;
 
 public class OilModFileInfoHelper {
     public static final String OilModIdentifier = "OilModIdentifierClasspath";
+    public static final String OilTestModIdentifier = "OilTestModIdentifierClasspath";
     private static final Config fakeModFileConfig; //needed because of forge stupidity, casts all IModFileInfo to ModFileInfo for no reason whatsoever, like just for fun
     private static final Config fakeModConfig;
     static {
@@ -57,7 +59,7 @@ public class OilModFileInfoHelper {
     }
 
     //copied from OilModFileInfo
-    public static ModFileInfo createFileInfo(OilModFile modFile, UnmodifiableConfig config) {
+    public static ModFileInfo createFileInfo(ModFile modFile, UnmodifiableConfig config) {
         try {
             ModFileInfo result = ctor.newInstance(modFile, fakeModFileConfig);
 
@@ -183,7 +185,7 @@ public class OilModFileInfoHelper {
     public static String getClasspath(IModInfo info) {
         return (String) info.getModProperties().get(OilModIdentifier);
     }
-    public static boolean isOilModIfo(IModInfo info) {
+    public static boolean isOilModInfo(IModInfo info) {
         return info.getModProperties().containsKey(OilModIdentifier);
     }
 }

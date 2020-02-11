@@ -4,6 +4,7 @@ import org.oilmod.api.OilMod;
 import org.oilmod.api.blocks.BlockRegistry;
 import org.oilmod.api.inventory.ItemFilterRegistry;
 import org.oilmod.api.items.ItemRegistry;
+import org.oilmod.api.registry.RegistryBase;
 
 public final class ModUtil extends OilMod.ModHelper<ModUtil> {
 
@@ -16,6 +17,11 @@ public final class ModUtil extends OilMod.ModHelper<ModUtil> {
     }
     public static void invokeRegisterBlocks(OilMod mod) {
         OilMod.ModHelper.invokeRegister(mod, BlockRegistry.class);
+    }
+
+
+    public static <T extends RegistryBase<?, T, ?, ?>> void invokeRegister(OilMod mod, Class<T> clazz) {
+        OilMod.ModHelper.invokeRegister(mod, clazz);
     }
 
     public static void invokeMissingRegistries(OilMod mod) {

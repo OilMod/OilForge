@@ -1,9 +1,8 @@
 package org.oilmod.oilforge.modloading;
 
-import net.minecraftforge.forgespi.language.ILifecycleEvent;
-import net.minecraftforge.forgespi.language.IModInfo;
-import net.minecraftforge.forgespi.language.IModLanguageProvider;
-import net.minecraftforge.forgespi.language.ModFileScanData;
+import net.minecraftforge.fml.loading.moddiscovery.ModFileInfo;
+import net.minecraftforge.fml.loading.moddiscovery.ModInfo;
+import net.minecraftforge.forgespi.language.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.oilmod.oilforge.modloading.hacks.OilModFileInfoHelper;
@@ -11,6 +10,7 @@ import org.oilmod.oilforge.modloading.hacks.OilModFileInfoHelper;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -47,10 +47,24 @@ public class OilModLanguageProvider implements IModLanguageProvider {
                     .collect(Collectors.toMap(OilLoader::getModId, Function.identity(), (a, b)->a));*/
             final Map<String, OilLoader> modTargetMap = scanResult.getIModInfoData().stream()
                     .flatMap(fileInfo -> fileInfo.getMods().stream())
-                    .filter(OilModFileInfoHelper::isOilModIfo)
+                    .filter(OilModFileInfoHelper::isOilModInfo)
                     .peek(modInfo -> LOGGER.debug(SCAN, "Found oilmod-classpath {} with id {}", getClasspath(modInfo)::toString, modInfo::getModId))
                     .map(modInfo -> new OilLoader(getClasspath(modInfo), modInfo.getModId()))
                     .collect(Collectors.toMap(OilLoader::getModId, Function.identity(), (a, b)->a));
+
+            /*Optional<IModFileInfo> apiImplOptional = scanResult.getIModInfoData().stream()
+                    .filter(fileInfo -> fileInfo.getMods().stream().anyMatch(modInfo -> modInfo.getModId().equals("oilforgeapi")))
+                    .findAny();
+            if (apiImplOptional.isPresent()) {
+                ModFileInfo apiImpl = (ModFileInfo) apiImplOptional.get();
+                ModInfo modInfo = OilModFileInfoHelper.createModInfo(apiImpl, OilModFileParser.readModList(apiImpl.getFile()).getConfig());
+                apiImpl.getMods().add(modInfo);
+
+                OilLoader oilLoader = new OilLoader(getClasspath(modInfo), modInfo.getModId());
+                modTargetMap.put(oilLoader.getModId(), oilLoader);
+
+            }*/
+
             scanResult.addLanguageLoader(modTargetMap);
         };
     }

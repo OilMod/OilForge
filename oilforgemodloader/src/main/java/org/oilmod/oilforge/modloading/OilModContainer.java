@@ -2,12 +2,10 @@ package org.oilmod.oilforge.modloading;
 
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
+import net.minecraft.tileentity.TileEntityType;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.EventBusErrorMessage;
-import net.minecraftforge.eventbus.api.BusBuilder;
-import net.minecraftforge.eventbus.api.Event;
-import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.eventbus.api.IEventListener;
+import net.minecraftforge.eventbus.api.*;
 import net.minecraftforge.fml.*;
 import net.minecraftforge.forgespi.language.IModInfo;
 import net.minecraftforge.forgespi.language.ModFileScanData;
@@ -16,8 +14,11 @@ import org.apache.commons.lang3.Validate;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.oilmod.api.OilMod;
+import org.oilmod.api.blocks.BlockRegistry;
+import org.oilmod.api.stateable.complex.ComplexStateTypeRegistry;
 import org.oilmod.oilforge.OilAPIInitEvent;
 import org.oilmod.oilforge.OilModContext;
+import org.oilmod.oilforge.block.IBlockItemRegistry;
 
 import java.util.Optional;
 import java.util.function.Consumer;
@@ -71,6 +72,7 @@ public class OilModContainer extends ModContainer { //would like to overwrite fm
         OilAPIInitEvent.addListener(this::onOilAPIInitEvent);
         eventBus.addGenericListener(Item.class, this::registerItems); //if this fails, its indicated that classloader stuff went wrong (this class cannot be classloaded by e.g. AppClassLoader etc must be TransformingClassLoader)
         eventBus.addGenericListener(Block.class, this::registerBlocks); 
+        eventBus.addGenericListener(TileEntityType.class, this::registerTileEntityType);
     }
 
     private void checkConstructState(LifecycleEventProvider.LifecycleEvent lifecycleEvent) {
@@ -85,8 +87,9 @@ public class OilModContainer extends ModContainer { //would like to overwrite fm
 
         ModUtil.invokeRegisterItemFilters(modInstance);
         ModUtil.invokeRegisterItems(modInstance);
-
+        ((IBlockItemRegistry)OilMod.ModHelper.getRegistry(modInstance, BlockRegistry.class)).registerBlockItems();
         context.itemRegistry = null;
+
     }
 
     //OilMod
@@ -98,6 +101,18 @@ public class OilModContainer extends ModContainer { //would like to overwrite fm
         ModUtil.invokeRegisterBlocks(modInstance);
 
         context.blockRegistry = null;
+    }
+
+
+    public void registerTileEntityType(RegistryEvent.Register<TileEntityType<?>> event) {
+        IForgeRegistry<TileEntityType<?>> tileEntityTypeRegistry = event.getRegistry();
+        OilModContext context = (OilModContext) modInstance.getContext();
+        context.tileEntityTypeRegistry = tileEntityTypeRegistry;
+
+        ModUtil.invokeRegister(modInstance, ComplexStateTypeRegistry.class);
+        BlockRegistry registry = OilMod.ModHelper.getRegistry(modInstance, BlockRegistry.class);
+        //registry.
+
     }
 
 

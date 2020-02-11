@@ -1,16 +1,25 @@
 apply plugin: 'net.minecraftforge.gradle'
 
 minecraft {
-    mappings channel: 'snapshot', version: '20190719-1.14.3'
+    mappings channel: 'snapshot', version: '20200119-1.14.4'
+    accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
 }
 
 dependencies {
-    minecraft 'net.minecraftforge:forge:1.14.4-28.1.90'
+    minecraft 'net.minecraftforge:forge:1.14.4-28.1.116'
 }
 version = '1.0' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 
 fmlmodtype = 'LANGPROVIDER'
 isDepForge = true;
+
+task copyMod(type: Copy) {
+    doFirst {
+        println "Copying jar into ${rootProject.file('run/mods')}"
+    }
+    from jar
+    into rootProject.file('run/mods')
+}
 
 
 def delayedSetup() {
@@ -23,16 +32,6 @@ def delayedSetup() {
         compileOnly project(":lib:OilMod-API")
         compileOnly project(":forgeshared")
 
-    }
-
-    jar {
-        doLast {
-            copy {
-                from jar
-                into rootProject.file('run/mods')
-            }
-
-        }
     }
 }
 
