@@ -6,7 +6,7 @@ public class ItemStateFR extends ItemStateBase {
     private int data;
 
 
-    public ItemStateFR(ItemFR item, int data) {
+    public ItemStateFR(ItemFR item, int data) { //todo get rid of data
         super(item);
         this.data = data;
     }

@@ -16,13 +16,13 @@ public class RealModHelper extends OilMod.ModHelper<RealModHelper> {
 
     public static class OilModMinecraft extends OilMod {
         @Override
-        protected boolean isGame() {
+        public boolean isGame() {
             return true;
         }
     }
     public static class OilModOilForge extends OilMod {
         @Override
-        protected boolean isImplementation() {
+        public boolean isImplementation() {
             return true;
         }
     }

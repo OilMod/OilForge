@@ -9,12 +9,18 @@ import org.oilmod.api.crafting.custom.Transformation;
 import org.oilmod.api.inventory.ItemFilterRegistry;
 import org.oilmod.api.items.ItemRegistry;
 import org.oilmod.api.items.crafting.VanillaMaterialIngredient;
+import org.oilmod.api.registry.DeferredObject;
 import org.oilmod.api.rep.crafting.*;
 import org.oilmod.api.rep.itemstack.ItemStackFactory;
+import org.oilmod.api.stateable.complex.ComplexStateTypeRegistry;
 import org.oilmod.oilforge.internaltest.testmod1.blocks.TestBlock;
+import org.oilmod.oilforge.internaltest.testmod1.blocks.TestBlock2;
+import org.oilmod.oilforge.internaltest.testmod1.blocks.TestBlockInventoryType;
 import org.oilmod.oilforge.internaltest.testmod1.items.*;
 import org.oilmod.oilforge.internaltest.testmod1.ui.UITest;
 import org.oilmod.oilforge.internaltest.testmod1.ui.UITestItem;
+
+import java.util.function.Supplier;
 
 import static org.oilmod.api.rep.providers.minecraft.MinecraftItem.*;
 
@@ -22,7 +28,7 @@ public class TestMod1 extends OilMod {
     public static final IIngredientCategory TestIngredientCategory = new IIngredientCategory() {};
     public static final IResultCategory TestResultCategory = new IResultCategory() {};
     public static final CustomCraftingManager CraftingManager = new CustomCraftingManager(new IIngredientCategory[]{TestIngredientCategory}, new IResultCategory[]{TestResultCategory});
-
+    public static DeferredObject<TestBlockInventoryType> TestBlockInventoryType = DeferredObject.empty();
 
     @Override
     public void onRegisterItems(ItemRegistry itemRegistry) {
@@ -37,16 +43,16 @@ public class TestMod1 extends OilMod {
 
 
 
-        itemRegistry.register("testitem1", new TestItem1());
-        itemRegistry.register("testitem2", new TestItem2());
-        itemRegistry.register("testbackpack", new TestBackpackItem());
-        itemRegistry.register("kaban", new TestKabanItem());
-        itemRegistry.register("testportablefurnance", new TestPortableFurnaceItem());
-        itemRegistry.register("testpickaxe", new TestPickaxe());
-        itemRegistry.register("testshovel", new TestShovel());
-        itemRegistry.register("gods_flint", new GodsFlintItem());
-        itemRegistry.register("ui_test", new UITestItem());
-        itemRegistry.register("upgradable_pickaxe", new UpgradablePickaxe());
+        itemRegistry.register("testitem1", TestItem1::new);
+        itemRegistry.register("testitem2", TestItem2::new);
+        itemRegistry.register("testbackpack", TestBackpackItem::new);
+        itemRegistry.register("kaban", TestKabanItem::new);
+        itemRegistry.register("testportablefurnance", TestPortableFurnaceItem::new);
+        itemRegistry.register("testpickaxe", TestPickaxe::new);
+        itemRegistry.register("testshovel", TestShovel::new);
+        itemRegistry.register("gods_flint", GodsFlintItem::new);
+        itemRegistry.register("ui_test", UITestItem::new);
+        itemRegistry.register("upgradable_pickaxe", UpgradablePickaxe::new);
 
 
 
@@ -54,17 +60,22 @@ public class TestMod1 extends OilMod {
 
     @Override
     protected void onRegisterBlocks(BlockRegistry registry) {
-        registry.register("testblock", new TestBlock());
+        registry.register("testblock", TestBlock::new);
+        registry.register("testblock2", TestBlock2::new);
     }
 
     @Override
     protected void onRegisterItemFilter(ItemFilterRegistry registry) {
-        registry.register("portable_item_filter", PortableInventoryFilter.INSTANCE);
+        registry.register("portable_item_filter", ()-> PortableInventoryFilter.INSTANCE);
     }
 
     @Override
     protected void onRegisterUI(UIRegistry registry) {
-        registry.register("ui_test", UITest.INSTANCE);
+        registry.register("ui_test", ()->UITest.INSTANCE);
     }
 
+    @Override
+    protected void onRegisterComplexStateType(ComplexStateTypeRegistry registry) {
+        TestBlockInventoryType = registry.register("testblockcomplexstate", TestBlockInventoryType::new);
+    }
 }

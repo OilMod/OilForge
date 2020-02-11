@@ -51,7 +51,7 @@ public class CustomUIScreen<T extends UIContainer>extends ContainerScreen<T> imp
     }
 
     public boolean displayCompact() {
-        return func_194310_f() != null && this.width < xSize + GuiRecipeBookSize;
+        return getRecipeGui() != null && this.width < xSize + GuiRecipeBookSize;
     }
 
     public void addRenderable(IRenderable renderable) {
@@ -66,11 +66,11 @@ public class CustomUIScreen<T extends UIContainer>extends ContainerScreen<T> imp
     @Override
     protected void init() {
         super.init();
-        recipeBookGui.func_201520_a(this.width, this.height, this.minecraft, displayCompact(), this.container);
+        recipeBookGui.init(this.width, this.height, this.minecraft, displayCompact(), this.container);
 
         this.guiLeft = this.recipeBookGui.updateScreenPosition(displayCompact(), this.width, this.xSize);
         this.addButton((new ImageButton(this.guiLeft + 20, this.height / 2 - 49, 20, 18, 0, 0, 19, RECIPE_BUTTON_TEXTURE, (p_214087_1_) -> {
-            recipeBookGui.func_201518_a(displayCompact());
+            recipeBookGui.initSearchBar(displayCompact());
             recipeBookGui.toggleVisibility();
             this.guiLeft = recipeBookGui.updateScreenPosition(displayCompact(), this.width, this.xSize);
             ((ImageButton)p_214087_1_).setPosition(this.guiLeft + 20, this.height / 2 - 49);
@@ -245,7 +245,7 @@ public class CustomUIScreen<T extends UIContainer>extends ContainerScreen<T> imp
     }
 
     @Override
-    public RecipeBookGui func_194310_f() {
+    public RecipeBookGui getRecipeGui() {
         return recipeBookGui;//should return currently active gui maybe check via get focus
     }
 

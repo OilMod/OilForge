@@ -15,6 +15,9 @@ org.oilmod.oilforge.block.RealBIPHelper
 org.oilmod.oilforge.ui.UIRegistryHelper
 org.oilmod.oilforge.ui.UIHelper
 
+#Statable
+org.oilmod.oilforge.stateable.RealComplexStateTypeRegistryHelper
+
 
 
 ###Factories
@@ -26,4 +29,5 @@ org.oilmod.oilforge.rep.itemstack.RealItemStackFactory
 #Mods
 org.oilmod.oilforge.modloader.RealModHelper
 org.oilmod.oilforge.RealOilUtil
+
 

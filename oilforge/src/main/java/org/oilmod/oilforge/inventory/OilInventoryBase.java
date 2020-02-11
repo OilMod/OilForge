@@ -1,9 +1,11 @@
 package org.oilmod.oilforge.inventory;
 
 import net.minecraft.inventory.Inventory;
+import net.minecraft.inventory.InventoryHelper;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.NonNullList;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.World;
@@ -11,9 +13,11 @@ import org.apache.commons.lang3.NotImplementedException;
 import org.apache.commons.lang3.Validate;
 import org.oilmod.api.config.Compound;
 import org.oilmod.api.crafting.ICraftingProcessor;
+import org.oilmod.api.inventory.InventoryFactory;
 import org.oilmod.api.inventory.ModInventoryObjectBase;
 import org.oilmod.api.rep.inventory.InventoryHolderRep;
 import org.oilmod.api.rep.inventory.InventoryRep;
+import org.oilmod.api.stateable.complex.IInventoryState;
 import org.oilmod.api.userinterface.IInteractableUIElement;
 import org.oilmod.api.util.ITicker;
 import org.oilmod.oilforge.inventory.container.SetItemFilterPacket;
@@ -30,7 +34,7 @@ import java.util.function.Function;
  * Created by sirati97 on 13.02.2016.
  */
 public abstract class OilInventoryBase<APIObject extends ModInventoryObjectBase<APIObject>> extends Inventory implements OilIInventory<APIObject> {
-    private final WeakReference<InventoryHolderRep> owner;
+    private final WeakReference<IInventoryState> owner;
     private final IItemFilter itemFilter;
     private final NonNullList<ItemStack> items;
     private final List<ItemStack> itemsReadOnly;
@@ -40,9 +44,10 @@ public abstract class OilInventoryBase<APIObject extends ModInventoryObjectBase<
     private final InventoryFR inventoryRep;
     private ITextComponent displayName;
     private final ICraftingProcessor[] craftingProcessors;
+    private final InventoryFactory.DropPredicate dropPredicate;
 
 
-    public OilInventoryBase(InventoryHolderRep owner, String title, int size, ITicker ticker, IItemFilter itemFilter, boolean needsOwner, Function<InventoryRep, ICraftingProcessor[]> processorFactory) {
+    public OilInventoryBase(IInventoryState owner, String title, int size, ITicker ticker, IItemFilter itemFilter, boolean needsOwner, Function<InventoryRep, ICraftingProcessor[]> processorFactory, InventoryFactory.DropPredicate dropPredicate) {
         super(size);
         setTitle(title);
         this.items = extractItems();
@@ -53,6 +58,7 @@ public abstract class OilInventoryBase<APIObject extends ModInventoryObjectBase<
         this.itemFilter = itemFilter;
         this.ticker = ticker;
         this.needsOwner = needsOwner;
+        this.dropPredicate = dropPredicate;
         this.craftingProcessors = processorFactory.apply(getInventoryRep());
         if (isTickable() && ticker != null) {
             ticker.add(this);
@@ -82,7 +88,7 @@ public abstract class OilInventoryBase<APIObject extends ModInventoryObjectBase<
         }
     }
 
-    public InventoryHolderRep getOwner() {
+    public IInventoryState getOwner() {
         return owner.get();
     }
 
@@ -169,10 +175,37 @@ public abstract class OilInventoryBase<APIObject extends ModInventoryObjectBase<
         markDirtyFlag = false;
 
         super.markDirty();
+        IInventoryState owner = getOwner();
+        if (owner != null)owner.markUpdated();
     }
 
     @Override
     public Collection<ICraftingProcessor> getProcessors() {
         return Collections.unmodifiableCollection(Arrays.asList(craftingProcessors));
+    }
+
+    public InventoryFactory.DropPredicate getDropPredicate() {
+        return dropPredicate;
+    }
+    
+    public void dropInventory(World worldIn, BlockPos pos) {
+        for (int top = 0; top < getColumns(); top++) {
+            for (int left = 0; left < getRows(); left++) {
+                int i = top * getRows() + left;
+                if (dropPredicate.test(getInventoryRep(), i, top, left)) {
+                    InventoryHelper.spawnItemStack(worldIn, pos.getX(), pos.getY(), pos.getZ(), items.get(i));
+                    items.set(i, ItemStack.EMPTY);
+                }
+            }
+        }
+    }
+
+
+    public int getRows() {
+        return getSizeInventory();
+    }
+
+    public int getColumns() {
+        return 1;
     }
 }

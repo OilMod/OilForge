@@ -5,7 +5,7 @@ import org.oilmod.api.UI.UI;
 import org.oilmod.api.UI.UIFactory;
 import org.oilmod.api.UI.UIMPI;
 import org.oilmod.api.crafting.ICraftingProcessor;
-import org.oilmod.api.data.DataParent;
+import org.oilmod.api.data.IDataParent;
 import org.oilmod.api.items.OilItemStack;
 import org.oilmod.api.rep.entity.EntityHumanRep;
 import org.oilmod.api.rep.entity.EntityPlayerRep;
@@ -28,17 +28,17 @@ public class UITest extends UIFactory<OilItemStack> {
     }
 
     @Override
-    public DataParent getDataParent(OilItemStack stack) {
+    public IDataParent getDataParent(OilItemStack stack) {
         return stack;
     }
 
     @Override
-    public DataParent createDataParent(EntityPlayerRep player) {
+    public IDataParent createDataParent(EntityPlayerRep player) {
         return ((OilModItemStackFR)UITestItem.INSTANCE.createItemStack((EntityHumanRep) player, 1)).getOilItemStack(); //this should be made easier lol
     }
 
     @Override
-    public OilItemStack getContext(DataParent data) {
+    public OilItemStack getContext(IDataParent data) {
         return (OilItemStack)data;
     }
 }

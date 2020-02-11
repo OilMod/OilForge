@@ -28,9 +28,11 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.world.World;
 import org.oilmod.api.config.Compound;
 import org.oilmod.api.crafting.ICraftingProcessor;
+import org.oilmod.api.inventory.InventoryFactory;
 import org.oilmod.api.inventory.ModFurnaceInventoryObject;
 import org.oilmod.api.rep.inventory.InventoryHolderRep;
 import org.oilmod.api.rep.inventory.InventoryRep;
+import org.oilmod.api.stateable.complex.IInventoryState;
 import org.oilmod.api.util.ITicker;
 import org.oilmod.oilforge.inventory.container.OilContainerType;
 import org.oilmod.oilforge.inventory.container.OilFurnaceContainer;
@@ -48,8 +50,8 @@ public class OilInventoryFurnace extends OilInventoryBase<ModFurnaceInventoryObj
 
 
     //new TextComponentTranslation("container.furnace", new Object[0])
-    public OilInventoryFurnace(OilContainerType<?> containerType, IRecipeType<? extends AbstractCookingRecipe> recipeType, InventoryHolderRep owner, String title, ITicker ticker, IItemFilter itemFilter, Function<InventoryRep, ICraftingProcessor[]> processorFactory) {
-        super(owner, title, 3, ticker, itemFilter, true, processorFactory);
+    public OilInventoryFurnace(OilContainerType<?> containerType, IRecipeType<? extends AbstractCookingRecipe> recipeType, IInventoryState owner, String title, ITicker ticker, IItemFilter itemFilter, Function<InventoryRep, ICraftingProcessor[]> processorFactory, InventoryFactory.DropPredicate dropPredicate) {
+        super(owner, title, 3, ticker, itemFilter, true, processorFactory, dropPredicate);
         this.recipeType = recipeType;
         this.containerType = containerType;
     }

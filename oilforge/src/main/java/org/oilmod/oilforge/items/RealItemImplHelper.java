@@ -12,10 +12,7 @@ import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemUseContext;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.ActionResultType;
-import net.minecraft.util.Hand;
-import net.minecraft.util.NonNullList;
+import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
@@ -35,7 +32,7 @@ import java.util.Objects;
 
 import static org.oilmod.oilforge.Util.*;
 
-public interface RealItemImplHelper extends NMSItem, IForgeItem {
+public interface RealItemImplHelper extends NMSItem, IForgeItem, IItemProvider {
 
 
     //Oil
@@ -76,7 +73,7 @@ public interface RealItemImplHelper extends NMSItem, IForgeItem {
 
         RealItemStack itemstack = toReal(context.getItem());
         Vec3d hit = context.getHitVec();
-        return toForge(getApiItem().onItemUseOnBlock(itemstack.getOilItemStack(), toOil(player), toOil(blockpos, world), player.getHeldItemOffhand()==context.getItem(), toOil(context.getFace()), (float)hit.x, (float)hit.y, (float)hit.z));
+        return toForge(getApiItem().onItemUseOnBlock(itemstack.getOilItemStack(), toOil(player), toOil(blockpos, world), context.getHand() == Hand.OFF_HAND, toOil(context.getFace()), (float)hit.x, (float)hit.y, (float)hit.z));
     }
 
     /*

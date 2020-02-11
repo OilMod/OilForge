@@ -146,4 +146,8 @@ public class RealItem extends Item implements NMSItem, RealItemImplHelper {
 
     //test impl
 
+    @Override
+    public void inventoryTick(ItemStack stack, World worldIn, Entity entityIn, int itemSlot, boolean isSelected) {
+        super.inventoryTick(stack, worldIn, entityIn, itemSlot, isSelected); //todo OMG so useful
+    }
 }

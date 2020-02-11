@@ -1,0 +1,12 @@
+{
+  "required": true,
+  "package": "org.oilmod.oilforge.mixin.transformers",
+  "compatibilityLevel": "JAVA_8",
+  "refmap": "main.refmap.json",
+  "mixins": [
+    "EntityMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

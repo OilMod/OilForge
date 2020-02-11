@@ -1,15 +1,21 @@
 apply plugin: 'net.minecraftforge.gradle'
+apply plugin: 'org.spongepowered.mixin'
 
 minecraft {
-    mappings channel: 'snapshot', version: '20190719-1.14.3'
+    mappings channel: 'snapshot', version: '20200119-1.14.4'
+    accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
 }
 
 dependencies {
-    minecraft 'net.minecraftforge:forge:1.14.4-28.1.90'
+    minecraft 'net.minecraftforge:forge:1.14.4-28.1.116'
 }
 
 version = '1.0' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 isDepForge = true;
+
+
+
+mixinconnector =  "org.oilmod.oilforge.mixin.transformers.MixinConnector"
 
 def delayedSetup() {
     dependencies {
@@ -19,9 +25,14 @@ def delayedSetup() {
         compileOnly project(":oilforgemodloader")
         compileJars project(":forgeshared")
         compile 'com.electronwill.night-config:json:3.6.0' //remove after figuring out big jar
+        compileOnly 'org.spongepowered:mixin:0.8-SNAPSHOT'
     }
 }
 
+mixin {
+    add sourceSets.main, "main.refmap.json"
+    //add sourceSets.another, "another.refmap.json"
+}
 
 minecraft {
     // makeObfSourceJar = false // an Srg named sources jar is made by default. uncomment this to disable.
@@ -81,9 +92,12 @@ minecraft {
                 }
             }
         }
+
         //dependsOn ':oilforgemodloader:jar'
     }
 }
+
+
 
 def setupForge() {
 

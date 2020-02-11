@@ -1,0 +1,10 @@
+{
+  "configVersion": 1,
+  "mods": [
+    {
+      "modId": "oiltest",
+      "displayName": "oiltest",
+      "classpath": "org.oilmod.oilforge.internaltest.testmod1.TestMod1"
+    }
+  ]
+}
