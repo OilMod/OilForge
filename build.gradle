@@ -4,6 +4,7 @@ allprojects {
         jcenter()
         mavenCentral()
         mavenLocal()
+        maven {url='https://dist.creeper.host/Sponge/maven'}
     }
 }
 
@@ -11,10 +12,32 @@ buildscript {
     repositories {
         maven { url = 'https://files.minecraftforge.net/maven' }
         gradlePluginPortal()
+        maven {url='https://dist.creeper.host/Sponge/maven'}
     }
     dependencies {
         classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '3.+', changing: true
         classpath "gradle.plugin.com.lazan:gradle-maven-share:0.4"
+        classpath 'org.spongepowered:mixingradle:0.7-SNAPSHOT'
+    }
+}
+
+task copyMods{
+    doFirst{
+        Task task ->
+            println "copied/processed ${task.dependsOn.size()} mods"
+    }
+}
+
+
+
+gradle.afterProject { Project project2 ->
+    if (!project2.state.failure) {
+        project2.tasks.whenTaskAdded { Task task -> //we have to do this late as listening early for some reason breaks the createMcpToSrg task
+            if (task.name.equals("prepareRuns")) {
+                //println "made ${task} depend on ${project(":").copyMods}"
+                task.dependsOn project(":").copyMods
+            }
+        }
     }
 }
 
@@ -29,12 +52,21 @@ allprojects {
         isMaven = false
         delayedSetup = {}
     }
+
+
+    afterEvaluate{
+        if (project.tasks.findByName("copyMod")) {
+            project(":").copyMods.dependsOn copyMod
+        }
+    }
 }
+
 subprojects {
 
     ext {
         title = project.name
         fmlmodtype = "MOD"
+        mixinconnector = ""
     }
     group = 'org.oilmod'
 }
@@ -42,8 +74,9 @@ subprojects {
 //important to now evaluate children as they might change properties we depend on and we do not want to read the default values!
 evaluationDependsOnChildren()
 
-allprojects {
 
+
+allprojects {
     if (project.isDepForge) {
         println "$project.name is forge dep"
         configurations {
@@ -89,6 +122,7 @@ allprojects {
                         "Implementation-Vendor" :"oilforge",
                         "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
                         "FMLModType": fmlmodtype,
+                        "MixinConnector": mixinconnector,
                         //"Class-Path": configurations.releaseJars.collect { "META-INF/libraries/${it.getName()}" }.join(' ') //todo fix dependency inclusion
                 ])
             }
@@ -99,6 +133,8 @@ allprojects {
         }
     }
 }
+
+
 
 
 subprojects {
@@ -112,3 +148,11 @@ subprojects {
     }
 
 }
+
+
+
+def f = project.file('./run/mods/MixinBootstrap-1.0.1.jar')
+if (!f.exists()) {
+    println "Downloading MixinBootstrap ITransformerService and place it in mod folder"
+    new URL('https://github.com/LXGaming/MixinBootstrap/releases/download/v1.0.1/MixinBootstrap-1.0.1.jar').withInputStream{ i -> f.withOutputStream{ it << i }}
+}/**/
