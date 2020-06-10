@@ -155,4 +155,5 @@ def f = project.file('./run/mods/MixinBootstrap-1.0.1.jar')
 if (!f.exists()) {
     println "Downloading MixinBootstrap ITransformerService and place it in mod folder"
     new URL('https://github.com/LXGaming/MixinBootstrap/releases/download/v1.0.1/MixinBootstrap-1.0.1.jar').withInputStream{ i -> f.withOutputStream{ it << i }}
+    println "Tried downloading MixinBootstrap. File ${f.getAbsolutePath()} ${f.exists()?"does now":"still does not"} exist!"
 }/**/
