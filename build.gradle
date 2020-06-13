@@ -4,15 +4,15 @@ allprojects {
         jcenter()
         mavenCentral()
         mavenLocal()
-        maven {url='https://dist.creeper.host/Sponge/maven'}
+        maven {url='https://repo.spongepowered.org/maven/'}
     }
 }
 
 buildscript {
     repositories {
-        maven { url = 'https://files.minecraftforge.net/maven' }
+        maven {url = 'https://files.minecraftforge.net/maven'}
         gradlePluginPortal()
-        maven {url='https://dist.creeper.host/Sponge/maven'}
+        maven {url='https://repo.spongepowered.org/maven/'}
     }
     dependencies {
         classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '3.+', changing: true
