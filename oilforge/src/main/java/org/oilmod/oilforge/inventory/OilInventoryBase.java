@@ -72,7 +72,7 @@ public abstract class OilInventoryBase<APIObject extends ModInventoryObjectBase<
     private static final Field inventoryContentsField;
     static {
         try {
-            inventoryContentsField = Inventory.class.getDeclaredField("inventoryContents");
+            inventoryContentsField = Inventory.class.getDeclaredField("inventoryContents"); //todo just make it public in forge lol
             inventoryContentsField.setAccessible(true);
         } catch (NoSuchFieldException e) {
             throw new IllegalStateException(e);

@@ -132,34 +132,47 @@ public class UIContainer extends RecipeBookContainer<IInventory> implements IOil
                 UISlot uiSlot = (UISlot) slot;
                 ICraftingProcessor processor=uiSlot.getCraftingProcessor();
                 if (processor!= null) {
+                    ItemStack previewStack = itemstack1.copy();
                     int max;
-                    do {
-                        max = findSpace(itemstack,  topSlots, this.inventorySlots.size());
-                        max = processor.tryCrafting(max, (stack, multiplier, testRun) -> false, true);
-                        max = processor.tryCrafting(max, (oilStack, multiplier, testRun) -> {
-                            if (testRun) return false;
-                            int stackLimit =oilStack.getMaxStackSize();
-                            int total = (oilStack.getAmount()*multiplier);
-                            int stacks = total/stackLimit;
-                            int rest = total-stacks*stackLimit;
-                            ItemStack stack = toForge(oilStack);
-                            stack.setCount(stackLimit);
-                            for (int i = 0; i < total; i++) {
-                                playerIn.dropItem(stack.copy(), false);
+                    boolean hasTaken = false;
+                    try {
+                        do {
+                            max = findSpace(previewStack,  topSlots, this.inventorySlots.size());
+                            if (max != 0) max = processor.tryCrafting(max, (stack, multiplier, testRun) -> false, true); //bug 1 returns 1 instead of 0
+                            if (max == 0) {
+                                return ItemStack.EMPTY;
                             }
-                            if (rest!=0) {
-                                stack.setCount(rest);
-                                playerIn.dropItem(stack, false);
-                            }
-                            return true;
-                        }, false);
+                            max = processor.tryCrafting(max, (oilStack, multiplier, testRun) -> {
+                                if (testRun) return false;
+                                int stackLimit =oilStack.getMaxStackSize();
+                                int total = (oilStack.getAmount()*multiplier);
+                                int stacks = total/stackLimit;
+                                int rest = total-stacks*stackLimit;
+                                ItemStack stack = toForge(oilStack);
+                                stack.setCount(stackLimit);
+                                for (int i = 0; i < total; i++) {
+                                    playerIn.dropItem(stack.copy(), false);
+                                }
+                                if (rest!=0) {
+                                    stack.setCount(rest);
+                                    playerIn.dropItem(stack, false);
+                                }
+                                return true;
+                            }, false);
+                            hasTaken = true;
 
-                        itemstack1 = slot.getStack();
-                        itemstack = itemstack1.copy();
-                        if (!this.mergeItemStack(itemstack1, topSlots, this.inventorySlots.size(), true)) {
-                            return ItemStack.EMPTY;
+                            itemstack1 = slot.getStack();
+                            itemstack = itemstack1.copy();
+                            if (!this.mergeItemStack(itemstack1, topSlots, this.inventorySlots.size(), true)) {
+                                return ItemStack.EMPTY;
+                            }
+                        } while (max > 0);
+                    } finally {
+                        if (hasTaken) {
+                            processor.afterSlotTake();
+                            processor.updateRecipe(true); //we need to update the processor as its possible that we used up an ingredient
                         }
-                    } while (max > 0);
+                    }
 
                 }
 
@@ -194,7 +207,7 @@ public class UIContainer extends RecipeBookContainer<IInventory> implements IOil
             }
         }
 
-        return total;
+        return total / stackType.getCount();
     }
 
     /**

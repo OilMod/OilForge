@@ -22,7 +22,7 @@ org.oilmod.oilforge.stateable.RealComplexStateTypeRegistryHelper
 
 ###Factories
 org.oilmod.oilforge.rep.itemstack.RealItemStackFactory
-
+org.oilmod.oilforge.rep.inventory.InventoryFactoryFR
 
 
 ###Other

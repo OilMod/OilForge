@@ -8,7 +8,9 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import org.oilmod.api.UI.IItemElement;
 import org.oilmod.api.UI.slot.ISlotType;
 import org.oilmod.api.crafting.ICraftingProcessor;
+import org.oilmod.api.rep.crafting.IResultCategory;
 import org.oilmod.oilforge.inventory.IItemFilter;
+import org.oilmod.oilforge.rep.inventory.InventoryFR;
 import org.oilmod.oilforge.ui.RealItemRef;
 import org.oilmod.oilforge.ui.SlotTypeProcessing;
 
@@ -75,6 +77,7 @@ public class UISlot extends Slot {
         if (slotType instanceof SlotTypeProcessing) {
             ICraftingProcessor processor = ((SlotTypeProcessing) slotType).getProcessor();
             processor.onSlotTake();
+            processor.afterSlotTake();
         }
 
         return ref.getHandler().onTake(ref, thePlayer, stack);
@@ -84,8 +87,21 @@ public class UISlot extends Slot {
     /**
      * Helper fnct to get the stack in the slot.
      */
+    @Override
     public ItemStack getStack() {
-        return rref().getHandler().getStack(ref);
+        ISlotType slotType = rref().getSlotType();
+        ItemStack result = ref.getHandler().getStack(ref);
+        /*if (result.isEmpty() && slotType instanceof SlotTypeProcessing) {
+            SlotTypeProcessing slotTypeProcessing = ((SlotTypeProcessing) slotType);
+            ICraftingProcessor processor = slotTypeProcessing.getProcessor();
+            for (IResultCategory category:slotTypeProcessing.getCategories()) {
+                //to/do: this will result is wrong behaviour if the local slotview does not match the processors result invview. this is a bug, to fix it we need to enforce they are the same or obtain the local slot id other ways
+                ItemStack preview = ((InventoryFR)processor.getPreviewInventory(category)).getForge().getStackInSlot(elementRow * element.getColumns()+ elementColumn);
+                //System.out.printf("preview: %s, real:%s, slotid:%d\n", preview, result, elementRow * element.getColumns()+ elementColumn);
+                if (!preview.isEmpty()) return preview;
+            }
+        }*/
+        return result;
     }
 
     /**
@@ -134,7 +150,13 @@ public class UISlot extends Slot {
      * Return whether this slot's stack can be taken from this slot.
      */
     public boolean canTakeStack(PlayerEntity playerIn) {
-        return rref().getSlotType().isTakeable() && ref.getHandler().canTakeStack(ref, playerIn);
+
+
+        if ( rref().getSlotType().isTakeable() && ref.getHandler().canTakeStack(ref, playerIn)) {
+
+            return true;
+        }
+        return false;
     }
 
     /**

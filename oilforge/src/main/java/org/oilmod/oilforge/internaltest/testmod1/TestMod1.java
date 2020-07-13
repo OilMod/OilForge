@@ -37,7 +37,7 @@ public class TestMod1 extends OilMod {
                     .row(new VanillaMaterialIngredient(ARROW.getItem()))
                     .row(new VanillaMaterialIngredient(BEEF.getItem()))
                 .ok()
-                .results(TestResultCategory, (state, checkState) -> ItemStackFactory.INSTANCE.create(PORKCHOP.getItem(), 10)).build();
+                .results(TestResultCategory, (state, checkState) -> ItemStackFactory.INSTANCE.create(PORKCHOP.getItem(), 2)).build();
 
         CraftingManager.add(recipe);
 
