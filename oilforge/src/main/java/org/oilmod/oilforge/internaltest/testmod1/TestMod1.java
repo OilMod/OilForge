@@ -20,14 +20,12 @@ import org.oilmod.oilforge.internaltest.testmod1.items.*;
 import org.oilmod.oilforge.internaltest.testmod1.ui.UITest;
 import org.oilmod.oilforge.internaltest.testmod1.ui.UITestItem;
 
-import java.util.function.Supplier;
-
 import static org.oilmod.api.rep.providers.minecraft.MinecraftItem.*;
 
 public class TestMod1 extends OilMod {
     public static final IIngredientCategory TestIngredientCategory = new IIngredientCategory() {};
     public static final IResultCategory TestResultCategory = new IResultCategory() {};
-    public static final CustomCraftingManager CraftingManager = new CustomCraftingManager(new IIngredientCategory[]{TestIngredientCategory}, new IResultCategory[]{TestResultCategory});
+    public static final CustomCraftingManager TestCraftingManager = new CustomCraftingManager(new IIngredientCategory[]{TestIngredientCategory}, new IResultCategory[]{TestResultCategory});
     public static DeferredObject<TestBlockInventoryType> TestBlockInventoryType = DeferredObject.empty();
 
     @Override
@@ -39,7 +37,7 @@ public class TestMod1 extends OilMod {
                 .ok()
                 .results(TestResultCategory, (state, checkState) -> ItemStackFactory.INSTANCE.create(PORKCHOP.getItem(), 2)).build();
 
-        CraftingManager.add(recipe);
+        TestCraftingManager.add(recipe);
 
 
 

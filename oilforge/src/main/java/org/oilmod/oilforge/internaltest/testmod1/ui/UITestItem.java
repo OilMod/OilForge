@@ -36,7 +36,7 @@ public class UITestItem extends OilItem implements IUnique {
                 .size(4*4+1+2)
                 .filter(PortableInventoryFilter.INSTANCE)
                 .mainInventory()
-                .processors((inv)-> new ResultSlotCraftingProcessor(Collections.singletonMap(TestIngredientCategory, inv.createView2d(0, 4, 4)), Collections.singletonMap(TestResultCategory, inv.createView(16, 1)), CraftingManager))
+                .processors((inv)-> new ResultSlotCraftingProcessor(Collections.singletonMap(TestIngredientCategory, inv.createView2d(0, 4, 4)), Collections.singletonMap(TestResultCategory, inv.createView(16, 1)), TestCraftingManager))
                 .basic();
     }
 
