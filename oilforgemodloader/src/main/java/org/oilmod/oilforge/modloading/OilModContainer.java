@@ -32,6 +32,7 @@ public class OilModContainer extends ModContainer { //would like to overwrite fm
     private final IEventBus eventBus;
     private OilMod modInstance;
     private final Class<? extends OilMod> modClass;
+    private final OilEvents oilEvents;
 
     public OilModContainer(IModInfo info, String className, ClassLoader modClassLoader, ModFileScanData modFileScanResults)
     {
@@ -41,7 +42,7 @@ public class OilModContainer extends ModContainer { //would like to overwrite fm
         triggerMap.put(ModLoadingStage.CONSTRUCT, dummy().andThen(this::beforeEvent).andThen(this::constructMod).andThen(this::afterEvent));
         triggerMap.put(ModLoadingStage.CREATE_REGISTRIES, dummy().andThen(this::checkConstructState).andThen(this::beforeEvent).andThen(this::fireEvent).andThen(this::afterEvent));
         triggerMap.put(ModLoadingStage.LOAD_REGISTRIES, dummy().andThen(this::beforeEvent).andThen(this::fireEvent).andThen(this::afterEvent));
-        triggerMap.put(ModLoadingStage.COMMON_SETUP, dummy().andThen(this::beforeEvent).andThen(this::preinitMod).andThen(this::fireEvent).andThen(this::afterEvent));
+        triggerMap.put(ModLoadingStage.COMMON_SETUP, dummy().andThen(this::beforeEvent).andThen(this::fireEvent).andThen(this::afterEvent));
         triggerMap.put(ModLoadingStage.SIDED_SETUP, dummy().andThen(this::beforeEvent).andThen(this::fireEvent).andThen(this::afterEvent));
         triggerMap.put(ModLoadingStage.ENQUEUE_IMC, dummy().andThen(this::beforeEvent).andThen(this::initMod).andThen(this::fireEvent).andThen(this::afterEvent));
         triggerMap.put(ModLoadingStage.PROCESS_IMC, dummy().andThen(this::beforeEvent).andThen(this::fireEvent).andThen(this::afterEvent));
@@ -70,49 +71,11 @@ public class OilModContainer extends ModContainer { //would like to overwrite fm
 
 
         OilAPIInitEvent.addListener(this::onOilAPIInitEvent);
-        eventBus.addGenericListener(Item.class, this::registerItems); //if this fails, its indicated that classloader stuff went wrong (this class cannot be classloaded by e.g. AppClassLoader etc must be TransformingClassLoader)
-        eventBus.addGenericListener(Block.class, this::registerBlocks); 
-        eventBus.addGenericListener(TileEntityType.class, this::registerTileEntityType);
+        this.oilEvents = new OilEvents(eventBus); //if this fails, its indicated that classloader stuff went wrong (this class cannot be classloaded by e.g. AppClassLoader etc must be TransformingClassLoader)
     }
 
     private void checkConstructState(LifecycleEventProvider.LifecycleEvent lifecycleEvent) {
         Validate.notNull(modInstance, "Previous stage did not complete, as OilAPIInitEvent was not fired");
-    }
-
-    //OilMod
-    public void registerItems(RegistryEvent.Register<Item> event) {
-        IForgeRegistry<Item> itemRegistry = event.getRegistry();
-        OilModContext context = (OilModContext) modInstance.getContext();
-        context.itemRegistry = itemRegistry;
-
-        ModUtil.invokeRegisterItemFilters(modInstance);
-        ModUtil.invokeRegisterItems(modInstance);
-        ((IBlockItemRegistry)OilMod.ModHelper.getRegistry(modInstance, BlockRegistry.class)).registerBlockItems();
-        context.itemRegistry = null;
-
-    }
-
-    //OilMod
-    public void registerBlocks(RegistryEvent.Register<Block> event) {
-        IForgeRegistry<Block> blockRegistry = event.getRegistry();
-        OilModContext context = (OilModContext) modInstance.getContext();
-        context.blockRegistry = blockRegistry;
-
-        ModUtil.invokeRegisterBlocks(modInstance);
-
-        context.blockRegistry = null;
-    }
-
-
-    public void registerTileEntityType(RegistryEvent.Register<TileEntityType<?>> event) {
-        IForgeRegistry<TileEntityType<?>> tileEntityTypeRegistry = event.getRegistry();
-        OilModContext context = (OilModContext) modInstance.getContext();
-        context.tileEntityTypeRegistry = tileEntityTypeRegistry;
-
-        ModUtil.invokeRegister(modInstance, ComplexStateTypeRegistry.class);
-        BlockRegistry registry = OilMod.ModHelper.getRegistry(modInstance, BlockRegistry.class);
-        //registry.
-
     }
 
 
@@ -162,11 +125,6 @@ public class OilModContainer extends ModContainer { //would like to overwrite fm
         }
     }
 
-    private void preinitMod(LifecycleEventProvider.LifecycleEvent lifecycleEvent)
-    {
-        ModUtil.invokeMissingRegistries(modInstance);
-    }
-
     private boolean oilAPIinit = false;
     private boolean observedPhaseConstruct = false;
     private void onOilAPIInitEvent() {
@@ -207,6 +165,7 @@ public class OilModContainer extends ModContainer { //would like to overwrite fm
                 LOGGER.debug(LOADING, "Loading mod instance {} of type {}", getModId(), modClass.getName());
                 //OilMod
                 this.modInstance = OilMod.ModHelper.createInstance(modClass, getDefaultContext(), getModId(), getModInfo().getDisplayName());
+                this.oilEvents.setOilMod(modInstance);
 
 
 

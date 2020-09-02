@@ -59,6 +59,7 @@ import org.oilmod.oilforge.items.capability.OilItemStackHandler;
 import org.oilmod.oilforge.OilModContext;
 import org.oilmod.oilforge.loottable.RealBlockLootEntry;
 import org.oilmod.oilforge.modloading.ModUtil;
+import org.oilmod.oilforge.modloading.OilEvents;
 import org.oilmod.oilforge.rep.minecraft.MC113ItemProvider;
 import org.oilmod.oilforge.resource.OilDummyResourcePack;
 import org.oilmod.oilforge.resource.OilPackFinder;
@@ -82,13 +83,13 @@ public class OilModLoaderMod
     // Directly reference a log4j logger.
     public static final Logger LOGGER = LogManager.getLogger();
     private TestMod1 mod1;
+    private OilEvents mod1ForgeEvents;
 
     public OilModLoaderMod() {
         FMLJavaModLoadingContext.get().getModEventBus().addGenericListener(Block.class, EventPriority.HIGHEST, this::registerBlocks);
         FMLJavaModLoadingContext.get().getModEventBus().addGenericListener(Item.class, EventPriority.HIGHEST, this::registerItems);
         FMLJavaModLoadingContext.get().getModEventBus().addGenericListener(ContainerType.class, this::registerContainerType);
-        FMLJavaModLoadingContext.get().getModEventBus().addGenericListener(TileEntityType.class, this::registerTileEntityType);
-        //FMLJavaModLoadingContext.get().getModEventBus().addGenericListener(ItemStack.class, this::attackCapabilities);
+        //FMLJavaModLoadingContext.get().getModEventBus().addGenericListener(ItemStack.class, this::attackCapabilities); //i love how this is called attackCapabilities and not attachCapabilities
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::commonSetup);
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::modelBakeEvent);
         //FMLJavaModLoadingContext.get().getModEventBus().addListener(this::lootTableLoadEvent);
@@ -106,6 +107,9 @@ public class OilModLoaderMod
         OilMain.init();
 
         mod1 =  OilMod.ModHelper.createInstance(TestMod1.class,OilMod.ModHelper.getDefaultContext(),"testmod1", "Internal Test Mod1"); // registers itself
+        mod1ForgeEvents = new OilEvents(FMLJavaModLoadingContext.get().getModEventBus());
+        mod1ForgeEvents.setOilMod(mod1);
+
         Minecraft.getInstance().getResourcePackList().addPackFinder(new OilPackFinder());
 
         //Minecraft.getInstance().getResourceManager().addResourcePack(new OilDummyResourcePack());
@@ -120,9 +124,7 @@ public class OilModLoaderMod
     public void commonSetup(FMLCommonSetupEvent event) {
         LOGGER.info("OilForgeApi received FMLCommonSetupEvent");
 
-        ModUtil.invokeMissingRegistries(mod1);
         OilItemStackHandler.register();
-
 
         LOGGER.info("OilForgeApi registered Capability {}", OilItemStackHandler.CAPABILITY);
     }
@@ -147,42 +149,14 @@ public class OilModLoaderMod
     public void registerBlocks(final RegistryEvent.Register<Block> blockRegistryEvent) {
         LOGGER.debug("OilForgeApi received RegistryEvent.Register<Block>, initialising block providers");
         MinecraftBlockProvider.init();
-        // register a new block here
-        OilModContext context = (OilModContext) mod1.getContext();
-        context.blockRegistry = blockRegistryEvent.getRegistry();
-
-        ModUtil.invokeRegisterBlocks(mod1);
-
-        context.blockRegistry = null;
     }
     public void registerItems(RegistryEvent.Register<Item> event) {
         LOGGER.debug("OilForgeApi received RegistryEvent.Register<Item>, initialising item providers");
         IForgeRegistry<Item> itemRegistry = event.getRegistry();
         ((MC113ItemProvider)MinecraftItemProvider.getInstance()).setItemRegistry(itemRegistry);
         MinecraftItemProvider.init();
-
-        //register a new item here
-        OilModContext context = (OilModContext) mod1.getContext();
-        context.itemRegistry = itemRegistry;
-
-        RealModHelper.invokeRegisterItemFilters(mod1);
-        RealModHelper.invokeRegisterItems(mod1);
-        ((IBlockItemRegistry)OilMod.ModHelper.getRegistry(mod1, BlockRegistry.class)).registerBlockItems();
-        context.itemRegistry = null;
     }
 
-    public void registerTileEntityType(RegistryEvent.Register<TileEntityType<?>> event) {
-        IForgeRegistry<TileEntityType<?>> tileEntityTypeRegistry = event.getRegistry();
-        OilModContext context = (OilModContext) mod1.getContext();
-        context.tileEntityTypeRegistry = tileEntityTypeRegistry;
-
-        ModUtil.invokeRegister(mod1, ComplexStateTypeRegistry.class);
-
-        context.blockRegistry = null;
-        BlockRegistry registry = OilMod.ModHelper.getRegistry(mod1, BlockRegistry.class);
-        //registry.
-
-    }
 
 
     public void registerContainerType(RegistryEvent.Register<ContainerType<?>> event) {
@@ -295,7 +269,7 @@ public class OilModLoaderMod
         if (event.getTable() == EMPTY_LOOT_TABLE) {
             ResourceLocation key = event.getName();
             if (key.getNamespace().equals("testmod1")) {
-                LOGGER.debug(key);
+                LOGGER.debug("event.getTable() == EMPTY_LOOT_TABLE for {}", key);
             }
         }
 

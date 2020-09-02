@@ -10,8 +10,6 @@ import net.minecraftforge.fml.loading.moddiscovery.ModFile;
 import net.minecraftforge.fml.loading.moddiscovery.ModFileInfo;
 import net.minecraftforge.fml.loading.moddiscovery.ModInfo;
 import net.minecraftforge.forgespi.language.IModInfo;
-import net.minecraftforge.forgespi.locating.IModFile;
-import org.oilmod.oilforge.modloading.OilModFile;
 import org.oilmod.oilforge.modloading.OilModInfo;
 
 import java.lang.reflect.Constructor;
@@ -141,13 +139,10 @@ public class OilModFileInfoHelper {
             Map<String, Object> properties = new Object2ObjectOpenHashMap<>();
             properties.put(OilModIdentifier, classpath);
 
-            Config depOilModLoader = Config.inMemory(); //maybe do by included resource file instead
-            depOilModLoader.add("modId", "oilforgeapi");
-            depOilModLoader.add("mandatory", true);
-            depOilModLoader.add("versionRange", "${file.jarVersion}");
-            depOilModLoader.add("ordering", IModInfo.Ordering.AFTER.toString());
-            //adds implied dependencies oilforge (oilforgeapi)!
-            dependencies.add(new IModInfo.ModVersion(result, depOilModLoader));
+            //adds implied dependencies oilforge (oilforgeapi), oilmod, oiluni!
+            addDep(result, dependencies, "oilforgeapi", "${file.jarVersion}");
+            addDep(result, dependencies, "oilmod", "${file.jarVersion}"); //todo this should be oilmod api version not forge!
+            addDep(result, dependencies, "oiluni", "${file.jarVersion}");
             /*depOilModLoader = Config.inMemory();
             depOilModLoader.add("modId", "oilforgemodloader"); apparently providers do not appear as a mod so you cannot depend on them
             depOilModLoader.add("mandatory", true);
@@ -165,6 +160,16 @@ public class OilModFileInfoHelper {
             throw new IllegalStateException("LamdbaExceptionUtils not working", e);
         }
     }
+
+    public static void addDep(ModInfo owner, List<IModInfo.ModVersion> dependencies, String modId, String version) {
+        Config depOilModLoader = Config.inMemory(); //maybe do by included resource file instead
+        depOilModLoader.add("modId", modId);
+        depOilModLoader.add("mandatory", true);
+        depOilModLoader.add("versionRange", version);
+        depOilModLoader.add("ordering", IModInfo.Ordering.AFTER.toString());
+        dependencies.add(new IModInfo.ModVersion(owner, depOilModLoader));
+    }
+
 
     static void set(Field field, Object on, Object newValue) throws NoSuchFieldException, IllegalAccessException {
         field.setAccessible(true);

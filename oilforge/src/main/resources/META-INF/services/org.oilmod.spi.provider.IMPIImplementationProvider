@@ -18,6 +18,9 @@ org.oilmod.oilforge.ui.UIHelper
 #Statable
 org.oilmod.oilforge.stateable.RealComplexStateTypeRegistryHelper
 
+#Crafting
+org.oilmod.oilforge.crafting.CraftingHelper
+
 
 
 ###Factories

@@ -11,26 +11,52 @@ loaderVersion="[28,)" #mandatory (28 is current forge version)
 issueTrackerURL="http://my.issue.tracker/" #optional
 # A list of mods - how many allowed here is determined by the individual mod loader
 [[mods]] #mandatory
-# The modid of the mod
-modId="oilforgeapi" #mandatory
-# The version number of the mod - there's a few well known ${} variables useable here or just hardcode it
-version="${file.jarVersion}" #mandatory
- # A display name for the mod
-displayName="OilForge - OilMod Forge Modloader" #mandatory
-# A URL to query for updates for this mod. See the JSON update specification <here>
-#updateJSONURL="http://myurl.me/" #optional
-# A URL for the "homepage" for this mod, displayed in the mod UI
-displayURL="https://oilmod.org/" #optional
-# A file name (in the root of the mod JAR) containing a logo for display
-logoFile="oilmodlogo.png" #optional
-# A text field displayed in the mod UI
-credits="Thanks to the makers for Forge, MCP, Spigot, PaperMC, Sponge, and Glowstone" #optional
-# A text field displayed in the mod UI
-authors="sirati97" #optional
-# The description text for the mod (multi line!) (#mandatory)
-description='''Loads oilmods in forge. amazing'''
-# A dependency - use the . to indicate dependency for a specific modid. Dependencies are optional.
+    # The modid of the mod
+    modId="oilforgeapi" #mandatory
+    # The version number of the mod - there's a few well known ${} variables useable here or just hardcode it
+    version="${file.jarVersion}" #mandatory
+     # A display name for the mod
+    displayName="OilForge - OilMod Forge Modloader" #mandatory
+    # A URL to query for updates for this mod. See the JSON update specification <here>
+    #updateJSONURL="http://myurl.me/" #optional
+    # A URL for the "homepage" for this mod, displayed in the mod UI
+    displayURL="https://oilmod.org/" #optional
+    # A file name (in the root of the mod JAR) containing a logo for display
+    logoFile="oilmodlogo.png" #optional
+    # A text field displayed in the mod UI
+    credits="Thanks to the makers for Forge, MCP, Spigot, PaperMC, Sponge, and Glowstone" #optional
+    # A text field displayed in the mod UI
+    authors="sirati97" #optional
+    # The description text for the mod (multi line!) (#mandatory)
+    description='''Loads oilmods in forge. amazing'''
+    # A dependency - use the . to indicate dependency for a specific modid. Dependencies are optional.
 
+
+[[mods]]
+    modId="oilmod" #mandatory
+    # The version number of the mod - there's a few well known ${} variables useable here or just hardcode it
+    version="${file.jarVersion}" #todo make this the api version
+    displayName="OilMod - Internal OilMod Forge Adapter"
+    displayURL="https://oilmod.org/"
+    logoFile="oilmodlogo.png"
+    description='''does nothing on its own. amazing'''
+
+[[mods]]
+    modId="oiluni" #mandatory
+    # The version number of the mod - there's a few well known ${} variables useable here or just hardcode it
+    version="${file.jarVersion}" #todo make this the api version
+    displayName="OilMod Unification - Internal OilUni Forge Adapter"
+    displayURL="https://oilmod.org/"
+    logoFile="oilmodlogo.png"
+    description='''registered all items and blocks requested from the unification api'''
+
+
+[[dependencies.oiluni]] #optional
+    modId="oilmod"
+    mandatory=true
+    versionRange="[1,)" #mandatory
+    ordering="AFTER"
+    side="BOTH"
 
 #[[dependencies.oilforgeapi]] #optional
 #    # the modid of the dependency
