@@ -41,6 +41,7 @@ import org.apache.logging.log4j.Logger;
 import org.oilmod.api.OilMod;
 import org.oilmod.api.blocks.BlockRegistry;
 import org.oilmod.api.blocks.OilBlock;
+import org.oilmod.api.registry.RegistryHelperBase;
 import org.oilmod.api.rep.providers.minecraft.MinecraftBlockProvider;
 import org.oilmod.api.rep.providers.minecraft.MinecraftItemProvider;
 import org.oilmod.api.stateable.complex.ComplexStateTypeRegistry;
@@ -91,6 +92,7 @@ public class OilModLoaderMod
         FMLJavaModLoadingContext.get().getModEventBus().addGenericListener(ContainerType.class, this::registerContainerType);
         //FMLJavaModLoadingContext.get().getModEventBus().addGenericListener(ItemStack.class, this::attackCapabilities); //i love how this is called attackCapabilities and not attachCapabilities
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::commonSetup);
+        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::createRegistries);
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::modelBakeEvent);
         //FMLJavaModLoadingContext.get().getModEventBus().addListener(this::lootTableLoadEvent);
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::attachCapabilities);
@@ -107,7 +109,7 @@ public class OilModLoaderMod
         OilMain.init();
 
         mod1 =  OilMod.ModHelper.createInstance(TestMod1.class,OilMod.ModHelper.getDefaultContext(),"testmod1", "Internal Test Mod1"); // registers itself
-        mod1ForgeEvents = new OilEvents(FMLJavaModLoadingContext.get().getModEventBus());
+        mod1ForgeEvents = new OilModForgeAdapterBase();
         mod1ForgeEvents.setOilMod(mod1);
 
         Minecraft.getInstance().getResourcePackList().addPackFinder(new OilPackFinder());
@@ -127,6 +129,15 @@ public class OilModLoaderMod
         OilItemStackHandler.register();
 
         LOGGER.info("OilForgeApi registered Capability {}", OilItemStackHandler.CAPABILITY);
+
+        RegistryHelperBase.assertAllEventsFired();
+    }
+
+
+
+
+    public void createRegistries(RegistryEvent.NewRegistry event) {
+        ((RealModHelper)RealModHelper.getInstance()).freeze(); //wooo i love this --- not
     }
 
 

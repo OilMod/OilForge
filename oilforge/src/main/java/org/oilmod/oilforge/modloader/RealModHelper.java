@@ -5,6 +5,7 @@ import org.apache.logging.log4j.Logger;
 import org.oilmod.api.OilMod;
 import org.oilmod.api.inventory.ItemFilterRegistry;
 import org.oilmod.api.items.ItemRegistry;
+import org.oilmod.api.unification.Standard;
 import org.oilmod.oilforge.OilMain;
 import org.oilmod.oilforge.OilModContext;
 
@@ -39,6 +40,7 @@ public class RealModHelper extends OilMod.ModHelper<RealModHelper> {
         super.onReady();
         OilMain.ModMinecraft = createInstance(OilModMinecraft.class, getDefaultContext(),"minecraft", "Minecraft");
         OilMain.ModOilMod =  createInstance(OilModOilForge.class, getDefaultContext(),"oilmod", "OilMod");
+        Standard.mod.isGame(); //noop to load class
     }
 
     @Override
@@ -67,5 +69,11 @@ public class RealModHelper extends OilMod.ModHelper<RealModHelper> {
     @Override
     protected OilMod.ModContext createDefaultContext() {
         return new OilModContext();
+    }
+
+
+    @Override
+    public void freeze() {
+        super.freeze();
     }
 }

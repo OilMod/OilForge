@@ -25,7 +25,7 @@ public class OilEvents {
         eventbus.addGenericListener(Block.class, this::registerBlocks);
         eventbus.addGenericListener(Item.class, this::registerItems);
         eventbus.addGenericListener(TileEntityType.class, this::registerTileEntityType);
-        eventbus.addListener(this::commonSetup);
+        eventbus.addListener(EventPriority.HIGHEST,this::commonSetup);
     }
     public void setOilMod(OilMod oilMod) {
         this.mod = oilMod;

@@ -4,6 +4,7 @@ package org.oilmod.oilforge;
 import cpw.mods.modlauncher.TransformingClassLoader;
 import de.sirati97.minherit.Processor;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.loading.progress.StartupMessageManager;
 import org.apache.commons.lang3.Validate;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -30,6 +31,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.time.Duration;
 import java.time.Instant;
+import java.util.Optional;
+import java.util.function.Consumer;
 
 public class OilMain {
     public static final Logger LOGGER = LogManager.getLogger();
@@ -47,6 +50,12 @@ public class OilMain {
     }
 
     public static void init() {
+
+        Optional<Consumer<String>> statusConsumer = StartupMessageManager.modLoaderConsumer();
+        statusConsumer.ifPresent(c->c.accept("OilMod: performing preprocessing"));
+
+
+        //todo cache
         Instant start = Instant.now();
         Processor.readClass = (clazz) -> {
             try {
@@ -65,6 +74,7 @@ public class OilMain {
 
 
 
+        statusConsumer.ifPresent(c->c.accept("OilMod: init MPIs"));
         ContainerPackageHandler.registerPackets();
         MPILoader.init(); //this gonna get more complicated in the future but its okay for now
         RepAPI.installImplementation(new RepAPIImpl());
@@ -88,8 +98,10 @@ public class OilMain {
         //todo by here API should be completely initialised, i.e. no hanging dependencies MPILoader.xXX()
 
         long timeElapsed = Duration.between(start, Instant.now()).toMillis();  //in millis
+        statusConsumer.ifPresent(c->c.accept(String.format("OilMod: init took %d ms", timeElapsed)));
         LOGGER.info("Initialising OilMod-API took {} ms", timeElapsed);
 
+        statusConsumer.ifPresent(c->c.accept(String.format("OilMod: Constructing %d delayed OilMods", OilAPIInitEvent.getWaiting())));
         OilAPIInitEvent.fire();
     }
 

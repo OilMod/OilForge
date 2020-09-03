@@ -59,13 +59,6 @@ public class RealBlockRegistryHelper extends BlockRegistry.RegistryHelper<RealBl
     }
 
     @Override
-    public void initRegister(BlockRegistry blockRegistry, InitRegisterCallback initRegisterCallback) {
-        //if (register.exists(blockRegistry.getMod().getInternalName()))throw new IllegalStateException("There is already a BlockRegistry with the id '" + blockRegistry.getMod().getInternalName() + "'");
-
-        initRegisterCallback.callback(true, null);
-    }
-
-    @Override
     public RealBlockRegistry create(OilMod mod) {
         return new RealBlockRegistry(mod, this);
     }

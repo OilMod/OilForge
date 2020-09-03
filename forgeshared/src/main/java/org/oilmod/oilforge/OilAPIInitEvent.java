@@ -33,6 +33,10 @@ public class OilAPIInitEvent{
         eventSubs.add(r);
     }
 
+    public static int getWaiting() {
+        return eventSubs.size();
+    }
+
     public static synchronized void fire(){
         Validate.notNull(eventSubs, "Cannot call fire twice");
         LOGGER.debug("Sending OilAPIInitEvent to {} subscribers", eventSubs::size);

@@ -60,7 +60,7 @@ public class RealItemRegistryHelper extends ItemRegistry.Helper<RealItemRegistry
         if (register.exists(itemRegistry.getMod().getInternalName()))throw new IllegalStateException("There is already a ItemRegister with the id '" + itemRegistry.getMod().getInternalName() + "'");
         //ApiItemStackCreator creator = new ApiItemStackCreator(itemRegistry);
         //register.register(creator);
-        initRegisterCallback.callback(true, null);
+        super.initRegister(itemRegistry, initRegisterCallback);
     }
 
 }

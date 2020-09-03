@@ -44,12 +44,12 @@ public class RealBIPHelper extends BlockImplementationProvider.Helper<RealBIPHel
     //todo assign keys to implementation provider
 
     @Override
-    protected BlockImplementationProvider getProvider(BlockImplementationProvider.TypeEnum t) {
-        switch (t) {
+    protected BlockImplementationProvider getProvider(BlockImplementationProvider.TypeEnum blockType) {
+        switch (blockType) {
             case GENERIC:
             case CUSTOM:
             default:
-                return new DIP(t, RealBlock::new);
+                return new DIP(blockType, RealBlock::new);
         }
     }
 }

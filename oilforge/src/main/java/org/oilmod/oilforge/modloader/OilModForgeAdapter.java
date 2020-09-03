@@ -9,9 +9,6 @@ import org.oilmod.oilforge.OilMain;
 @Mod("oilmod")@Mod.EventBusSubscriber
 public class OilModForgeAdapter extends OilModForgeAdapterBase {
 
-    public OilModForgeAdapter() {
-        super(FMLJavaModLoadingContext.get().getModEventBus());
-    }
 
     @Override
     public OilMod getOilMod() {
