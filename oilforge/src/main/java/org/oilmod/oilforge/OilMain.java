@@ -101,8 +101,10 @@ public class OilMain {
         statusConsumer.ifPresent(c->c.accept(String.format("OilMod: init took %d ms", timeElapsed)));
         LOGGER.info("Initialising OilMod-API took {} ms", timeElapsed);
 
-        statusConsumer.ifPresent(c->c.accept(String.format("OilMod: Constructing %d delayed OilMods", OilAPIInitEvent.getWaiting())));
+        final int delayedMods = OilAPIInitEvent.getWaiting();
+        statusConsumer.ifPresent(c->c.accept(String.format("OilMod: Constructing %d delayed OilMods", delayedMods)));
         OilAPIInitEvent.fire();
+        statusConsumer.ifPresent(c->c.accept(String.format("OilMod: Done. Constructed %d delayed OilMods", delayedMods)));
     }
 
     public static void printTrace(String text) {

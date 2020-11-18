@@ -1,15 +1,20 @@
 [submodule "lib/OilRep-API"]
 	path = lib/OilRep-API
 	url = git@github.com:OilMod/OilMod-Representation-Api.git
+	update = merge
 [submodule "lib/OilMod-API"]
 	path = lib/OilMod-API
 	url = git@github.com:OilMod/OilMod-API.git
+	update = merge
 [submodule "lib/OilMod-TestPlugin2"]
 	path = lib/OilMod-TestPlugin2
 	url = git@github.com:OilMod/OilMod-TestPlugin2.git
+	update = merge
 [submodule "lib/OilSPI"]
 	path = lib/OilSPI
 	url = git@github.com:OilMod/OilSPI.git
+	update = merge
 [submodule "lib/minherit"]
 	path = lib/minherit
 	url = git@github.com:sirati97/minherit.git
+	update = merge

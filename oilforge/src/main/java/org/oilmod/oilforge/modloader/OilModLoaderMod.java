@@ -27,6 +27,7 @@ import net.minecraftforge.event.LootTableLoadEvent;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.DeferredWorkQueue;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
@@ -130,7 +131,8 @@ public class OilModLoaderMod
 
         LOGGER.info("OilForgeApi registered Capability {}", OilItemStackHandler.CAPABILITY);
 
-        RegistryHelperBase.assertAllEventsFired();
+
+        DeferredWorkQueue.runLater(RegistryHelperBase::assertAllEventsFired);
     }
 
 
