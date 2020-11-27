@@ -95,9 +95,7 @@ allprojects {
         fmlmodtype = 'NONE/MAVEN-LIB' //only for debug purposes, is never read
     }
 
-
-    Closure<Void> delayedSetupClosure = project.delayedSetup
-    delayedSetupClosure()
+    project.delayedSetup() //idk how to call this without creating a warning .call() and .run() do not work?!
 
     if (project.isDepForge) {
         archivesBaseName = project.projectDir.name
