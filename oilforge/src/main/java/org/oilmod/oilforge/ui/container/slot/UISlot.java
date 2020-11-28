@@ -14,20 +14,31 @@ import org.oilmod.oilforge.rep.inventory.InventoryFR;
 import org.oilmod.oilforge.ui.RealItemRef;
 import org.oilmod.oilforge.ui.SlotTypeProcessing;
 
+import java.util.function.IntSupplier;
+
 public class UISlot extends Slot {
     private final RealItemRef ref;
     private final IItemFilter filter;
     private final IItemElement element;
     private final int elementRow;
     private final int elementColumn;
+    private final IntSupplier xPosition;
+    private final IntSupplier yPosition;
 
-    public UISlot(IItemElement element, RealItemRef ref, int slotId, int xPosition, int yPosition, IItemFilter filter, int elementRow, int elementColumn) {
-        super(null, slotId, xPosition, yPosition);
+    public UISlot(IItemElement element, RealItemRef ref, int slotId, IntSupplier xPosition, IntSupplier yPosition, IItemFilter filter, int elementRow, int elementColumn) {
+        super(null, slotId, xPosition.getAsInt(), yPosition.getAsInt());
+        this.xPosition = xPosition;
+        this.yPosition = yPosition;
         this.ref = ref;
         this.filter = filter;
         this.element = element;
         this.elementRow = elementRow;
         this.elementColumn = elementColumn;
+    }
+
+    public void updatePos() {
+        this.xPos = xPosition.getAsInt();
+        this.yPos = yPosition.getAsInt();
     }
 
     private RealItemRef rref() {

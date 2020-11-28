@@ -92,7 +92,10 @@ public class UIContainer extends RecipeBookContainer<IInventory> implements IOil
 
             for (int i = 0; i < element.getRows(); i++) {
                 for (int j = 0; j < element.getColumns(); j++) {
-                    this.addSlot(new UISlot(element, ref, topSlots++, xOff + j * GuiSlotSize + element.getLeft(), GuiSlotSize + i * GuiSlotSize + element.getTop(), itemFilter, i, j));
+                    int finalXOff = xOff;
+                    int finalJ = j;
+                    int finalI = i;
+                    this.addSlot(new UISlot(element, ref, topSlots++, () -> finalXOff + finalJ * GuiSlotSize + element.getLeft(), () -> GuiSlotSize + finalI * GuiSlotSize + element.getTop(), itemFilter, i, j));
                 }
             }
         }
@@ -107,6 +110,13 @@ public class UIContainer extends RecipeBookContainer<IInventory> implements IOil
 
         for(int i1 = 0; i1 < 9; ++i1) {
             this.addSlot(new Slot(playerInventory, i1, xOff + i1 * GuiSlotSize, 161 + yOff + playerInvOff));
+        }
+    }
+
+
+    public void updateSlotPos() {
+        for(Slot slot:inventorySlots) {
+            if (slot instanceof UISlot)((UISlot) slot).updatePos();
         }
     }
 
@@ -280,6 +290,7 @@ public class UIContainer extends RecipeBookContainer<IInventory> implements IOil
         return 16;
     }
 
+    //todo crafting height needs to be set
     @Override
     public int getWidth() {
         return 4;

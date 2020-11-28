@@ -9,11 +9,9 @@ public class RecipeBookRenderable implements IRenderable {
     private final RecipeBookGui recipeBook;
     private CustomUIScreen screen;
 
-    public void setScreen(CustomUIScreen screen) {
-        this.screen = screen;
-    }
 
-    public RecipeBookRenderable(RecipeBookGui recipeBook) {
+    public RecipeBookRenderable(RecipeBookGui recipeBook, CustomUIScreen screen) {
+        this.screen = screen;
         this.recipeBook = recipeBook;
     }
 
@@ -28,24 +26,24 @@ public class RecipeBookRenderable implements IRenderable {
     }
 
     @Override
-    public void renderBackground(int mouseX, int mouseY, float p_render_3_) {
+    public void renderBackground(int guiLeft, int guiTop, int mouseLeft, int mouseTop, float timeDif) {
         if (!this.recipeBook.isVisible() || !screen.displayCompact()) {
-            this.recipeBook.render(mouseX, mouseY, p_render_3_);
+            this.recipeBook.render(mouseLeft, mouseTop, timeDif);
         }
     }
 
     @Override
-    public void renderForeground(int mouseX, int mouseY, float p_render_3_) {
+    public void renderForeground(int guiLeft, int guiTop, int mouseLeft, int mouseTop, float timeDif) {
         if (this.recipeBook.isVisible() && screen.displayCompact()) {
-            this.recipeBook.render(mouseX, mouseY, p_render_3_);
+            this.recipeBook.render(mouseLeft, mouseTop, timeDif);
         } else {
-            this.recipeBook.renderGhostRecipe(screen.getGuiLeft(), screen.getGuiTop(), false, p_render_3_); //false -> result slot should not be rendered bigger
+            this.recipeBook.renderGhostRecipe(guiLeft, guiTop, false, timeDif); //false -> result slot should not be rendered bigger
         }
     }
 
     @Override
-    public void renderToolTips(int mouseX, int mouseY, float p_render_3_) {
-        this.recipeBook.renderTooltip(screen.getGuiLeft(), screen.getGuiTop(), mouseX, mouseY);
+    public void renderToolTips(int guiLeft, int guiTop, int mouseLeft, int mouseTop, float timeDif) {
+        this.recipeBook.renderTooltip(guiLeft, guiTop, mouseLeft, mouseTop);
     }
 
 

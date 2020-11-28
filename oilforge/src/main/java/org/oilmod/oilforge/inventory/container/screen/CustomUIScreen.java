@@ -3,20 +3,20 @@ package org.oilmod.oilforge.inventory.container.screen;
 import com.mojang.blaze3d.platform.GlStateManager;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
-import net.minecraft.client.gui.recipebook.FurnaceRecipeGui;
 import net.minecraft.client.gui.recipebook.IRecipeShownListener;
 import net.minecraft.client.gui.recipebook.RecipeBookGui;
 import net.minecraft.client.gui.screen.inventory.ContainerScreen;
 import net.minecraft.client.gui.widget.button.ImageButton;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.container.ClickType;
-import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.Slot;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.oilmod.api.UI.IItemElement;
+import org.oilmod.api.UI.IUIElement;
+import org.oilmod.api.UI.ScrollbarElement;
 import org.oilmod.api.UI.UI;
 import org.oilmod.oilforge.ui.container.UIContainer;
 
@@ -30,9 +30,13 @@ public class CustomUIScreen<T extends UIContainer>extends ContainerScreen<T> imp
     private static final ResourceLocation CHEST_GUI_TEXTURE = new ResourceLocation("textures/gui/container/generic_54.png");
     private static final ResourceLocation DISPENSER_GUI_TEXTURE = new ResourceLocation("textures/gui/container/dispenser.png");
     private static final ResourceLocation RECIPE_BUTTON_TEXTURE = new ResourceLocation("textures/gui/recipe_button.png");
+    private static final ResourceLocation CREATIVE_INVENTORY_TABS = new ResourceLocation("textures/gui/container/creative_inventory/tabs.png");
+    private static final ResourceLocation CREATIVE_INVENTORY_ITEMS = new ResourceLocation("textures/gui/container/creative_inventory/tab_items.png");
 
     private final DrawCallBuffer<CustomUIScreen> chestBuffer = new DrawCallBuffer<>(this, CHEST_GUI_TEXTURE);
     private final DrawCallBuffer<CustomUIScreen> dispenserBuffer = new DrawCallBuffer<>(this, DISPENSER_GUI_TEXTURE);
+    private final DrawCallBuffer<CustomUIScreen> creativeTabsBuffer = new DrawCallBuffer<>(this, CREATIVE_INVENTORY_TABS);
+    private final DrawCallBuffer<CustomUIScreen> creativeItemsBuffer = new DrawCallBuffer<>(this, CREATIVE_INVENTORY_ITEMS);
     private final List<IRenderable> renderables = new ObjectArrayList<>(); //todo think about super.children
     
     private UI<?> ui;
@@ -46,8 +50,13 @@ public class CustomUIScreen<T extends UIContainer>extends ContainerScreen<T> imp
         int j = 114;
         this.ySize = 114 + screenContainer.getTopHeight();
         this.xSize = Math.max(xSize, screenContainer.getGuiWidth());
-        RecipeBookRenderable renderable = new RecipeBookRenderable(recipeBookGui);
+        RecipeBookRenderable renderable = new RecipeBookRenderable(recipeBookGui, this);
         addRenderable(renderable);
+        for (IUIElement element:ui.getUiElements()) {
+            if (element instanceof ScrollbarElement) {
+                addRenderable(new Scrollbar((ScrollbarElement) element, this));
+            }
+        }
     }
 
     public boolean displayCompact() {
@@ -55,7 +64,6 @@ public class CustomUIScreen<T extends UIContainer>extends ContainerScreen<T> imp
     }
 
     public void addRenderable(IRenderable renderable) {
-        renderable.setScreen(this);
         children.add(renderable.getEventListener());
         renderables.add(renderable);
     }
@@ -66,6 +74,10 @@ public class CustomUIScreen<T extends UIContainer>extends ContainerScreen<T> imp
     @Override
     protected void init() {
         super.init();
+
+        //in case we have a text box
+        this.minecraft.keyboardListener.enableRepeatEvents(true);
+
         recipeBookGui.init(this.width, this.height, this.minecraft, displayCompact(), this.container);
 
         this.guiLeft = this.recipeBookGui.updateScreenPosition(displayCompact(), this.width, this.xSize);
@@ -77,28 +89,27 @@ public class CustomUIScreen<T extends UIContainer>extends ContainerScreen<T> imp
         })));
     }
 
-    public void render(int mouseX, int mouseY, float last) {
+    private float lastTimeCount;
+    public void render(int mouseLeft, int mouseTop, float last) {
         this.renderBackground();
+        lastTimeCount = last;
+        super.render(mouseLeft, mouseTop, last);
         for(IRenderable renderable: renderables) {
-            renderable.renderBackground( mouseX, mouseY, last);
-        }
-        super.render(mouseX, mouseY, last);
-        for(IRenderable renderable: renderables) {
-            renderable.renderItemStacks( mouseX, mouseY, last);
+            renderable.renderItemStacks(guiLeft, guiTop+GuiOffTop, mouseLeft, mouseTop, last);
         }
         for(IRenderable renderable: renderables) {
-            renderable.renderForeground(mouseX, mouseY, 1); //todo change to last
+            renderable.renderForeground(guiLeft, guiTop+GuiOffTop, mouseLeft, mouseTop, 1); //todo change to last
         }
-        this.renderHoveredToolTip(mouseX, mouseY);
+        this.renderHoveredToolTip(mouseLeft, mouseTop);
         for(IRenderable renderable: renderables) {
-            renderable.renderToolTips( mouseX, mouseY, last);
+            renderable.renderToolTips(guiLeft, guiTop+GuiOffTop, mouseLeft, mouseTop, last);
         }
     }
 
     /**
      * Draw the foreground layer for the GuiContainer (everything in front of the items)
      */
-    protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
+    protected void drawGuiContainerForegroundLayer(int mouseLeft, int mouseTop) {
         this.font.drawString(this.title.getFormattedText(), 8.0F, 6.0F, 4210752);
 
 
@@ -111,7 +122,7 @@ public class CustomUIScreen<T extends UIContainer>extends ContainerScreen<T> imp
     private Set<DrawString> scheduled = new ObjectOpenHashSet<>();
 
     @Override
-    protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
+    protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseLeft, int mouseTop) {
         GlStateManager.color4f(1.0F, 1.0F, 1.0F, 1.0F);
         int left = guiLeft;
         int top = guiTop;
@@ -145,19 +156,33 @@ public class CustomUIScreen<T extends UIContainer>extends ContainerScreen<T> imp
         //draw player
         left = guiLeft + container.getBottomXDiffHalf();
         int cornerArt = 3;
-        left=  drawVerticalSegment(left, top , 0, 126 + yOff, cornerArt, 96 + yOff, chestBuffer);
-        left = drawVerticalSegment(left, top - yOff , cornerArt, 126, StdXSize - cornerArt*2, 96, chestBuffer);
-        left = drawVerticalSegment(left, top , StdXSize - cornerArt, 126 + yOff, cornerArt, 96 + yOff, chestBuffer);
+        left=  chestBuffer.drawVerticalSegment(left, top , 0, 126 + yOff, cornerArt, 96 + yOff);
+        left = chestBuffer.drawVerticalSegment(left, top - yOff , cornerArt, 126, StdXSize - cornerArt*2, 96);
+        left = chestBuffer.drawVerticalSegment(left, top , StdXSize - cornerArt, 126 + yOff, cornerArt, 96 + yOff);
 
         left = guiLeft;
         top = guiTop;
 
 
 
+        //if (itemgroup.hasScrollbar()) {
+           // this.blit(i, j + (int)((float)(k - j - 17) * this.currentScroll), 232 + (this.needsScrollBars() ? 0 : 12), 0, 12, 15);
+            //drawVerticalSegment(int i, int j, int leftOff, int topOff, int width, int height , DrawCallBuffer<?> buffer) {
+        //}
+
+
         dispenserBuffer.execute();
         chestBuffer.execute();
+        creativeTabsBuffer.execute();
+        creativeItemsBuffer.execute();
         scheduled.forEach(DrawString::draw);
         scheduled.clear();
+
+
+        for(IRenderable renderable: renderables) {
+            renderable.renderBackground(guiLeft + GuiOffSide + container.getTopXDiffHalf(), guiTop+GuiOffTop, mouseLeft, mouseTop, lastTimeCount);
+        }
+        container.updateSlotPos();
     }
 
     private void fillBackGround(int left, int top, int width, int height) {
@@ -168,7 +193,7 @@ public class CustomUIScreen<T extends UIContainer>extends ContainerScreen<T> imp
             int widthDone = 0;
             while (widthDone < width) {
                 int thisRoundW = Math.min(2 * GuiSlotSize, width-widthDone);
-                drawVerticalSegment(left + widthDone, top + heightDone, GuiOffSide, GuiOffTop, thisRoundW, thisRoundH, dispenserBuffer);
+                dispenserBuffer.drawVerticalSegment(left + widthDone, top + heightDone, GuiOffSide, GuiOffTop, thisRoundW, thisRoundH);
                 widthDone += thisRoundW;
             }
             heightDone += thisRoundH;
@@ -181,8 +206,8 @@ public class CustomUIScreen<T extends UIContainer>extends ContainerScreen<T> imp
         while (heightDone < height) {
             int thisRoundH = Math.min(6 * GuiSlotSize, height-heightDone);
 
-            drawVerticalSegment(left                     , top + heightDone, 0                 , GuiOffTop, GuiOffSide, thisRoundH, chestBuffer);
-            drawVerticalSegment(left + xSize-GuiOffSide, top + heightDone, StdXSize - GuiOffSide, GuiOffTop, GuiOffSide, thisRoundH, chestBuffer);
+            chestBuffer.drawVerticalSegment(left                     , top + heightDone, 0                 , GuiOffTop, GuiOffSide, thisRoundH);
+            chestBuffer.drawVerticalSegment(left + xSize-GuiOffSide, top + heightDone, StdXSize - GuiOffSide, GuiOffTop, GuiOffSide, thisRoundH);
 
             heightDone += thisRoundH;
         }
@@ -207,28 +232,21 @@ public class CustomUIScreen<T extends UIContainer>extends ContainerScreen<T> imp
     private int drawInvSegment(int i, int j, int topOff, int height, int columns, boolean drawSides) {
         int xOff = container.getTopXDiffHalf();
 
-        if (drawSides) i = drawVerticalSegment(i, j, 0, topOff, GuiOffSide, height, chestBuffer);
+        if (drawSides) i = chestBuffer.drawVerticalSegment(i, j, 0, topOff, GuiOffSide, height);
         //if (xOff>0)i = drawVerticalSegment(i, j, 0, topOff, xOff, height, dispenserBuffer);
 
         int remainingSlots = columns;
         while (remainingSlots > 0) {
             int thisRound = Math.min(9, remainingSlots);
             //new DrawString("Draw call rem=" + (remainingSlots) + " tr=" + thisRound, 8.0F + i + 20, 6.0F + j, 0xFF0000, scheduled);
-            i = drawVerticalSegment(i, j, GuiOffSide, topOff, thisRound * GuiSlotSize , height, chestBuffer);
+            i = chestBuffer.drawVerticalSegment(i, j, GuiOffSide, topOff, thisRound * GuiSlotSize , height);
             remainingSlots -= thisRound;
         }
 
         //if (xOff>0)i = drawVerticalSegment(i, j, StdXSize - xOff, topOff, xOff, height, dispenserBuffer);
-        if (drawSides) i = drawVerticalSegment(i, j, StdXSize - GuiOffSide, topOff, GuiOffSide, height, chestBuffer);
+        if (drawSides) i = chestBuffer.drawVerticalSegment(i, j, StdXSize - GuiOffSide, topOff, GuiOffSide, height);
         return j + height;
     }
-
-
-    private int drawVerticalSegment(int i, int j, int leftOff, int topOff, int width, int height , DrawCallBuffer<?> buffer) {
-        buffer.stow(o -> o.blit(i, j , leftOff, topOff, width, height));
-        return i + width;
-    }
-
 
 
     private int drawCorner(int i, int j, int unused, int height, boolean top, boolean left) {
@@ -272,6 +290,14 @@ public class CustomUIScreen<T extends UIContainer>extends ContainerScreen<T> imp
         }
     }
 
+    @Override
+    public void removed() {
+        super.removed();
+
+
+        //in case we have a text box
+        this.minecraft.keyboardListener.enableRepeatEvents(false);
+    }
 
 
     //<editor-fold desc="Listeners" defaultstate="collapsed">

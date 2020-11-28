@@ -48,7 +48,7 @@ public class CustomChestScreen<T extends OilChestLikeContainer>extends Container
     /**
      * Draw the foreground layer for the GuiContainer (everything in front of the items)
      */
-    protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
+    protected void drawGuiContainerForegroundLayer(int mouseLeft, int mouseTop) {
         this.font.drawString(this.title.getFormattedText(), 8.0F, 6.0F, 4210752);
 
         int xOff = (columns>9?(columns-9)*GuiSlotSize/2:0);
@@ -58,7 +58,7 @@ public class CustomChestScreen<T extends OilChestLikeContainer>extends Container
     private Set<DrawString> scheduled = new ObjectOpenHashSet<>();
 
     @Override
-    protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
+    protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseLeft, int mouseTop) {
         GlStateManager.color4f(1.0F, 1.0F, 1.0F, 1.0F);
         int originalI = (this.width - xSize) / 2;
         int originalJ = (this.height - this.ySize) / 2;
