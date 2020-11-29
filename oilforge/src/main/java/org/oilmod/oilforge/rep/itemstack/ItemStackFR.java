@@ -5,8 +5,11 @@ import org.oilmod.api.rep.item.ItemRep;
 import org.oilmod.api.rep.itemstack.ItemStackRep;
 import org.oilmod.api.rep.itemstack.state.ItemStackStateRep;
 import org.oilmod.api.rep.providers.ItemStackStateProvider;
+import org.oilmod.oilforge.Util;
 import org.oilmod.oilforge.rep.item.ItemFR;
 import org.oilmod.oilforge.rep.itemstack.state.ItemStackStateFR;
+
+import java.util.Objects;
 
 import static org.oilmod.oilforge.Util.toOil;
 
@@ -27,9 +30,9 @@ public class ItemStackFR implements ItemStackRep {
 
     protected ItemStackFR(ItemFR item, ItemStackStateFR state, int amount) {
         this.forge  = new ItemStack(item.getForge(), amount);
+        this.state = new ItemStackStateFR(this.forge);
         if (state != null)state.applyTo(this, false, true);
         this.item = toOil(forge.getItem()); //might have changed so need to get it from stack
-        this.state = new ItemStackStateFR(this.forge);
     }
 
     @Override
@@ -71,12 +74,22 @@ public class ItemStackFR implements ItemStackRep {
     public boolean isSimilar(ItemStackStateProvider stack) {
         ItemStackStateFR state = (ItemStackStateFR)stack.getProvidedItemStackState();
         ItemStack forge2 = state.getForgeState();
-        return ItemStack.areItemsEqual(forge, forge2);
+        return Util.areItemTagEqual(forge, forge2);
     }
 
     @Override
     public ItemStackRep copy() {
         return new ItemStackFR(forge.copy());
+    }
+
+    @Override
+    public ItemStackStateRep getContainerItem() {
+        return new ItemStackStateFR(forge.getContainerItem());
+    }
+
+    @Override
+    public boolean isContainer() {
+        return forge.hasContainerItem();
     }
 
     @Override
@@ -119,5 +132,24 @@ public class ItemStackFR implements ItemStackRep {
     @Override
     public String toString() {
         return forge.toString();
+    }
+
+
+
+    @Override
+    public boolean equals(ItemStackRep other) {
+        return equals((Object)other);
+    }
+
+    @Override
+    public int getHashCode() {
+        return hashCode();
+    }
+
+
+
+    @Override
+    public int hashCode() {
+        return getForge().getCount() + 31 * Objects.hash(getForge().getItem(), getForge().getTag());
     }
 }

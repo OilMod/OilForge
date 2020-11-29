@@ -3,8 +3,6 @@ package org.oilmod.oilforge.inventory.container.screen;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.util.ResourceLocation;
 
-import static org.oilmod.oilforge.inventory.container.ContainerUtil.*;
-
 public class DrawCallBuffer<Gui extends Screen> extends DrawCallBufferBase<Gui> {
     private final ResourceLocation texture;
 
@@ -26,16 +24,16 @@ public class DrawCallBuffer<Gui extends Screen> extends DrawCallBufferBase<Gui> 
 
         //###top border
 
-        int currentTop = drawTextureStretchedSegment(posLeft, posTop, width, borderTop, texLeft, texTop, texWidth, borderTop, borderLeft, borderRight);
+        int currentTop = drawTextureStretchedSegment(posLeft, posTop, width, texLeft, texTop, texWidth, borderTop, borderLeft, borderRight);
         for (int i = 0; i < midHeight; i+= texMidHeight) {
             int texHeightCurrent = Math.min(texMidHeight, midHeight-i);
-            currentTop = drawTextureStretchedSegment(posLeft, currentTop, width, texHeightCurrent, texLeft, texTop + borderTop, texWidth, texHeightCurrent, borderLeft, borderRight);
+            currentTop = drawTextureStretchedSegment(posLeft, currentTop, width, texLeft, texTop + borderTop, texWidth, texHeightCurrent, borderLeft, borderRight);
         }
-        currentTop = drawTextureStretchedSegment(posLeft, currentTop, width, borderBottom, texLeft, texTop + texHeight - borderBottom, texWidth, borderBottom, borderLeft, borderRight);
+        currentTop = drawTextureStretchedSegment(posLeft, currentTop, width, texLeft, texTop + texHeight - borderBottom, texWidth, borderBottom, borderLeft, borderRight);
     }
 
 
-    private int drawTextureStretchedSegment(int posLeft, int posTop, int width, int height, int texLeft, int texTop, int texWidth, int texHeight, int borderLeft, int borderRight) {
+    private int drawTextureStretchedSegment(int posLeft, int posTop, int width, int texLeft, int texTop, int texWidth, int texHeight, int borderLeft, int borderRight) {
         int texMidWidth = texWidth - borderLeft - borderRight;
         int midWidth = width - borderLeft - borderRight;
         int currentLeft = drawVerticalSegment(posLeft, posTop , texLeft, texTop, borderLeft, texHeight);

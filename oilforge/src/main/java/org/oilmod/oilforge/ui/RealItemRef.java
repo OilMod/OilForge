@@ -8,6 +8,7 @@ import org.apache.commons.lang3.Validate;
 import org.oilmod.api.UI.IItemElement;
 import org.oilmod.api.UI.IItemInteractionHandler;
 import org.oilmod.api.UI.IItemRef;
+import org.oilmod.api.UI.IUIElement;
 import org.oilmod.api.UI.slot.ISlotType;
 import org.oilmod.api.rep.inventory.InventoryRep;
 import org.oilmod.api.rep.inventory.InventoryView;
@@ -32,6 +33,7 @@ public class RealItemRef implements IItemRef {
     private int globalRow;
     private int localColumn;
     private int globalColumn;
+    private boolean preview;
 
     //these are flexible
     private IRealItemInteractionHandler handler;
@@ -87,7 +89,7 @@ public class RealItemRef implements IItemRef {
 
 
     @Override
-    public void next(IItemElement element, int row, int column) {
+    public void deferTo(IItemElement element, int row, int column) {
         if (trace.size() == 0) {
             globalRow = row;
             globalColumn = column;
@@ -96,6 +98,17 @@ public class RealItemRef implements IItemRef {
         localColumn = column;
         trace.add(element);
         element.handle(this);
+    }
+
+    @Override
+    public void setPreview(boolean isPreview) {
+        assertUntouched();
+        this.preview = isPreview;
+    }
+
+    @Override
+    public boolean isRedirectPreview() {
+        return preview;
     }
 
     public void fixIndexForView(InventoryView view) {
@@ -144,6 +157,7 @@ public class RealItemRef implements IItemRef {
         invNative = null;
         invCustom = null;
 
+        preview = false;
         slotId = -1;
         globalRow = -1;
         globalColumn = -1;

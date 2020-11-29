@@ -10,6 +10,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.item.crafting.RecipeItemHelper;
 import net.minecraft.network.PacketBuffer;
+import net.minecraft.util.NonNullList;
 import net.minecraftforge.fml.DistExecutor;
 import org.apache.commons.lang3.Validate;
 import org.oilmod.api.UI.IItemElement;
@@ -95,7 +96,7 @@ public class UIContainer extends RecipeBookContainer<IInventory> implements IOil
                     int finalXOff = xOff;
                     int finalJ = j;
                     int finalI = i;
-                    this.addSlot(new UISlot(element, ref, topSlots++, () -> finalXOff + finalJ * GuiSlotSize + element.getLeft(), () -> GuiSlotSize + finalI * GuiSlotSize + element.getTop(), itemFilter, i, j));
+                    this.addSlot(new UISlot(element, ref, topSlots++, () -> finalXOff + finalJ * GuiSlotSize + element.getLeft(), () -> GuiSlotSize + finalI * GuiSlotSize + element.getTop(), itemFilter, i, j, this::getAllowPreview));
                 }
             }
         }
@@ -137,11 +138,11 @@ public class UIContainer extends RecipeBookContainer<IInventory> implements IOil
         if (slot != null && slot.getHasStack()) {
             ItemStack itemstack1 = slot.getStack();
             itemstack = itemstack1.copy();
-            //todo check if we have a processing stack
-            if (index < topSlots) {
+            if (index < topSlots) { //this implies UI slot
                 UISlot uiSlot = (UISlot) slot;
                 ICraftingProcessor processor=uiSlot.getCraftingProcessor();
-                if (processor!= null) {
+                System.out.printf("%s: trying shift for slot %d\n", Thread.currentThread().getName(), index);
+                if (uiSlot.isPreviewing() && processor!= null) {
                     ItemStack previewStack = itemstack1.copy();
                     int max;
                     boolean hasTaken = false;
@@ -184,9 +185,7 @@ public class UIContainer extends RecipeBookContainer<IInventory> implements IOil
                         }
                     }
 
-                }
-
-                if (!this.mergeItemStack(itemstack1, topSlots, this.inventorySlots.size(), true)) {
+                } else if (!this.mergeItemStack(itemstack1, topSlots, this.inventorySlots.size(), true)) {
                     return ItemStack.EMPTY;
                 }
             } else if (!this.mergeItemStack(itemstack1, 0, topSlots, false)) {
@@ -195,12 +194,32 @@ public class UIContainer extends RecipeBookContainer<IInventory> implements IOil
 
             if (itemstack1.isEmpty()) {
                 slot.putStack(ItemStack.EMPTY);
+                return ItemStack.EMPTY; //as we might have emptied a crafting stack, we need to make sure that we now dont try again and accidentally shift craft
             } else {
+                System.out.println("was not able to finish shifting this turn");
                 slot.onSlotChanged();
             }
         }
 
         return itemstack;
+    }
+
+    @Override
+    protected boolean mergeItemStack(ItemStack stack, int startIndex, int endIndex, boolean reverseDirection) {
+        allowPreview = false;
+        try {
+            return super.mergeItemStack(stack, startIndex, endIndex, reverseDirection);
+        } finally {
+            allowPreview = true;
+        }
+    }
+
+    @Override
+    public boolean canMergeSlot(ItemStack stack, Slot slotIn) {
+        if (slotIn instanceof UISlot && !((UISlot) slotIn).getSlotType().isSettable()) {
+            return false;
+        }
+        return super.canMergeSlot(stack, slotIn);
     }
 
     public int findSpace(ItemStack stackType, int from, int toEx) {
@@ -267,6 +286,29 @@ public class UIContainer extends RecipeBookContainer<IInventory> implements IOil
 
     public int getGuiHeight() {
         return getTopHeight() +126+5*18; //todo change when we allow changing the player inv
+    }
+
+    private boolean allowPreview = true;
+
+    public boolean getAllowPreview() {
+        return allowPreview;
+    }
+
+    @Override
+    public void detectAndSendChanges() {
+        allowPreview = false;
+        super.detectAndSendChanges();
+        allowPreview = true;
+    }
+
+    @Override
+    public NonNullList<ItemStack> getInventory() {
+        allowPreview = false;
+        try {
+            return super.getInventory();
+        } finally {
+            allowPreview = true;
+        }
     }
 
     //<editor-fold desc="RecipeBookContainer" defaultstate="collapsed">

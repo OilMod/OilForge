@@ -73,7 +73,10 @@ import java.util.List;
 
 public final class Util {
     //todo use mixins
+    public static boolean areItemTagEqual(ItemStack stack1, ItemStack stack2) {
 
+        return ItemStack.areItemsEqual(stack1, stack2) && ItemStack.areItemStackTagsEqual(stack1, stack2);
+    }
 
 
     //ItemStack

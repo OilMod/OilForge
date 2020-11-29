@@ -33,10 +33,10 @@ public class UITestItem extends OilItem implements IUnique {
         invBuilder = InventoryFactory
                 .builder("items")
                 .standardTitle("UI Test Item")
-                .size(4*4+1+2)
+                .size(4*4+2+2)
                 .filter(PortableInventoryFilter.INSTANCE)
                 .mainInventory()
-                .processors((inv)-> new ResultSlotCraftingProcessor(Collections.singletonMap(TestIngredientCategory, inv.createView2d(0, 4, 4)), Collections.singletonMap(TestResultCategory, inv.createView(16, 1)), TestCraftingManager))
+                .processors((inv)-> new ResultSlotCraftingProcessor(Collections.singletonMap(TestIngredientCategory, inv.createView2d(0, 4, 4)), Collections.singletonMap(TestResultCategory, inv.createView(16, 2)), TestCraftingManager))
                 .basic();
     }
 

@@ -7,11 +7,17 @@ import net.minecraft.client.gui.recipebook.IRecipeShownListener;
 import net.minecraft.client.gui.recipebook.RecipeBookGui;
 import net.minecraft.client.gui.screen.inventory.ContainerScreen;
 import net.minecraft.client.gui.widget.button.ImageButton;
+import net.minecraft.client.renderer.model.IBakedModel;
+import net.minecraft.client.renderer.model.ItemCameraTransforms;
+import net.minecraft.client.renderer.texture.AtlasTexture;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.container.ClickType;
 import net.minecraft.inventory.container.Slot;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
+import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.oilmod.api.UI.IItemElement;
@@ -19,7 +25,9 @@ import org.oilmod.api.UI.IUIElement;
 import org.oilmod.api.UI.ScrollbarElement;
 import org.oilmod.api.UI.UI;
 import org.oilmod.oilforge.ui.container.UIContainer;
+import org.oilmod.oilforge.ui.container.slot.UISlot;
 
+import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Set;
 
@@ -105,6 +113,32 @@ public class CustomUIScreen<T extends UIContainer>extends ContainerScreen<T> imp
             renderable.renderToolTips(guiLeft, guiTop+GuiOffTop, mouseLeft, mouseTop, last);
         }
     }
+
+    @Override
+    public void drawSlot(Slot slotIn) {
+
+        super.drawSlot(slotIn);
+        if (slotIn instanceof UISlot && ((UISlot) slotIn).isPreviewing()) {
+            int i = slotIn.xPos;
+            int j = slotIn.yPos;
+
+
+            GlStateManager.disableLighting();
+            GlStateManager.disableDepthTest();
+            GlStateManager.colorMask(true, true, true, false);
+            int slotColor = 0x668B8B8B;
+
+            this.fillGradient(i, j, i + 16, j + 16, slotColor, slotColor);
+            GlStateManager.colorMask(true, true, true, true);
+            GlStateManager.enableLighting();
+            GlStateManager.enableDepthTest();
+        }
+
+
+    }
+
+
+
 
     /**
      * Draw the foreground layer for the GuiContainer (everything in front of the items)

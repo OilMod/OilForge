@@ -9,9 +9,11 @@ import org.oilmod.api.rep.item.ItemStateRep;
 import org.oilmod.api.rep.itemstack.ItemStackFactory;
 import org.oilmod.api.rep.itemstack.ItemStackRep;
 import org.oilmod.api.rep.itemstack.state.ItemStackStateRep;
+import org.oilmod.api.rep.states.implapi.StateCollector;
 import org.oilmod.oilforge.Util;
 import org.oilmod.oilforge.items.capability.OilItemStackHandler;
 import org.oilmod.oilforge.rep.item.ItemFR;
+import org.oilmod.oilforge.rep.itemstack.state.ItemStackStateCollector;
 import org.oilmod.oilforge.rep.itemstack.state.ItemStackStateFR;
 
 public class RealItemStackFactory extends ItemStackFactory<RealItemStackFactory> {
@@ -50,5 +52,10 @@ public class RealItemStackFactory extends ItemStackFactory<RealItemStackFactory>
     @Override
     public ItemStackStateRep createStackState(BlockItemRep item, BlockStateRep itemState) {
         throw new NotImplementedException("todo"); //todo
+    }
+
+    @Override
+    protected StateCollector<ItemStackStateRep> createStateCollector() {
+        return new ItemStackStateCollector();
     }
 }

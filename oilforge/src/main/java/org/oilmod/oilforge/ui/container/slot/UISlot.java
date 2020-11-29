@@ -8,12 +8,11 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import org.oilmod.api.UI.IItemElement;
 import org.oilmod.api.UI.slot.ISlotType;
 import org.oilmod.api.crafting.ICraftingProcessor;
-import org.oilmod.api.rep.crafting.IResultCategory;
 import org.oilmod.oilforge.inventory.IItemFilter;
-import org.oilmod.oilforge.rep.inventory.InventoryFR;
 import org.oilmod.oilforge.ui.RealItemRef;
 import org.oilmod.oilforge.ui.SlotTypeProcessing;
 
+import java.util.function.BooleanSupplier;
 import java.util.function.IntSupplier;
 
 public class UISlot extends Slot {
@@ -24,8 +23,9 @@ public class UISlot extends Slot {
     private final int elementColumn;
     private final IntSupplier xPosition;
     private final IntSupplier yPosition;
+    private final BooleanSupplier allowPreview;
 
-    public UISlot(IItemElement element, RealItemRef ref, int slotId, IntSupplier xPosition, IntSupplier yPosition, IItemFilter filter, int elementRow, int elementColumn) {
+    public UISlot(IItemElement element, RealItemRef ref, int slotId, IntSupplier xPosition, IntSupplier yPosition, IItemFilter filter, int elementRow, int elementColumn, BooleanSupplier allowPreview) {
         super(null, slotId, xPosition.getAsInt(), yPosition.getAsInt());
         this.xPosition = xPosition;
         this.yPosition = yPosition;
@@ -34,6 +34,7 @@ public class UISlot extends Slot {
         this.element = element;
         this.elementRow = elementRow;
         this.elementColumn = elementColumn;
+        this.allowPreview = allowPreview;
     }
 
     public void updatePos() {
@@ -42,8 +43,12 @@ public class UISlot extends Slot {
     }
 
     private RealItemRef rref() {
+        return rref(false);
+    }
+    private RealItemRef rref(boolean preview) {
         ref.reset();
-        ref.next(element, elementRow, elementColumn);
+        ref.setPreview(preview && allowPreview.getAsBoolean());
+        ref.deferTo(element, elementRow, elementColumn);
         return ref;
     }
 
@@ -84,42 +89,48 @@ public class UISlot extends Slot {
     public ItemStack onTake(PlayerEntity thePlayer, ItemStack stack) {
         this.onSlotChanged();
 
-        ISlotType slotType = rref().getSlotType();
-        if (slotType instanceof SlotTypeProcessing) {
-            ICraftingProcessor processor = ((SlotTypeProcessing) slotType).getProcessor();
-            processor.onSlotTake();
-            processor.afterSlotTake();
-        }
-
         return ref.getHandler().onTake(ref, thePlayer, stack);
-        //todo add crafting logic
     }
+
+
 
     /**
      * Helper fnct to get the stack in the slot.
      */
     @Override
     public ItemStack getStack() {
-        ISlotType slotType = rref().getSlotType();
-        ItemStack result = ref.getHandler().getStack(ref);
-        /*if (result.isEmpty() && slotType instanceof SlotTypeProcessing) {
-            SlotTypeProcessing slotTypeProcessing = ((SlotTypeProcessing) slotType);
-            ICraftingProcessor processor = slotTypeProcessing.getProcessor();
-            for (IResultCategory category:slotTypeProcessing.getCategories()) {
-                //to/do: this will result is wrong behaviour if the local slotview does not match the processors result invview. this is a bug, to fix it we need to enforce they are the same or obtain the local slot id other ways
-                ItemStack preview = ((InventoryFR)processor.getPreviewInventory(category)).getForge().getStackInSlot(elementRow * element.getColumns()+ elementColumn);
-                //System.out.printf("preview: %s, real:%s, slotid:%d\n", preview, result, elementRow * element.getColumns()+ elementColumn);
-                if (!preview.isEmpty()) return preview;
-            }
-        }*/
+        ItemStack result = rref().getHandler().getStack(ref);
+        if (isPreviewing(ref)) {
+            //need to reresolve this time as a preview
+            result = rref(true).getHandler().getStack(ref);
+        }
         return result;
+    }
+
+    public boolean isPreviewing() {
+        return isPreviewing(rref());
+    }
+
+    private boolean isPreviewing(RealItemRef ref) {
+        if (!allowPreview.getAsBoolean())return false;
+        ISlotType slotType = ref.getSlotType();
+        ItemStack result = ref.getHandler().getStack(ref);
+        return slotType instanceof SlotTypeProcessing && result.isEmpty();
+    }
+
+    public ISlotType getSlotType() {
+        return rref().getSlotType();
     }
 
     /**
      * Returns if this slot contains a stack.
      */
     public boolean getHasStack() {
-        return rref().getHandler().getHasStack(ref);
+        rref();
+        if (isPreviewing(ref)) {
+            return rref(true).getHandler().getHasStack(ref);
+        }
+        return ref.getHandler().getHasStack(ref);
     }
 
     /**
@@ -154,17 +165,26 @@ public class UISlot extends Slot {
      * Decrease the size of the stack in slot (first int arg) by the amount of the second int arg. Returns the new stack.
      */
     public ItemStack decrStackSize(int amount) {
-        return rref().getHandler().decrStackSize(ref, amount);
+        ISlotType slotType = rref().getSlotType();
+        if (slotType instanceof SlotTypeProcessing) {
+
+            //we only want to craft when we try taking the preview
+            if (!ref.getHandler().getHasStack(ref)) {
+                ICraftingProcessor processor = ((SlotTypeProcessing) slotType).getProcessor();
+                processor.onSlotTake();
+                processor.afterSlotTake();
+            }
+
+            amount = Math.max(amount, ref.getHandler().getStack(ref).getCount());
+        }
+        return ref.getHandler().decrStackSize(ref, amount);
     }
 
     /**
      * Return whether this slot's stack can be taken from this slot.
      */
     public boolean canTakeStack(PlayerEntity playerIn) {
-
-
-        if ( rref().getSlotType().isTakeable() && ref.getHandler().canTakeStack(ref, playerIn)) {
-
+        if (rref().getSlotType().isTakeable() && ref.getHandler().canTakeStack(ref, playerIn)) {
             return true;
         }
         return false;

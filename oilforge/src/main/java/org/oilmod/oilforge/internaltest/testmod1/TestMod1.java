@@ -11,7 +11,6 @@ import org.oilmod.api.items.ItemRegistry;
 import org.oilmod.api.items.crafting.VanillaMaterialIngredient;
 import org.oilmod.api.registry.DeferredObject;
 import org.oilmod.api.rep.crafting.*;
-import org.oilmod.api.rep.itemstack.ItemStackFactory;
 import org.oilmod.api.stateable.complex.ComplexStateTypeRegistry;
 import org.oilmod.oilforge.internaltest.testmod1.blocks.TestBlock;
 import org.oilmod.oilforge.internaltest.testmod1.blocks.TestBlock2;
@@ -31,11 +30,23 @@ public class TestMod1 extends OilMod {
     @Override
     public void onRegisterItems(ItemRegistry itemRegistry) {
         CustomRecipe recipe = new RecipeBuilder()
-                .shaped(TestIngredientCategory, Transformation.Rotation90)
-                    .row(new VanillaMaterialIngredient(ARROW.getItem()))
-                    .row(new VanillaMaterialIngredient(BEEF.getItem()))
+                .shaped(TestIngredientCategory, Transformation.Rotation90, Transformation.Rotation180, Transformation.Rotation270)
+                    .row(new VanillaMaterialIngredient(ARROW))
+                    .row(new VanillaMaterialIngredient(BEEF))
                 .ok()
-                .results(TestResultCategory, (state, checkState) -> ItemStackFactory.INSTANCE.create(PORKCHOP.getItem(), 2)).build();
+                .results(TestResultCategory,
+                        (s, c) -> ARROW.createStack(2),
+                        (s, c) -> BEEF.createStack(2)).build();
+
+        TestCraftingManager.add(recipe);
+
+        recipe = new RecipeBuilder()
+                .shaped(TestIngredientCategory)
+                .row(new VanillaMaterialIngredient(BLAZE_POWDER))
+                .row(new VanillaMaterialIngredient(MILK_BUCKET))
+                .ok()
+                .results(TestResultCategory,
+                        (s, c) -> LAVA_BUCKET.createStack(1)).build();
 
         TestCraftingManager.add(recipe);
 
