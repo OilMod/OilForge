@@ -60,7 +60,7 @@ public class TestPortableFurnaceItemStack extends OilItemStack {
 
         @Override
         public int getSimulationSpeed() {
-            return 1;
+            return 10;
         }
 
         @Override

@@ -14,14 +14,12 @@ public class EventManager {
 
     @SubscribeEvent
     public static void onContainerOpen(PlayerContainerEvent.Open event) {
-        LOGGER.info("PlayerContainerEvent.Open: Container: {}", event.getContainer());
         TickableItemManager.add(event.getPlayer().world, event.getContainer(), ContainerTicker.class, ContainerTicker::new);
     }
 
 
     @SubscribeEvent
     public static void onContainerClose(PlayerContainerEvent.Close event) {
-        LOGGER.info("PlayerContainerEvent.Close: Container: {}", event.getContainer());
         TickableItemManager.remove(event.getPlayer().world, event.getContainer(), ContainerTicker.class);
     }
 

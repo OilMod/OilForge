@@ -6,6 +6,7 @@ import org.oilmod.api.blocks.BlockRegistry;
 import org.oilmod.api.crafting.custom.CustomCraftingManager;
 import org.oilmod.api.crafting.custom.RecipeBuilder;
 import org.oilmod.api.crafting.custom.Transformation;
+import org.oilmod.api.crafting.ingredients.InterchangeableCraftingIngredient;
 import org.oilmod.api.inventory.ItemFilterRegistry;
 import org.oilmod.api.items.ItemRegistry;
 import org.oilmod.api.items.crafting.VanillaMaterialIngredient;
@@ -26,6 +27,7 @@ public class TestMod1 extends OilMod {
     public static final IResultCategory TestResultCategory = new IResultCategory() {};
     public static final CustomCraftingManager TestCraftingManager = new CustomCraftingManager(new IIngredientCategory[]{TestIngredientCategory}, new IResultCategory[]{TestResultCategory});
     public static DeferredObject<TestBlockInventoryType> TestBlockInventoryType = DeferredObject.empty();
+    public static DeferredObject<TestKabanItem> kabanItem = DeferredObject.empty();
 
     @Override
     public void onRegisterItems(ItemRegistry itemRegistry) {
@@ -37,8 +39,8 @@ public class TestMod1 extends OilMod {
                 .results(TestResultCategory,
                         (s, c) -> ARROW.createStack(2),
                         (s, c) -> BEEF.createStack(2)).build();
-
         TestCraftingManager.add(recipe);
+
 
         recipe = new RecipeBuilder()
                 .shaped(TestIngredientCategory)
@@ -47,7 +49,38 @@ public class TestMod1 extends OilMod {
                 .ok()
                 .results(TestResultCategory,
                         (s, c) -> LAVA_BUCKET.createStack(1)).build();
+        TestCraftingManager.add(recipe);
 
+
+        recipe = new RecipeBuilder()
+                .shaped(TestIngredientCategory)
+                .row(new VanillaMaterialIngredient(LAPIS_LAZULI))
+                .row(new VanillaMaterialIngredient(BUCKET))
+                .ok()
+                .results(TestResultCategory,
+                        (s, c) -> WATER_BUCKET.createStack(1)).build();
+        TestCraftingManager.add(recipe);
+
+
+        VanillaMaterialIngredient leather = new VanillaMaterialIngredient(LEATHER);
+        VanillaMaterialIngredient iron = new VanillaMaterialIngredient(IRON_INGOT);
+        VanillaMaterialIngredient gold = new VanillaMaterialIngredient(GOLD_INGOT);
+        VanillaMaterialIngredient slime = new VanillaMaterialIngredient(SLIME_BALL);
+        VanillaMaterialIngredient string = new VanillaMaterialIngredient(STRING);
+
+        recipe = new RecipeBuilder()
+                .shapedPattern(TestIngredientCategory, ' ', Transformation.ReflectionVertical)
+                    .row("~ILL")
+                    .row("~L L")
+                    .row("~LSL")
+                    .row("~ILL")
+                    .ingre('~', string)
+                    .ingre('L', leather)
+                    .ingre('I', new InterchangeableCraftingIngredient(iron, gold))
+                    .ingre('S', slime)
+                .ok()
+                .results(TestResultCategory,
+                        (s, c) -> kabanItem.get().createItemStack(1)).build();
         TestCraftingManager.add(recipe);
 
 
@@ -55,7 +88,7 @@ public class TestMod1 extends OilMod {
         itemRegistry.register("testitem1", TestItem1::new);
         itemRegistry.register("testitem2", TestItem2::new);
         itemRegistry.register("testbackpack", TestBackpackItem::new);
-        itemRegistry.register("kaban", TestKabanItem::new);
+        kabanItem = itemRegistry.register("kaban", TestKabanItem::new);
         itemRegistry.register("testportablefurnance", TestPortableFurnaceItem::new);
         itemRegistry.register("testpickaxe", TestPickaxe::new);
         itemRegistry.register("testshovel", TestShovel::new);

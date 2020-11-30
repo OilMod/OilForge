@@ -16,7 +16,7 @@ import org.oilmod.oilforge.rep.item.ItemFR;
 import org.oilmod.oilforge.rep.itemstack.state.ItemStackStateCollector;
 import org.oilmod.oilforge.rep.itemstack.state.ItemStackStateFR;
 
-public class RealItemStackFactory extends ItemStackFactory<RealItemStackFactory> {
+public class RealItemStackFactory extends ItemStackFactory.Provider<RealItemStackFactory> {
     public static RealItemStackFactory INSTANCE;
     private ItemStackFR EMPTY = new ItemStackFR(ItemStack.EMPTY);  //todo consider chance of mod trying to modify empty item
 

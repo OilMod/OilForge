@@ -30,7 +30,7 @@ public class RealBlockLootEntry extends LootEntry {
             IEnumerableState enumState = toOilState(lootContext.get(LootParameters.BLOCK_STATE));
             if (enumState == null && complexState!=null)enumState = toOilState(lootContext.get(LootParameters.BLOCK_ENTITY).getBlockState());
             ItemStateRep itemState = block.getAssociatedItem(enumState, complexState);
-            ItemStackRep itemStackRep = ItemStackFactory.INSTANCE.create(itemState.getItem(), itemState);
+            ItemStackRep itemStackRep = ItemStackFactory.create(itemState.getItem(), itemState);
             stackConsumer.accept(toForge(itemStackRep));
         }
     };

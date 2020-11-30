@@ -62,12 +62,12 @@ public class EnchantmentFR implements EnchantmentRep {
 
     @Override
     public boolean canEnchantItem(ItemRep item, ItemStateRep state) {
-        return canEnchantItem(ItemStackFactory.INSTANCE.create(item, state));
+        return canEnchantItem(ItemStackFactory.create(item, state));
     }
 
     @Override
     public boolean canEnchantItem(ItemRep item, ItemStackStateRep stackState) {
-        return canEnchantItem(ItemStackFactory.INSTANCE.create(item, stackState));
+        return canEnchantItem(ItemStackFactory.create(item, stackState));
     }
     private boolean canEnchantItem(ItemStackRep stack) {
         return forge.canApply(((ItemStackFR)stack).getForge());

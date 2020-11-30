@@ -44,7 +44,7 @@ public class OilFurnaceContainer extends AbstractFurnaceContainer implements IOi
     public void detectAndSendChanges() {
         super.detectAndSendChanges();
         if (top instanceof OilIInventory) {
-            ((OilIInventory) top).tick(); //to simulate ticks as long as we havent implemented a working ticker
+            ((OilIInventory) top).tick(); //to simulate ticks as long as we havent implemented a working ticker todo: do that lol
         }
     }
 

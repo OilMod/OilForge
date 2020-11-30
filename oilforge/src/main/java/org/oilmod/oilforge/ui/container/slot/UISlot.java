@@ -8,6 +8,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import org.oilmod.api.UI.IItemElement;
 import org.oilmod.api.UI.slot.ISlotType;
 import org.oilmod.api.crafting.ICraftingProcessor;
+import org.oilmod.api.rep.crafting.IResultCategory;
 import org.oilmod.oilforge.inventory.IItemFilter;
 import org.oilmod.oilforge.ui.RealItemRef;
 import org.oilmod.oilforge.ui.SlotTypeProcessing;
@@ -202,6 +203,11 @@ public class UISlot extends Slot {
     public ICraftingProcessor getCraftingProcessor() {
         ISlotType type = rref().getSlotType();
         return type instanceof SlotTypeProcessing?((SlotTypeProcessing) type).getProcessor():null;
+    }
+
+    public IResultCategory getResultCategory() {
+        ISlotType type = rref().getSlotType();
+        return type instanceof SlotTypeProcessing?((SlotTypeProcessing) type).getCategories()[0] :null;
     }
 
     /**

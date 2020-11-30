@@ -41,7 +41,9 @@ public class TestPortableFurnaceItem extends OilItem implements IUnique, ITickab
         try {
             last = Integer.parseInt(name.substring(getDisplayName().length()));
         }catch (NumberFormatException ex){}
-        last += ticksToProcess;
-        DisplayName.set(stack, getDisplayName() + last);
+        if (ticksToProcess >= last) {
+
+            DisplayName.set(stack, getDisplayName() + ticksToProcess);
+        }
     }
 }

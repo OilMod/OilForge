@@ -16,6 +16,8 @@ import org.apache.commons.lang3.Validate;
 import org.oilmod.api.UI.IItemElement;
 import org.oilmod.api.UI.UI;
 import org.oilmod.api.crafting.ICraftingProcessor;
+import org.oilmod.api.rep.crafting.IResultCategory;
+import org.oilmod.api.rep.inventory.InventoryRep;
 import org.oilmod.oilforge.inventory.IItemFilter;
 import org.oilmod.oilforge.inventory.NoItemFilter;
 import org.oilmod.oilforge.inventory.container.ClientContainerHelper;
@@ -141,6 +143,8 @@ public class UIContainer extends RecipeBookContainer<IInventory> implements IOil
             if (index < topSlots) { //this implies UI slot
                 UISlot uiSlot = (UISlot) slot;
                 ICraftingProcessor processor=uiSlot.getCraftingProcessor();
+                IResultCategory categoryShiftingFrom = uiSlot.getResultCategory();
+                InventoryRep playerInventory = toOil(this.playerInventory);
                 System.out.printf("%s: trying shift for slot %d\n", Thread.currentThread().getName(), index);
                 if (uiSlot.isPreviewing() && processor!= null) {
                     ItemStack previewStack = itemstack1.copy();
@@ -149,7 +153,7 @@ public class UIContainer extends RecipeBookContainer<IInventory> implements IOil
                     try {
                         do {
                             max = findSpace(previewStack,  topSlots, this.inventorySlots.size());
-                            if (max != 0) max = processor.tryCrafting(max, (stack, multiplier, testRun) -> false, true); //bug 1 returns 1 instead of 0
+                            if (max != 0) max = processor.tryCrafting(max, (stack, multiplier, testRun) -> false, categoryShiftingFrom, playerInventory , true); //bug 1 returns 1 instead of 0
                             if (max == 0) {
                                 return ItemStack.EMPTY;
                             }
@@ -169,15 +173,13 @@ public class UIContainer extends RecipeBookContainer<IInventory> implements IOil
                                     playerIn.dropItem(stack, false);
                                 }
                                 return true;
-                            }, false);
+                            }, categoryShiftingFrom, playerInventory , false);
                             hasTaken = true;
 
-                            itemstack1 = slot.getStack();
-                            itemstack = itemstack1.copy();
-                            if (!this.mergeItemStack(itemstack1, topSlots, this.inventorySlots.size(), true)) {
-                                return ItemStack.EMPTY;
-                            }
+
                         } while (max > 0);
+                        return ItemStack.EMPTY; //as we replace the output inventory the crafting is dont directly into the player inventory, so we do not need the merge the itemstack manaually here
+                        //in fact if we were to merge we would merge the preview and dupe items!
                     } finally {
                         if (hasTaken) {
                             processor.afterSlotTake();
