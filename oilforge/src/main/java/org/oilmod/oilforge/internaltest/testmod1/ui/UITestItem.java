@@ -1,7 +1,6 @@
 package org.oilmod.oilforge.internaltest.testmod1.ui;
 
 import org.oilmod.api.UI.UIMPI;
-import org.oilmod.api.crafting.ResultSlotCraftingProcessor;
 import org.oilmod.api.inventory.InventoryFactory;
 import org.oilmod.api.inventory.ModInventoryObject;
 import org.oilmod.api.items.ItemInteractionResult;
@@ -17,8 +16,6 @@ import org.oilmod.api.util.InteractionResult;
 import org.oilmod.oilforge.internaltest.testmod1.items.PortableInventoryFilter;
 import org.oilmod.oilforge.internaltest.testmod1.items.TestBackpackItemStack;
 
-import java.util.Collections;
-
 import static org.oilmod.oilforge.Util.toForge;
 import static org.oilmod.oilforge.internaltest.testmod1.TestMod1.*;
 
@@ -33,10 +30,12 @@ public class UITestItem extends OilItem implements IUnique {
         invBuilder = InventoryFactory
                 .builder("items")
                 .standardTitle("UI Test Item")
-                .size(4*4+2+2)
+                .size(4*4+2+2+18)
                 .filter(PortableInventoryFilter.INSTANCE)
                 .mainInventory()
-                .processors((inv)-> new ResultSlotCraftingProcessor(Collections.singletonMap(TestIngredientCategory, inv.createView2d(0, 4, 4)), Collections.singletonMap(TestResultCategory, inv.createView(16, 2)), TestCraftingManager))
+                .processor(TestCraftingManager, (b)-> b.ingre(TestIngredientCategory).view2d(4, 4)
+                        .result(TestResultCategory).view1d(16, 2)
+                        .resultSlot())
                 .basic();
     }
 
