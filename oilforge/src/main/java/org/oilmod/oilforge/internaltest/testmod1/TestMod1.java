@@ -69,7 +69,7 @@ public class TestMod1 extends OilMod {
         VanillaMaterialIngredient string = new VanillaMaterialIngredient(STRING);
 
         recipe = new RecipeBuilder()
-                .shapedPattern(TestIngredientCategory, ' ', Transformation.ReflectionVertical)
+                .shapedPattern(TestIngredientCategory, ' ', Transformation.ReflectionHorizontal)
                     .row("~ILL")
                     .row("~L L")
                     .row("~LSL")

@@ -34,7 +34,9 @@ public class UITestItem extends OilItem implements IUnique {
                 .filter(PortableInventoryFilter.INSTANCE)
                 .mainInventory()
                 .processor(TestCraftingManager, (b)-> b.ingre(TestIngredientCategory).view2d(4, 4)
+                        .reserve(TestIngredientCategory).view1d(20, 18).make()
                         .result(TestResultCategory).view1d(16, 2)
+                        .overflow(TestResultCategory).view1d(18, 2).make()
                         .resultSlot())
                 .basic();
     }

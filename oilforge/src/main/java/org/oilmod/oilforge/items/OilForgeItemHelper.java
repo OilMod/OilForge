@@ -36,6 +36,7 @@ public class OilForgeItemHelper {
                 item.write(itemNBT);
                 OilNBTCompound oilNBT = new OilNBTCompound(itemNBT);
                 copyTo(oilNBT, compound1); //todo should be doable as a itemsCompoundList.append(compound1) even if not of same compound config type (on the fly detection and translation)
+                //profiling resulted in that this copyTo operation is super heavy
 
                 //item.save(compound1);
                 itemsCompoundList.append(compound1);
