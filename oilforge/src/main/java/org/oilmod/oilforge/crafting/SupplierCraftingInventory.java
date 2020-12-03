@@ -24,7 +24,7 @@ public class SupplierCraftingInventory extends CraftingInventory {
     public boolean isEmpty() {
         for (int top = 0; top < getHeight(); top++) {
             for (int left = 0; left < getWidth(); left++) {
-                if(!ingredientSupplier.getSupplied(left, top).isEmpty()) return false;
+                if(!ingredientSupplier.getSuppliedShaped(left, top).isEmpty()) return false;
             }
         }
 
@@ -32,7 +32,7 @@ public class SupplierCraftingInventory extends CraftingInventory {
     }
 
     public ItemStack getStackInSlot(int index) {
-        return index >= this.getSizeInventory() ? ItemStack.EMPTY : ((ItemStackFR)ingredientSupplier.getSupplied(index)).getForge();
+        return index >= this.getSizeInventory() ? ItemStack.EMPTY : ((ItemStackFR)ingredientSupplier.getSuppliedShaped(index%getWidth(), index/getWidth()).getItemState()).getForge();
     }
 
     public ItemStack removeStackFromSlot(int index) {

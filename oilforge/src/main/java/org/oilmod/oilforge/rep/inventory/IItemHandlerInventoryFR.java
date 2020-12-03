@@ -39,6 +39,16 @@ public class IItemHandlerInventoryFR implements InventoryRep {
     }
 
     @Override
+    public boolean isEmpty(int slot) {
+        return forge.getStackInSlot(slot).isEmpty();
+    }
+
+    @Override
+    public int getStack(int slot) {
+        return forge.getStackInSlot(slot).getCount();
+    }
+
+    @Override
     public boolean isNative() {
         return false;
     }

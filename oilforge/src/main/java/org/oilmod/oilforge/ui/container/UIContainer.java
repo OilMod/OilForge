@@ -1,5 +1,6 @@
 package org.oilmod.oilforge.ui.container;
 
+import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import net.minecraft.client.util.RecipeBookCategories;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
@@ -28,6 +29,7 @@ import org.oilmod.oilforge.ui.container.slot.UISlot;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 import static org.oilmod.oilforge.Util.toForge;
 import static org.oilmod.oilforge.Util.toOil;
@@ -50,7 +52,6 @@ public class UIContainer extends RecipeBookContainer<IInventory> implements IOil
     }
     public UIContainer(OilContainerType<UIContainer> type, int id, PlayerInventory player, SetUIPacket info) {
         this(null, type, id, player, info.createUI());
-        //itemFilter = info.itemFilterPacket.itemFilter;
         initSlots();
     }
 
@@ -60,22 +61,16 @@ public class UIContainer extends RecipeBookContainer<IInventory> implements IOil
     }
     private UIContainer(Void unused, OilContainerType<UIContainer> type, int id, PlayerInventory playerInventory, UI ui) {
         super(type, id);
-        //assertInventorySize(inventory, rows * columns);
-        //this.top = inventory;
         this.ui = ui;
         this.playerInventory = playerInventory;
 
-        //inventory.openInventory(playerInventory.player); //todo find a way for this
-
         itemFilter = NoItemFilter.INSTANCE; //for now
-        /*if (inventory instanceof OilIInventory) {
-            itemFilter = ((OilIInventory) inventory).getItemFilter();
-        }*/
     }
 
     protected void initSlots() {
         Validate.notNull(itemFilter, "no itemfilter set. huh?");
         Validate.notNull(ui, "no UI set. huh?");
+        Set<ICraftingProcessor> processorSet = new ObjectOpenHashSet<>();
 
         ui.updateSize();
 
@@ -98,7 +93,12 @@ public class UIContainer extends RecipeBookContainer<IInventory> implements IOil
                     int finalXOff = xOff;
                     int finalJ = j;
                     int finalI = i;
-                    this.addSlot(new UISlot(element, ref, topSlots++, () -> finalXOff + finalJ * GuiSlotSize + element.getLeft(), () -> GuiSlotSize + finalI * GuiSlotSize + element.getTop(), itemFilter, i, j, this::getAllowPreview));
+                    UISlot slot = new UISlot(element, ref, topSlots++, () -> finalXOff + finalJ * GuiSlotSize + element.getLeft(), () -> GuiSlotSize + finalI * GuiSlotSize + element.getTop(), itemFilter, i, j, this::getAllowPreview);
+                    this.addSlot(slot);
+                    ICraftingProcessor processor = slot.getCraftingProcessor();
+                    if (processor != null) {
+                        processorSet.add(processor);
+                    }
                 }
             }
         }
@@ -114,6 +114,10 @@ public class UIContainer extends RecipeBookContainer<IInventory> implements IOil
         for(int i1 = 0; i1 < 9; ++i1) {
             this.addSlot(new Slot(playerInventory, i1, xOff + i1 * GuiSlotSize, 161 + yOff + playerInvOff));
         }
+
+
+        //lets also update the processors
+        processorSet.forEach( p ->  p.updateRecipe(true));
     }
 
 
@@ -153,12 +157,12 @@ public class UIContainer extends RecipeBookContainer<IInventory> implements IOil
                     try {
                         do {
                             max = findSpace(previewStack,  topSlots, this.inventorySlots.size());
-                            if (max != 0) max = processor.tryCrafting(max, (stack, multiplier, testRun) -> false, categoryShiftingFrom, playerInventory , true); //bug 1 returns 1 instead of 0
+                            if (max != 0) max = processor.tryCrafting(max, (stack, multiplier, testRun) -> 0, categoryShiftingFrom, playerInventory , true); //bug 1 returns 1 instead of 0
                             if (max == 0) {
                                 return ItemStack.EMPTY;
                             }
                             max = processor.tryCrafting(max, (oilStack, multiplier, testRun) -> {
-                                if (testRun) return false;
+                                if (testRun) return 0;
                                 int stackLimit =oilStack.getMaxStackSize();
                                 int total = (oilStack.getAmount()*multiplier);
                                 int stacks = total/stackLimit;
@@ -172,7 +176,7 @@ public class UIContainer extends RecipeBookContainer<IInventory> implements IOil
                                     stack.setCount(rest);
                                     playerIn.dropItem(stack, false);
                                 }
-                                return true;
+                                return multiplier;
                             }, categoryShiftingFrom, playerInventory , false);
                             hasTaken = true;
 

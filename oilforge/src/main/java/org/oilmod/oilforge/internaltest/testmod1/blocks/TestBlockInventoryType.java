@@ -2,7 +2,6 @@ package org.oilmod.oilforge.internaltest.testmod1.blocks;
 
 import org.oilmod.api.inventory.InventoryFactory;
 import org.oilmod.api.inventory.ModInventoryObject;
-import org.oilmod.api.rep.providers.minecraft.MinecraftItem;
 import org.oilmod.api.stateable.complex.ComplexStateTypeBase;
 import org.oilmod.oilforge.internaltest.testmod1.items.PortableInventoryFilter;
 

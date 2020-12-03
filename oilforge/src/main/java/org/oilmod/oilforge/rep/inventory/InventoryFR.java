@@ -75,6 +75,16 @@ public class InventoryFR implements InventoryRep {
     }
 
     @Override
+    public boolean isEmpty(int slot) {
+        return getForge().getStackInSlot(slot).isEmpty();
+    }
+
+    @Override
+    public int getStack(int slot) {
+        return getForge().getStackInSlot(slot).getCount();
+    }
+
+    @Override
     public boolean isNative() {
         return true;
     }
