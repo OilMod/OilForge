@@ -6,12 +6,15 @@ import org.oilmod.api.blocks.BlockRegistry;
 import org.oilmod.api.crafting.custom.CustomCraftingManager;
 import org.oilmod.api.crafting.custom.RecipeBuilder;
 import org.oilmod.api.crafting.custom.Transformation;
+import org.oilmod.api.crafting.ingredients.ConsistentCraftingIngredient;
 import org.oilmod.api.crafting.ingredients.InterchangeableCraftingIngredient;
 import org.oilmod.api.inventory.ItemFilterRegistry;
 import org.oilmod.api.items.ItemRegistry;
 import org.oilmod.api.items.crafting.VanillaMaterialIngredient;
 import org.oilmod.api.registry.DeferredObject;
 import org.oilmod.api.rep.crafting.*;
+import org.oilmod.api.rep.providers.minecraft.MinecraftBlock;
+import org.oilmod.api.rep.providers.minecraft.MinecraftItem;
 import org.oilmod.api.stateable.complex.ComplexStateTypeRegistry;
 import org.oilmod.oilforge.internaltest.testmod1.blocks.TestBlock;
 import org.oilmod.oilforge.internaltest.testmod1.blocks.TestBlock2;
@@ -70,18 +73,59 @@ public class TestMod1 extends OilMod {
 
         recipe = new RecipeBuilder()
                 .shapedPattern(TestIngredientCategory, ' ', Transformation.ReflectionHorizontal)
-                    .row("~ILL")
-                    .row("~L L")
-                    .row("~LSL")
-                    .row("~ILL")
-                    .ingre('~', string)
-                    .ingre('L', leather)
-                    .ingre('I', new InterchangeableCraftingIngredient(iron, gold))
-                    .ingre('S', slime)
+                .row("~ILL")
+                .row("~L L")
+                .row("~LSL")
+                .row("~ILL")
+                .ingre('~', string)
+                .ingre('L', leather)
+                .ingre('I', new InterchangeableCraftingIngredient(iron, gold))
+                .ingre('S', slime)
                 .ok()
                 .results(TestResultCategory,
                         (s, c) -> kabanItem.get().createItemStack(1)).build();
         TestCraftingManager.add(recipe);
+
+        recipe = new RecipeBuilder()
+                .shapeless(TestIngredientCategory)
+                .add(iron, gold)
+                .ok()
+                .results(TestResultCategory,
+                        (s, c) -> DIAMOND.createStack(1)).build();
+        TestCraftingManager.add(recipe);
+
+
+        VanillaMaterialIngredient oak = new VanillaMaterialIngredient(MinecraftBlock.OAK_PLANKS.get().getBlock().getItem());
+        VanillaMaterialIngredient spruce = new VanillaMaterialIngredient(MinecraftBlock.SPRUCE_PLANKS.get().getBlock().getItem());
+        ConsistentCraftingIngredient cons = new ConsistentCraftingIngredient(4, oak, spruce);
+        InterchangeableCraftingIngredient mix = new InterchangeableCraftingIngredient(oak, gold, cons); //as long as mix & cons are greedy order here matters
+
+        recipe = new RecipeBuilder()
+                .shapeless(TestIngredientCategory)
+                .add(oak) //needs to be first, most restrictive
+                .add(mix, mix, mix) //as long as mix is greedy order here matters
+                .add(cons, cons, cons) //as long as cons is greedy order here matters, needs to be last
+                .ok()
+                .results(TestResultCategory,
+                        (s, c) -> DIAMOND.createStack(1)).build();
+        TestCraftingManager.add(recipe);
+
+
+
+        recipe = new RecipeBuilder()
+                .shapedPattern(TestIngredientCategory, ' ', Transformation.ReflectionHorizontal)
+                .row("MMM")
+                .row("CCC")
+                .row("IO ")
+                .ingre('M', mix)
+                .ingre('C', cons)
+                .ingre('I', iron)
+                .ingre('O', oak)
+                .ok()
+                .results(TestResultCategory,
+                        (s, c) -> kabanItem.get().createItemStack(1)).build();
+        TestCraftingManager.add(recipe);
+
 
 
 
