@@ -88,7 +88,7 @@ public class UISlot extends Slot {
     }
 
     public ItemStack onTake(PlayerEntity thePlayer, ItemStack stack) {
-        this.onSlotChanged();
+        //this.onSlotChanged(); this seems to be redundant
 
         return ref.getHandler().onTake(ref, thePlayer, stack);
     }
@@ -139,14 +139,14 @@ public class UISlot extends Slot {
      */
     public void putStack(ItemStack stack) {
         rref().getHandler().putStack(ref, stack);
-        this.onSlotChanged();
+        //this.onSlotChanged();  this seems to be redundant
     }
 
     /**
      * Called when the stack in a Slot changes
      */
     public void onSlotChanged() {
-        rref().getHandler().onSlotChanged(ref);
+        //rref().getHandler().onSlotChanged(ref);  this seems to be redundant
     }
 
     /**
