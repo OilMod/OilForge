@@ -4,6 +4,7 @@ import net.minecraft.item.BlockItem;
 import org.oilmod.api.rep.block.BlockRep;
 import org.oilmod.api.rep.item.BlockItemRep;
 import org.oilmod.api.rep.item.BlockItemStateRep;
+import org.oilmod.api.rep.item.ItemStateRep;
 import org.oilmod.oilforge.rep.block.BlockFR;
 
 public class BlockItemFR extends ItemFR implements BlockItemRep {
@@ -18,7 +19,7 @@ public class BlockItemFR extends ItemFR implements BlockItemRep {
 
     @Override
     public BlockItemStateRep getStandardState() {
-        return (BlockItemStateRep) super.getStandardState();
+        return new StandardBlockItemStateFR(this);
     }
 
     @Override

@@ -14,7 +14,6 @@ import org.oilmod.api.items.crafting.VanillaMaterialIngredient;
 import org.oilmod.api.registry.DeferredObject;
 import org.oilmod.api.rep.crafting.*;
 import org.oilmod.api.rep.providers.minecraft.MinecraftBlock;
-import org.oilmod.api.rep.providers.minecraft.MinecraftItem;
 import org.oilmod.api.stateable.complex.ComplexStateTypeRegistry;
 import org.oilmod.oilforge.internaltest.testmod1.blocks.TestBlock;
 import org.oilmod.oilforge.internaltest.testmod1.blocks.TestBlock2;
@@ -23,6 +22,7 @@ import org.oilmod.oilforge.internaltest.testmod1.items.*;
 import org.oilmod.oilforge.internaltest.testmod1.ui.UITest;
 import org.oilmod.oilforge.internaltest.testmod1.ui.UITestItem;
 
+import static org.oilmod.api.rep.providers.minecraft.MinecraftBlock.*;
 import static org.oilmod.api.rep.providers.minecraft.MinecraftItem.*;
 
 public class TestMod1 extends OilMod {
@@ -95,15 +95,15 @@ public class TestMod1 extends OilMod {
         TestCraftingManager.add(recipe);
 
 
-        VanillaMaterialIngredient oak = new VanillaMaterialIngredient(MinecraftBlock.OAK_PLANKS.get().getBlock().getItem());
-        VanillaMaterialIngredient spruce = new VanillaMaterialIngredient(MinecraftBlock.SPRUCE_PLANKS.get().getBlock().getItem());
-        ConsistentCraftingIngredient cons = new ConsistentCraftingIngredient(4, oak, spruce);
+        VanillaMaterialIngredient oak = new VanillaMaterialIngredient(OAK_PLANKS.get().getBlock().getItem());
+        VanillaMaterialIngredient spruce = new VanillaMaterialIngredient(SPRUCE_PLANKS.get().getBlock().getItem());
+        ConsistentCraftingIngredient cons = new ConsistentCraftingIngredient(oak, spruce);
         InterchangeableCraftingIngredient mix = new InterchangeableCraftingIngredient(oak, gold, cons); //as long as mix & cons are greedy order here matters
 
         recipe = new RecipeBuilder()
                 .shapeless(TestIngredientCategory)
                 .add(oak) //needs to be first, most restrictive
-                .add(mix, mix, mix) //as long as mix is greedy order here matters
+                .add(mix, mix, mix) //as long as mix is greedy order here matters for efficiency
                 .add(cons, cons, cons) //as long as cons is greedy order here matters, needs to be last
                 .ok()
                 .results(TestResultCategory,
@@ -124,6 +124,18 @@ public class TestMod1 extends OilMod {
                 .ok()
                 .results(TestResultCategory,
                         (s, c) -> kabanItem.get().createItemStack(1)).build();
+        TestCraftingManager.add(recipe);
+
+
+        VanillaMaterialIngredient jungle = new VanillaMaterialIngredient(JUNGLE_PLANKS.get().getBlock().getItem());
+        ConsistentCraftingIngredient cons2 = new ConsistentCraftingIngredient(oak, jungle);
+
+        recipe = new RecipeBuilder()
+                .shapeless(TestIngredientCategory)
+                .add(cons, cons, cons2, cons2)
+                .ok()
+                .results(TestResultCategory,
+                        (s, c) -> ACACIA_LOG.get().getBlock().getItem().createStack(1)).build();
         TestCraftingManager.add(recipe);
 
 
