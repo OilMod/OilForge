@@ -51,11 +51,6 @@ issueTrackerURL="http://my.issue.tracker/" #optional
     description='''registered all items and blocks requested from the unification api'''
 
 
-[[mods]]
-    modId="multiparttest" #mandatory
-    # The version number of the mod - there's a few well known ${} variables useable here or just hardcode it
-    version="1"
-
 
 [[dependencies.oiluni]] #optional
     modId="oilmod"
