@@ -28,6 +28,7 @@ import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.DeferredWorkQueue;
+import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
@@ -60,6 +61,8 @@ import org.oilmod.oilforge.items.capability.ModInventoryObjectProvider;
 import org.oilmod.oilforge.items.capability.OilItemStackHandler;
 import org.oilmod.oilforge.OilModContext;
 import org.oilmod.oilforge.loottable.RealBlockLootEntry;
+import org.oilmod.oilforge.modloader.client.ClientSetup;
+import org.oilmod.oilforge.modloader.server.ServerSetup;
 import org.oilmod.oilforge.modloading.ModUtil;
 import org.oilmod.oilforge.modloading.OilEvents;
 import org.oilmod.oilforge.rep.minecraft.MC113ItemProvider;
@@ -78,16 +81,19 @@ import static org.oilmod.oilforge.Util.toReal;
 
 // The value here should match an entry in the META-INF/mods.toml file
 @Mod("oilforgeapi")@Mod.EventBusSubscriber
-public class OilModLoaderMod
+public class OilForgeMod
 {
     public static ServerWorld serverWorldDimOverworld; //this is just here temporary for debugging purposes
+
 
     // Directly reference a log4j logger.
     public static final Logger LOGGER = LogManager.getLogger();
     private TestMod1 mod1;
     private OilEvents mod1ForgeEvents;
+    private Setup setup;
 
-    public OilModLoaderMod() {
+    public OilForgeMod() {
+        setup = DistExecutor.runForDist(() -> ClientSetup::new, () -> ServerSetup::new);
         FMLJavaModLoadingContext.get().getModEventBus().addGenericListener(Block.class, EventPriority.HIGHEST, this::registerBlocks);
         FMLJavaModLoadingContext.get().getModEventBus().addGenericListener(Item.class, EventPriority.HIGHEST, this::registerItems);
         FMLJavaModLoadingContext.get().getModEventBus().addGenericListener(ContainerType.class, this::registerContainerType);
@@ -254,10 +260,6 @@ public class OilModLoaderMod
         commonSetupEvent.getServerSupplier().get().getResourcePacks().addPackFinder(new OilPackFinder());
     }
 
-    public void clientSetupEvent(final FMLClientSetupEvent commonSetupEvent) {
-        //commonSetupEvent.getMinecraftSupplier().get().getResourceManager().addResourcePack(new OilDummyResourcePack());//.addPackFinder(new OilPackFinder());
-    }
-
     @SubscribeEvent
     public void lootTableLoadEvent(LootTableLoadEvent event) {
         if (!event.getName().toString().toLowerCase().contains("minecraft")) {
@@ -286,6 +288,10 @@ public class OilModLoaderMod
             }
         }
 
+    }
+
+    public void clientSetupEvent(FMLClientSetupEvent event) {
+        setup.clientSetup(event);
     }
 
     // You can use EventBusSubscriber to automatically subscribe events on the contained class

@@ -4,23 +4,33 @@ allprojects {
         jcenter()
         mavenCentral()
         mavenLocal()
-        maven {url = 'https://files.minecraftforge.net/maven'}
-        maven {url='https://repo.spongepowered.org/maven/'}
+        maven {url = "https://files.minecraftforge.net/maven"}
+        maven {url="https://repo.spongepowered.org/maven/"}
+        maven { url = "https://chickenbones.net/maven" }
     }
 }
 
 buildscript {
     repositories {
-        maven {url = 'https://files.minecraftforge.net/maven'}
+        maven {url = "https://files.minecraftforge.net/maven"}
         gradlePluginPortal()
-        maven {url='https://repo.spongepowered.org/maven/'}
+        maven {url="https://repo.spongepowered.org/maven/"}
+        maven { url = "https://chickenbones.net/maven" }
     }
     dependencies {
-        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '3.+', changing: true
+        classpath group: "net.minecraftforge.gradle", name: "ForgeGradle", version: "3.+", changing: true
         classpath "gradle.plugin.com.lazan:gradle-maven-share:0.4"
-        classpath 'org.spongepowered:mixingradle:0.7-SNAPSHOT'
+        classpath "org.spongepowered:mixingradle:0.7-SNAPSHOT"
     }
 }
+
+file('build.properties').withReader {
+    def prop = new Properties()
+    prop.load(it)
+    project.ext.config = new ConfigSlurper().parse prop
+}
+
+
 
 task copyMods{
     doFirst{
@@ -45,9 +55,9 @@ gradle.afterProject { Project project2 ->
 
 
 allprojects {
-    apply plugin: 'idea'
-    apply plugin: 'eclipse'
-    apply plugin: 'maven-publish'
+    apply plugin: "idea"
+    apply plugin: "eclipse"
+    apply plugin: "maven-publish"
     ext {
         isDepForge = false
         isMaven = false
@@ -69,7 +79,7 @@ subprojects {
         fmlmodtype = "MOD"
         mixinconnector = ""
     }
-    group = 'org.oilmod'
+    group = "org.oilmod"
 }
 
 //important to now evaluate children as they might change properties we depend on and we do not want to read the default values!
@@ -88,18 +98,34 @@ allprojects {
             releaseJars.extendsFrom(compileJars)
             compile.extendsFrom(compileJars)
         }
+
+        processResources { task ->
+            inputs.property 'mod_version', config.mod_version
+            inputs.property 'mc_version', config.mc_version
+
+            from(sourceSets.main.resources.srcDirs) { spec ->
+                spec.include 'META-INF/mods.toml'
+                task.doFirst {
+                    spec.expand 'version': config.mod_version,
+                            'mc_version': config.mc_version,
+                            'ccl_version': resolve("CodeChickenLib")
+                }
+            }
+        }
     }
     if (project.isMaven) {
-        apply plugin: 'java'
-        apply plugin: 'com.lazan.gradlemavenshare'
-        fmlmodtype = 'NONE/MAVEN-LIB' //only for debug purposes, is never read
+        apply plugin: "java"
+        apply plugin: "com.lazan.gradlemavenshare"
+        fmlmodtype = "NONE/MAVEN-LIB" //only for debug purposes, is never read
     }
 
     project.delayedSetup() //idk how to call this without creating a warning .call() and .run() do not work?!
 
+
+
     if (project.isDepForge) {
         archivesBaseName = project.projectDir.name
-        sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '1.8' // Need this here so eclipse task generates correctly.
+        sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = "1.8" // Need this here so eclipse task generates correctly.
 
 
 
@@ -123,15 +149,17 @@ allprojects {
                         "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
                         "FMLModType": fmlmodtype,
                         "MixinConnector": mixinconnector,
-                        //"Class-Path": configurations.releaseJars.collect { "META-INF/libraries/${it.getName()}" }.join(' ') //todo fix dependency inclusion
+                        //"Class-Path": configurations.releaseJars.collect { "META-INF/libraries/${it.getName()}" }.join(" ") //todo fix dependency inclusion
                 ])
             }
 
-            into('META-INF/libraries/') {
+            into("META-INF/libraries/") {
                 from configurations.releaseJars
             }
         }
     }
+
+
 }
 
 
@@ -151,10 +179,45 @@ subprojects {
 
 
 
-def f = project.file('./run/mods/MixinBootstrap-1.0.1.jar')
+def f = project.file("./run/mods/MixinBootstrap-1.0.1.jar")
 if (!f.exists()) {
     if (!f.getParentFile().exists())f.getParentFile().mkdirs()
     println "Downloading MixinBootstrap ITransformerService and place it in mod folder"
-    new URL('https://github.com/LXGaming/MixinBootstrap/releases/download/v1.0.1/MixinBootstrap-1.0.1.jar').withInputStream{ i -> f.withOutputStream{ it << i }}
+    new URL("https://github.com/LXGaming/MixinBootstrap/releases/download/v1.0.1/MixinBootstrap-1.0.1.jar").withInputStream{ i -> f.withOutputStream{ it << i }}
     println "Tried downloading MixinBootstrap. File ${f.getAbsolutePath()} ${f.exists()?"does now":"still does not"} exist!"
 }/**/
+
+
+
+/**
+ * Polls the 'compile' configuration for a dependency with the given module name
+ * and resolves, and returns its version. E.g: '1.2.+' will resolve to '1.2.3.4'
+ *
+ * @param module The module to search for.
+ * @param chop If the string should be chopped on the last '-' in its string.
+ * @param configuration The name of the configuration to search.
+ * @param errorMissing If an error should be thrown if it can't be found.
+ * @return The version string, '0' if 'errorMissing' is false and nothing was found.
+ */
+def resolve(module, chop = true, configuration = 'compile', errorMissing = true) {
+    if (!configurations.find { it.name == configuration }) {
+        return "Configuration missing";
+    }
+    //Copy and lenient resolve the configuration, Forge cant be resolved at this time so lenient is required.
+    def filtered = configurations.getByName(configuration).copy().incoming.artifactView({ it.lenient = true }).artifacts
+            .findAll { it.id.componentIdentifier.module == module }
+            .collect { it.id.componentIdentifier.version }
+    if (filtered.size() > 1) {
+        println "WARNING: Found ${filtered.size()} Dependencies with ModuleName '${module}' in configuration '${configuration.name}'"
+    }
+    if (errorMissing && filtered.isEmpty()) {
+        throw new RuntimeException("Failed resolve dependency version for '${module}'")
+    }
+    if (filtered.isEmpty()) return "0"
+    def version = filtered.first() as String
+    if (chop) {
+        def idx = version.lastIndexOf('-')
+        return version.substring(idx + 1)
+    }
+    return version
+}

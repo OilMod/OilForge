@@ -13,7 +13,7 @@ import org.oilmod.api.util.ITicker;
 import org.oilmod.api.util.Tickable;
 import org.oilmod.oilforge.rep.location.WorldFR;
 
-import static org.oilmod.oilforge.modloader.OilModLoaderMod.serverWorldDimOverworld;
+import static org.oilmod.oilforge.modloader.OilForgeMod.serverWorldDimOverworld;
 
 public class TestPortableFurnaceItemStack extends OilItemStack {
     private static ITicker ticker = new ITicker() {

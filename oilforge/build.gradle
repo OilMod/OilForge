@@ -1,16 +1,17 @@
-apply plugin: 'net.minecraftforge.gradle'
-apply plugin: 'org.spongepowered.mixin'
+apply plugin: "net.minecraftforge.gradle"
+apply plugin: "org.spongepowered.mixin"
 
 minecraft {
-    mappings channel: 'snapshot', version: '20200119-1.14.4'
-    accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
+    mappings channel: "snapshot", version: config.mappings
+    accessTransformer = file("src/main/resources/META-INF/accesstransformer.cfg")
 }
 
 dependencies {
-    minecraft 'net.minecraftforge:forge:1.14.4-28.1.116'
+    minecraft "net.minecraftforge:forge:${config.mc_version}-${config.forge_version}"
+    compile "codechicken:CodeChickenLib:${config.mc_version}-${config.ccl_version}:deobf"
 }
 
-version = '1.0' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
+version = "1.0" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 isDepForge = true;
 
 
@@ -24,8 +25,8 @@ def delayedSetup() {
 
         compileOnly project(":oilforgemodloader")
         compileJars project(":forgeshared")
-        compile 'com.electronwill.night-config:json:3.6.0' //remove after figuring out big jar
-        compileOnly 'org.spongepowered:mixin:0.8-SNAPSHOT'
+        compile "com.electronwill.night-config:json:3.6.0" //remove after figuring out big jar
+        compileOnly "org.spongepowered:mixin:0.8-SNAPSHOT"
     }
 }
 
@@ -35,22 +36,14 @@ mixin {
 }
 
 minecraft {
-    // makeObfSourceJar = false // an Srg named sources jar is made by default. uncomment this to disable.
-
-    // accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
 
     // Default run configurations.
     // These can be tweaked, removed, or duplicated as needed.
     runs {
         client {
-            workingDirectory rootProject.file('run')
-
-            // Recommended logging data for a userdev environment
-            property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
-
+            workingDirectory rootProject.file("run")
             // Recommended logging level for the console
             property 'forge.logging.console.level', 'debug'
-
             mods {
                 oilforge {
                     source project(":oilforge").sourceSets.main
@@ -60,14 +53,9 @@ minecraft {
 
 
         server {
-            workingDirectory rootProject.file('run')
-
-            // Recommended logging data for a userdev environment
-            property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
-
+            workingDirectory rootProject.file("run")
             // Recommended logging level for the console
             property 'forge.logging.console.level', 'debug'
-
             mods {
                 oilforge {
                     source project(":oilforge").sourceSets.main
@@ -78,8 +66,6 @@ minecraft {
         data {
             workingDirectory rootProject.file('run')
 
-            // Recommended logging data for a userdev environment
-            property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
 
             // Recommended logging level for the console
             property 'forge.logging.console.level', 'debug'
@@ -92,8 +78,6 @@ minecraft {
                 }
             }
         }
-
-        //dependsOn ':oilforgemodloader:jar'
     }
 }
 

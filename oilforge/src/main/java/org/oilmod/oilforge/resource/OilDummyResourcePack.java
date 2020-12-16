@@ -1,11 +1,9 @@
 package org.oilmod.oilforge.resource;
 
-import com.google.common.base.Joiner;
 import net.minecraft.block.Block;
 import net.minecraft.resources.ResourcePackInfo;
 import net.minecraft.resources.ResourcePackType;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.fml.loading.moddiscovery.ModFile;
 import net.minecraftforge.fml.packs.DelegatableResourcePack;
 import net.minecraftforge.forgespi.locating.IModFile;
 import org.apache.commons.lang3.NotImplementedException;
@@ -13,15 +11,11 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.oilmod.api.OilMod;
 import org.oilmod.oilforge.block.RealBlockRegistryHelper;
-import org.oilmod.oilforge.modloader.OilModLoaderMod;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.StandardOpenOption;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Set;
