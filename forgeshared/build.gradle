@@ -1,16 +1,16 @@
-apply plugin: 'net.minecraftforge.gradle'
+apply plugin: "net.minecraftforge.gradle"
 
 minecraft {
-    mappings channel: 'snapshot', version: '20200119-1.14.4'
-    accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
+    mappings channel: "snapshot", version: "20200119-1.14.4"
+    accessTransformer = file("src/main/resources/META-INF/accesstransformer.cfg")
 }
 
 dependencies {
-    minecraft 'net.minecraftforge:forge:1.14.4-28.1.116'
+    minecraft "net.minecraftforge:forge:${config.mc_version}-${config.forge_version}"
 }
 
-version = '1.0'
-fmlmodtype = 'NONE'
+version = "1.0"
+fmlmodtype = "NONE"
 isDepForge = true;
 
 def delayedSetup() {
