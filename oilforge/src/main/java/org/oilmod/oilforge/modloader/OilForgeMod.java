@@ -9,17 +9,12 @@ import net.minecraft.client.renderer.model.ItemOverrideList;
 import net.minecraft.client.renderer.model.ModelResourceLocation;
 import net.minecraft.client.renderer.model.SimpleBakedModel;
 import net.minecraft.inventory.container.ContainerType;
-import net.minecraft.item.*;
-import net.minecraft.resources.IPackFinder;
-import net.minecraft.tileentity.TileEntityType;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.loot.LootPool;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.world.dimension.DimensionType;
+import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
-import net.minecraft.world.storage.loot.LootContext;
-import net.minecraft.world.storage.loot.LootEntry;
-import net.minecraft.world.storage.loot.LootPool;
-import net.minecraft.world.storage.loot.StandaloneLootEntry;
-import net.minecraft.world.storage.loot.conditions.ILootCondition;
 import net.minecraftforge.client.event.ModelBakeEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
@@ -32,7 +27,6 @@ import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
-import net.minecraftforge.fml.event.lifecycle.FMLDedicatedServerSetupEvent;
 import net.minecraftforge.fml.event.server.FMLServerAboutToStartEvent;
 import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
 import net.minecraftforge.fml.event.server.FMLServerStoppedEvent;
@@ -46,11 +40,8 @@ import org.oilmod.api.blocks.OilBlock;
 import org.oilmod.api.registry.RegistryHelperBase;
 import org.oilmod.api.rep.providers.minecraft.MinecraftBlockProvider;
 import org.oilmod.api.rep.providers.minecraft.MinecraftItemProvider;
-import org.oilmod.api.stateable.complex.ComplexStateTypeRegistry;
 import org.oilmod.oilforge.OilAPIInitEvent;
 import org.oilmod.oilforge.OilMain;
-import org.oilmod.oilforge.block.IBlockItemRegistry;
-import org.oilmod.oilforge.block.RealBlock;
 import org.oilmod.oilforge.block.RealBlockImplHelper;
 import org.oilmod.oilforge.block.RealBlockRegistryHelper;
 import org.oilmod.oilforge.internaltest.testmod1.TestMod1;
@@ -59,23 +50,19 @@ import org.oilmod.oilforge.items.RealItemImplHelper;
 import org.oilmod.oilforge.items.RealItemRegistryHelper;
 import org.oilmod.oilforge.items.capability.ModInventoryObjectProvider;
 import org.oilmod.oilforge.items.capability.OilItemStackHandler;
-import org.oilmod.oilforge.OilModContext;
 import org.oilmod.oilforge.loottable.RealBlockLootEntry;
 import org.oilmod.oilforge.modloader.client.ClientSetup;
 import org.oilmod.oilforge.modloader.server.ServerSetup;
-import org.oilmod.oilforge.modloading.ModUtil;
 import org.oilmod.oilforge.modloading.OilEvents;
 import org.oilmod.oilforge.rep.minecraft.MC113ItemProvider;
-import org.oilmod.oilforge.resource.OilDummyResourcePack;
 import org.oilmod.oilforge.resource.OilPackFinder;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Consumer;
 
-import static net.minecraft.world.storage.loot.LootTable.EMPTY_LOOT_TABLE;
+import static net.minecraft.loot.LootTable.EMPTY_LOOT_TABLE;
 import static org.oilmod.oilforge.Util.isModStack;
 import static org.oilmod.oilforge.Util.toReal;
 
@@ -102,8 +89,6 @@ public class OilForgeMod
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::createRegistries);
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::modelBakeEvent);
         //FMLJavaModLoadingContext.get().getModEventBus().addListener(this::lootTableLoadEvent);
-        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::attachCapabilities);
-        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::serverSetupEvent);
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::clientSetupEvent);
 
         // Register ourselves for server, registry and other game events we are interested in
@@ -111,7 +96,7 @@ public class OilForgeMod
 
         OilAPIInitEvent.addListener(this::onAPIInit);
 
-
+        Minecraft.getInstance().getResourcePackList().addPackFinder(new OilPackFinder());
 
         OilMain.init();
 
@@ -256,10 +241,6 @@ public class OilForgeMod
     }
 
 
-    public void serverSetupEvent(final FMLDedicatedServerSetupEvent commonSetupEvent) {
-        commonSetupEvent.getServerSupplier().get().getResourcePacks().addPackFinder(new OilPackFinder());
-    }
-
     @SubscribeEvent
     public void lootTableLoadEvent(LootTableLoadEvent event) {
         if (!event.getName().toString().toLowerCase().contains("minecraft")) {
@@ -305,7 +286,7 @@ public class OilForgeMod
         public static void onServerStarting(FMLServerStartingEvent event) {
             // do something when the server starts
             LOGGER.info("HELLO from server starting");
-            serverWorldDimOverworld = event.getServer().func_71218_a(DimensionType.OVERWORLD);
+            serverWorldDimOverworld = event.getServer().getWorld(World.OVERWORLD);
         }
         @SubscribeEvent
         public static void onServerStarting(FMLServerStoppedEvent event) {

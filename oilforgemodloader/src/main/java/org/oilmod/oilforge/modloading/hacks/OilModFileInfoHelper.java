@@ -5,10 +5,8 @@ import com.electronwill.nightconfig.core.UnmodifiableConfig;
 import cpw.mods.modlauncher.api.LamdbaExceptionUtils;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
-import net.minecraftforge.fml.loading.moddiscovery.InvalidModFileException;
-import net.minecraftforge.fml.loading.moddiscovery.ModFile;
-import net.minecraftforge.fml.loading.moddiscovery.ModFileInfo;
-import net.minecraftforge.fml.loading.moddiscovery.ModInfo;
+import net.minecraftforge.fml.loading.moddiscovery.*;
+import net.minecraftforge.forgespi.language.IConfigurable;
 import net.minecraftforge.forgespi.language.IModInfo;
 import org.oilmod.oilforge.modloading.OilModInfo;
 
@@ -27,8 +25,8 @@ import static net.minecraft.world.biome.Biome.LOGGER;
 public class OilModFileInfoHelper {
     public static final String OilModIdentifier = "OilModIdentifierClasspath";
     public static final String OilTestModIdentifier = "OilTestModIdentifierClasspath";
-    private static final Config fakeModFileConfig; //needed because of forge stupidity, casts all IModFileInfo to ModFileInfo for no reason whatsoever, like just for fun
-    private static final Config fakeModConfig;
+    public static final Config fakeModFileConfig; //needed because of forge stupidity, casts all IModFileInfo to ModFileInfo for no reason whatsoever, like just for fun
+    public static final Config fakeModConfig;
     static {
         fakeModConfig = Config.inMemory();
         fakeModConfig.add("modId", "fucku");
@@ -37,6 +35,7 @@ public class OilModFileInfoHelper {
         fakeModFileConfig = Config.inMemory();
         fakeModFileConfig.add("modLoader", "oilmod");
         fakeModFileConfig.add("loaderVersion", "1");
+        fakeModFileConfig.add("license", "Unknown");
         fakeModFileConfig.add("mods", new ArrayList<>(Collections.singletonList(fakeModConfig)));
     }
 
@@ -46,7 +45,7 @@ public class OilModFileInfoHelper {
     private static final Field fieldMods;
     static {
         try {
-            ctor = ModFileInfo.class.getDeclaredConstructor(ModFile.class, UnmodifiableConfig.class);
+            ctor = ModFileInfo.class.getDeclaredConstructor(ModFile.class, IConfigurable.class);
             ctor.setAccessible(true);
             fieldConfig = ModFileInfo.class.getDeclaredField("config");
             fieldMods = ModFileInfo.class.getDeclaredField("mods");
@@ -59,9 +58,9 @@ public class OilModFileInfoHelper {
     //copied from OilModFileInfo
     public static ModFileInfo createFileInfo(ModFile modFile, UnmodifiableConfig config) {
         try {
-            ModFileInfo result = ctor.newInstance(modFile, fakeModFileConfig);
+            ModFileInfo result = ctor.newInstance(modFile,  new NightConfigWrapper(fakeModFileConfig));
 
-            set(fieldConfig, result, config);
+            set(fieldConfig, result, new NightConfigWrapper(config));
 
             if (!config.contains("logoFile")) {
                 ((Config)config).add("logoFile", "oilmodlogo.png");
@@ -75,7 +74,7 @@ public class OilModFileInfoHelper {
             if (modConfigs.isEmpty()) {
                 throw new InvalidModFileException("Missing mods list", result);
             } else {
-                set(fieldMods, result, modConfigs.stream().map((mi) -> createModInfo(result, mi)).collect(Collectors.toList()));
+                set(fieldMods, result, modConfigs.stream().map((mi) -> new OilModInfo(result, new NightConfigWrapper(mi))).collect(Collectors.toList()));
             }
 
             return result;
@@ -95,9 +94,9 @@ public class OilModFileInfoHelper {
     private static final Field fieldDependencies;
     static {
         try {
-            ctorModInfo = ModInfo.class.getDeclaredConstructor(ModFileInfo.class, UnmodifiableConfig.class);
+            ctorModInfo = ModInfo.class.getDeclaredConstructor(ModFileInfo.class, IConfigurable.class);
             ctorModInfo.setAccessible(true);
-            fieldModConfig = ModInfo.class.getDeclaredField("modConfig");
+            fieldModConfig = ModInfo.class.getDeclaredField("config");
             fieldModId = ModInfo.class.getDeclaredField("modId");
             fieldDisplayName = ModInfo.class.getDeclaredField("displayName");
             fieldDescription = ModInfo.class.getDeclaredField("description");
@@ -108,7 +107,7 @@ public class OilModFileInfoHelper {
             throw new IllegalStateException("LamdbaExceptionUtils not working", e);
         }
     }
-    public static ModInfo createModInfo(ModFileInfo owningFile, UnmodifiableConfig modConfig) {
+    /*public static ModInfo createModInfo(ModFileInfo owningFile, UnmodifiableConfig modConfig) {
         //todo remove stuff we wont support (e.g. update service)
         try {
             ModInfo result = ctorModInfo.newInstance(owningFile, fakeModConfig);
@@ -149,7 +148,7 @@ public class OilModFileInfoHelper {
             depOilModLoader.add("versionRange", "${file.jarVersion}");
             depOilModLoader.add("ordering", IModInfo.Ordering.AFTER.toString());
             //adds implied dependencies OilModLoader (oilforgemodloader)!
-            dependencies.add(new IModInfo.ModVersion(result, depOilModLoader));*/
+            dependencies.add(new IModInfo.ModVersion(result, depOilModLoader));
 
             set(fieldDependencies, result, dependencies);
             set(fieldProperties, result, properties);
@@ -167,8 +166,8 @@ public class OilModFileInfoHelper {
         depOilModLoader.add("mandatory", true);
         depOilModLoader.add("versionRange", version);
         depOilModLoader.add("ordering", IModInfo.Ordering.AFTER.toString());
-        dependencies.add(new IModInfo.ModVersion(owner, depOilModLoader));
-    }
+        dependencies.add(new ModInfo.ModVersion(owner, new NightConfigWrapper(depOilModLoader)));
+    }*/
 
 
     static void set(Field field, Object on, Object newValue) throws NoSuchFieldException, IllegalAccessException {

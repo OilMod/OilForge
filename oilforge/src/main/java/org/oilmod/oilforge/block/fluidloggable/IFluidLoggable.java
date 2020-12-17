@@ -7,7 +7,7 @@ import net.minecraft.block.IWaterLoggable;
 import net.minecraft.fluid.FlowingFluid;
 import net.minecraft.fluid.Fluid;
 import net.minecraft.fluid.Fluids;
-import net.minecraft.fluid.IFluidState;
+import net.minecraft.fluid.FluidState;
 import net.minecraft.state.properties.BlockStateProperties;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockReader;
@@ -17,7 +17,7 @@ public interface IFluidLoggable extends IBucketPickupHandler, ILiquidContainer, 
 
 
     default boolean canContainFluid(IBlockReader worldIn, BlockPos pos, BlockState state, Fluid fluidIn) {
-        IFluidState fluidState = getFluidState(state);
+        FluidState fluidState = getFluidState(state);
         return !fluidState.isSource() && fluidIn.getFluid().isEquivalentTo(getFluid());
     }
 
@@ -25,8 +25,8 @@ public interface IFluidLoggable extends IBucketPickupHandler, ILiquidContainer, 
         return Fluids.WATER;
     }
 
-    default boolean receiveFluid(IWorld worldIn, BlockPos pos, BlockState state, IFluidState fluidStateIn) {
-        IFluidState fluidState = getFluidState(state);
+    default boolean receiveFluid(IWorld worldIn, BlockPos pos, BlockState state, FluidState fluidStateIn) {
+        FluidState fluidState = getFluidState(state);
         if (!fluidState.isSource() && fluidStateIn.getFluid().isEquivalentTo(getFluid())) {
             if (!worldIn.isRemote()) {
                 worldIn.setBlockState(pos, setFluidState(state, fluidStateIn), 3);
@@ -44,8 +44,8 @@ public interface IFluidLoggable extends IBucketPickupHandler, ILiquidContainer, 
         return false;
     }
 
-    IFluidState getFluidState(BlockState state);
-    default BlockState setFluidState(BlockState state, IFluidState fluidState) {
+    FluidState getFluidState(BlockState state);
+    default BlockState setFluidState(BlockState state, FluidState fluidState) {
         if (fluidState.isEmpty()) {
             if (!supportsOnlySources()) {
                 state = state.with(BlockStateProperties.LEVEL_0_15, 0);
@@ -61,7 +61,7 @@ public interface IFluidLoggable extends IBucketPickupHandler, ILiquidContainer, 
     }
 
     default Fluid pickupFluid(IWorld worldIn, BlockPos pos, BlockState state) {
-        IFluidState fluidState = getFluidState(state);
+        FluidState fluidState = getFluidState(state);
 
         if (fluidState.isSource()) {
             worldIn.setBlockState(pos, setFluidState(state, Fluids.EMPTY.getDefaultState()), 3);

@@ -16,6 +16,7 @@ import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Hand;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.ITextComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import org.oilmod.api.items.NMSItem;
@@ -56,38 +57,46 @@ public class RealItem extends Item implements NMSItem, RealItemImplHelper {
 
 
 
+    @Override
     public boolean canHarvestBlock(ItemStack stack, BlockState state) {
         return RealItemImplHelper.super.canHarvestBlock(stack, state);
     }
 
+    @Override
     public int getItemEnchantability(ItemStack stack) {
         return RealItemImplHelper.super.getItemEnchantability(stack);
     }
 
+    @Override
     public float getDestroySpeed(ItemStack stack, BlockState state) {
         return RealItemImplHelper.super.getDestroySpeed(stack, state);
     }
 
+    @Override
     @Nonnull
     public ActionResultType onItemUse(ItemUseContext context) {
         return RealItemImplHelper.super.onItemUse(context);
     }
 
+    @Override
     public boolean onBlockDestroyed(ItemStack stack, World worldIn, BlockState state, BlockPos pos, LivingEntity livingEntity) {
         return RealItemImplHelper.super.onBlockDestroyed(stack,worldIn,state,pos, livingEntity);
     }
 
+    @Override
     @Nonnull
     public ActionResult<ItemStack> onItemRightClick(World worldIn, PlayerEntity playerIn, @Nonnull Hand handIn) {
         return RealItemImplHelper.super.onItemRightClick(worldIn, playerIn, handIn);
     }
 
+    @Override
     @Nullable
     public CompoundNBT getShareTag(ItemStack stack) {
         return RealItemImplHelper.super.getShareTag(stack);
     }
 
 
+    @Override
     public void readShareTag(ItemStack stack, @Nullable CompoundNBT nbt) {
         RealItemImplHelper.super.readShareTag(stack, nbt);
     }
@@ -103,7 +112,7 @@ public class RealItem extends Item implements NMSItem, RealItemImplHelper {
     }
 
     @Override
-    public String getHighlightTip(ItemStack item, String displayName) {
+    public ITextComponent getHighlightTip(ItemStack item, ITextComponent displayName) {
         return RealItemImplHelper.super.getHighlightTip(item, displayName);
     }
 

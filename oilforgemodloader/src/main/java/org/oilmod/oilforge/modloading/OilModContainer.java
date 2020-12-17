@@ -7,6 +7,8 @@ import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.EventBusErrorMessage;
 import net.minecraftforge.eventbus.api.*;
 import net.minecraftforge.fml.*;
+import net.minecraftforge.fml.event.lifecycle.FMLConstructModEvent;
+import net.minecraftforge.fml.event.lifecycle.IModBusEvent;
 import net.minecraftforge.forgespi.language.IModInfo;
 import net.minecraftforge.forgespi.language.ModFileScanData;
 import net.minecraftforge.registries.IForgeRegistry;
@@ -39,16 +41,9 @@ public class OilModContainer extends ModContainer { //would like to overwrite fm
         super(info);
         LOGGER.debug(LOADING,"Creating OilModContainer instance for {} with classLoader {} & {}", className, modClassLoader, getClass().getClassLoader());
         this.scanResults = modFileScanResults;
-        triggerMap.put(ModLoadingStage.CONSTRUCT, dummy().andThen(this::beforeEvent).andThen(this::constructMod).andThen(this::afterEvent));
-        triggerMap.put(ModLoadingStage.CREATE_REGISTRIES, dummy().andThen(this::checkConstructState).andThen(this::beforeEvent).andThen(this::fireEvent).andThen(this::afterEvent));
-        triggerMap.put(ModLoadingStage.LOAD_REGISTRIES, dummy().andThen(this::beforeEvent).andThen(this::fireEvent).andThen(this::afterEvent));
-        triggerMap.put(ModLoadingStage.COMMON_SETUP, dummy().andThen(this::beforeEvent).andThen(this::fireEvent).andThen(this::afterEvent));
-        triggerMap.put(ModLoadingStage.SIDED_SETUP, dummy().andThen(this::beforeEvent).andThen(this::fireEvent).andThen(this::afterEvent));
-        triggerMap.put(ModLoadingStage.ENQUEUE_IMC, dummy().andThen(this::beforeEvent).andThen(this::initMod).andThen(this::fireEvent).andThen(this::afterEvent));
-        triggerMap.put(ModLoadingStage.PROCESS_IMC, dummy().andThen(this::beforeEvent).andThen(this::fireEvent).andThen(this::afterEvent));
-        triggerMap.put(ModLoadingStage.COMPLETE, dummy().andThen(this::beforeEvent).andThen(this::completeLoading).andThen(this::fireEvent).andThen(this::afterEvent));
-        triggerMap.put(ModLoadingStage.GATHERDATA, dummy().andThen(this::beforeEvent).andThen(this::fireEvent).andThen(this::afterEvent));
-        this.eventBus = BusBuilder.builder().setExceptionHandler(this::onEventFailed).setTrackPhases(false).build();
+
+        activityMap.put(ModLoadingStage.CONSTRUCT, this::constructMod);
+        this.eventBus = BusBuilder.builder().setExceptionHandler(this::onEventFailed).setTrackPhases(false).markerType(IModBusEvent.class).build();
         this.configHandler = Optional.of(this.eventBus::post);
         //OilMod
         final OilJavaModLoadingContext contextExtension = new OilJavaModLoadingContext(this);
@@ -74,7 +69,7 @@ public class OilModContainer extends ModContainer { //would like to overwrite fm
         this.oilEvents = new OilEvents(eventBus); //if this fails, its indicated that classloader stuff went wrong (this class cannot be classloaded by e.g. AppClassLoader etc must be TransformingClassLoader)
     }
 
-    private void checkConstructState(LifecycleEventProvider.LifecycleEvent lifecycleEvent) {
+    private void checkConstructState() {
         Validate.notNull(modInstance, "Previous stage did not complete, as OilAPIInitEvent was not fired");
     }
 
@@ -84,46 +79,12 @@ public class OilModContainer extends ModContainer { //would like to overwrite fm
         return super.getModInfo();
     }
 
-    private void completeLoading(LifecycleEventProvider.LifecycleEvent lifecycleEvent)
-    {
-
-    }
-
-    private void initMod(LifecycleEventProvider.LifecycleEvent lifecycleEvent)
-    {
-
-    }
-
-    private Consumer<LifecycleEventProvider.LifecycleEvent> dummy() { return (s) -> {}; }
 
     private void onEventFailed(IEventBus iEventBus, Event event, IEventListener[] iEventListeners, int i, Throwable throwable)
     {
         LOGGER.error(new EventBusErrorMessage(event, i, iEventListeners, throwable));
     }
 
-    private void beforeEvent(LifecycleEventProvider.LifecycleEvent lifecycleEvent) {
-    }
-
-    private void fireEvent(LifecycleEventProvider.LifecycleEvent lifecycleEvent) {
-        final Event event = lifecycleEvent.getOrBuildEvent(this);
-        LOGGER.debug(LOADING, "Firing event for modid {} : {}", this.getModId(), event);
-        try
-        {
-            eventBus.post(event);
-            LOGGER.debug(LOADING, "Fired event for modid {} : {}", this.getModId(), event);
-        }
-        catch (Throwable e)
-        {
-            LOGGER.error(LOADING,"Caught exception during event {} dispatch for modid {}", event, this.getModId(), e);
-            throw new ModLoadingException(modInfo, lifecycleEvent.fromStage(), "fml.modloading.errorduringevent", e);
-        }
-    }
-
-    private void afterEvent(LifecycleEventProvider.LifecycleEvent lifecycleEvent) {
-        if (getCurrentState() == ModLoadingStage.ERROR) {
-            LOGGER.error(LOADING,"An error occurred while dispatching event {} to {}", lifecycleEvent.fromStage(), getModId());
-        }
-    }
 
     private boolean oilAPIinit = false;
     private boolean observedPhaseConstruct = false;
@@ -137,7 +98,7 @@ public class OilModContainer extends ModContainer { //would like to overwrite fm
 
 
 
-    private void constructMod(LifecycleEventProvider.LifecycleEvent event)
+    private void constructMod()
     {
 
         synchronized (apiInitMutex) {
@@ -199,5 +160,20 @@ public class OilModContainer extends ModContainer { //would like to overwrite fm
     public IEventBus getEventBus()
     {
         return this.eventBus;
+    }
+
+    @Override
+    protected <T extends Event & IModBusEvent> void acceptEvent(final T e) {
+        if (!(e instanceof FMLConstructModEvent)) {
+            checkConstructState();
+        }
+        try {
+            LOGGER.debug(LOADING, "Firing event for modid {} : {}", this.getModId(), e);
+            this.eventBus.post(e);
+            LOGGER.debug(LOADING, "Fired event for modid {} : {}", this.getModId(), e);
+        } catch (Throwable t) {
+            LOGGER.error(LOADING,"Caught exception during event {} dispatch for modid {}", e, this.getModId(), t);
+            throw new ModLoadingException(modInfo, modLoadingStage, "fml.modloading.errorduringevent", t);
+        }
     }
 }

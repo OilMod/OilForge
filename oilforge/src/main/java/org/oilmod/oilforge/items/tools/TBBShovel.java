@@ -10,7 +10,7 @@ import net.minecraft.item.Items;
 import net.minecraft.item.ToolItem;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockRayTraceResult;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraftforge.common.ToolType;
 import org.oilmod.api.blocks.BlockType;
 import org.oilmod.api.items.OilItemStack;
@@ -51,7 +51,7 @@ public class TBBShovel extends RealTBBTool {
 
     @Override
     protected InteractionResult onItemUseOnBlock(IToolBlockBreaking item, OilItemStack stack, EntityLivingRep LivingEntity, LocationBlockRep loc, boolean offhand, BlockFaceRep face, float hitX, float hitY, float hitZ) {
-        BlockRayTraceResult rayTraceResult = new BlockRayTraceResult(new Vec3d(hitX, hitY, hitZ), toForge(face), toForge(loc), false); //todo this actually seems to be a useful item, consider copying also the last flag
+        BlockRayTraceResult rayTraceResult = new BlockRayTraceResult(new Vector3d(hitX, hitY, hitZ), toForge(face), toForge(loc), false); //todo this actually seems to be a useful item, consider copying also the last flag
         PlayerEntity player = toForge((EntityPlayerRep) LivingEntity);
         
         //Use mixin to use real shovel method instead directly

@@ -56,7 +56,7 @@ public class RealBlockType extends BlockType {
 
     @Override
     public boolean isAlwaysDestroyable() {
-        return getForge().isToolNotRequired();
+        return getForge().isReplaceable();
     }
 
     //todo need some generic test, also these are to be deleted anyway

@@ -14,7 +14,7 @@ import net.minecraft.item.ItemUseContext;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.extensions.IForgeItem;
@@ -72,7 +72,7 @@ public interface RealItemImplHelper extends NMSItem, IForgeItem, IItemProvider {
         PlayerEntity player = context.getPlayer();
 
         RealItemStack itemstack = toReal(context.getItem());
-        Vec3d hit = context.getHitVec();
+        Vector3d hit = context.getHitVec();
         return toForge(getApiItem().onItemUseOnBlock(itemstack.getOilItemStack(), toOil(player), toOil(blockpos, world), context.getHand() == Hand.OFF_HAND, toOil(context.getFace()), (float)hit.x, (float)hit.y, (float)hit.z));
     }
 
@@ -125,11 +125,6 @@ public interface RealItemImplHelper extends NMSItem, IForgeItem, IItemProvider {
     @Override
     default double getDurabilityForDisplay(ItemStack stack) {
         return getApiItem() instanceof IDurable?((IDurable) getApiItem()).getDurabilityForDisplay(toReal(stack).getOilItemStack()):IForgeItem.super.getDurabilityForDisplay(stack);
-    }
-
-    @Override
-    default String getHighlightTip(ItemStack item, String displayName) {
-        return displayName + " this was added"; //todo use api function
     }
 
     @Override

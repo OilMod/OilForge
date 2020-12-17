@@ -5,10 +5,17 @@ import net.minecraft.inventory.container.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.item.crafting.Ingredient;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
 
 import java.util.List;
 
 public class CustomRecipeBookGui extends RecipeBookGui {
+    private static final ITextComponent field_243414_i = new TranslationTextComponent("gui.recipebook.toggleRecipes.smeltable");
+
+    protected ITextComponent func_230479_g_() {
+        return field_243414_i;
+    }
 
 
     public void setupGhostRecipe(IRecipe<?> p_193951_1_, List<Slot> slots) {

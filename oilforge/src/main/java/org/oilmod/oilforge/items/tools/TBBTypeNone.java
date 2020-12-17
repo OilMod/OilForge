@@ -18,7 +18,7 @@ public class TBBTypeNone extends RealTBBTool {
     @Override
     protected boolean canHarvestBlock(IToolBlockBreaking item, OilItemStack stack, BlockStateRep blockState, BlockType blockType) {
         BlockState blockIn = ((BlockStateFR)blockState).getForge();
-        return !blockIn.getMaterial().isToolNotRequired();
+        return !blockIn.getMaterial().isReplaceable();
     }
 
     @Override

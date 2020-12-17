@@ -1,5 +1,6 @@
 package org.oilmod.oilforge.block.tileentity;
 
+import net.minecraft.block.BlockState;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityType;
@@ -25,12 +26,12 @@ public class RealTileEntity<TComplexState extends IComplexState> extends TileEnt
     }
 
     @Override
-    public void read(CompoundNBT compound) {
-        OilNBTCompound oilNBT = new OilNBTCompound(compound);
+    public void read(BlockState state, CompoundNBT nbt) {
+        OilNBTCompound oilNBT = new OilNBTCompound(nbt);
         for (Map.Entry<String, IData<?>> entry:complexState.getRegisteredIData().entrySet()) {
             entry.getValue().loadFrom(oilNBT, entry.getKey());
         }
-        super.read(compound);
+        super.read(state, nbt);
     }
 
     @Override

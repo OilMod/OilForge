@@ -1,8 +1,8 @@
 package org.oilmod.oilforge.loottable;
 
 import net.minecraft.item.ItemStack;
-import net.minecraft.world.storage.loot.*;
-import net.minecraft.world.storage.loot.conditions.ILootCondition;
+import net.minecraft.loot.*;
+import net.minecraft.loot.conditions.ILootCondition;
 import org.oilmod.api.blocks.OilBlock;
 import org.oilmod.api.rep.item.ItemStateRep;
 import org.oilmod.api.rep.itemstack.ItemStackFactory;
@@ -52,6 +52,11 @@ public class RealBlockLootEntry extends LootEntry {
 
     public static Builder builder(OilBlock block) {
         return new Builder(block);
+    }
+
+    @Override
+    public LootPoolEntryType func_230420_a_() {
+        return null;
     }
 
 

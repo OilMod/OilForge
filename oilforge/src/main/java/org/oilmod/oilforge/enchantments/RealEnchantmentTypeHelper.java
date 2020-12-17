@@ -35,7 +35,7 @@ public class RealEnchantmentTypeHelper extends EnchantmentType.EnchantmentTypeHe
             case ALL_VANILLA:
                 return implAllVanilla();
             case ALL:
-                return impl(net.minecraft.enchantment.EnchantmentType.ALL, e);
+                return impl(net.minecraft.enchantment.EnchantmentType.VANISHABLE, e);//todo
             case ARMOR:
                 return impl(net.minecraft.enchantment.EnchantmentType.ARMOR, e);
             case ARMOR_BOOTS:
@@ -69,7 +69,7 @@ public class RealEnchantmentTypeHelper extends EnchantmentType.EnchantmentTypeHe
 
     public EnchantmentType convertToOil(net.minecraft.enchantment.EnchantmentType forge) {
         switch (forge) {
-            case ALL:
+            case VANISHABLE:
                 return EnchantmentType.ALL;
             case ARMOR:
                 return EnchantmentType.ARMOR;
@@ -95,6 +95,7 @@ public class RealEnchantmentTypeHelper extends EnchantmentType.EnchantmentTypeHe
                 return EnchantmentType.BOW;
             case WEARABLE:
                 return EnchantmentType.WEARABLE;
+            case CROSSBOW:
             default:
                 return customTypeMap.get(forge);
         }

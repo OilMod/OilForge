@@ -1,5 +1,6 @@
 package org.oilmod.oilforge.inventory.container.screen;
 
+import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.client.gui.IGuiEventListener;
 import net.minecraft.inventory.container.ClickType;
 import net.minecraft.inventory.container.Slot;
@@ -9,10 +10,10 @@ public interface IRenderable {
     IGuiEventListener getEventListener();
 
 
-     default void renderBackground(int guiLeft, int guiTop, int mouseLeft, int mouseTop, float timeDif){}
-     default void renderItemStacks(int guiLeft, int guiTop, int mouseLeft, int mouseTop, float timeDif){}
-     default void renderForeground(int guiLeft, int guiTop, int mouseLeft, int mouseTop, float timeDif){}
-     default void renderToolTips(int guiLeft, int guiTop, int mouseLeft, int mouseTop, float timeDif){}
+     default void renderBackground(MatrixStack ms, int guiLeft, int guiTop, int mouseLeft, int mouseTop, float timeDif){}
+     default void renderItemStacks(MatrixStack ms, int guiLeft, int guiTop, int mouseLeft, int mouseTop, float timeDif){}
+     default void renderForeground(MatrixStack ms, int guiLeft, int guiTop, int mouseLeft, int mouseTop, float timeDif){}
+     default void renderToolTips(MatrixStack ms, int guiLeft, int guiTop, int mouseLeft, int mouseTop, float timeDif){}
 
 
     default void handleMouseClick(Slot slotIn, int slotId, int mouseButton, ClickType type){}

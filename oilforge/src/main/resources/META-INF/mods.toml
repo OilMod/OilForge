@@ -9,6 +9,7 @@ modLoader="javafml" #mandatory
 loaderVersion="[28,)" #mandatory (28 is current forge version)
 # A URL to refer people to when problems occur with this mod
 issueTrackerURL="http://my.issue.tracker/" #optional
+license="AGPL/LGPL"
 # A list of mods - how many allowed here is determined by the individual mod loader
 [[mods]] #mandatory
     # The modid of the mod
@@ -51,10 +52,10 @@ issueTrackerURL="http://my.issue.tracker/" #optional
     description='''registered all items and blocks requested from the unification api'''
 
 
-[[mods]]
-    modId="multiparttest" #mandatory
-    # The version number of the mod - there's a few well known ${} variables useable here or just hardcode it
-    version="1"
+#[[mods]]
+#    modId="multiparttest" #mandatory
+#    # The version number of the mod - there's a few well known ${} variables useable here or just hardcode it
+#    version="1"
 
 
 [[dependencies.oiluni]] #optional

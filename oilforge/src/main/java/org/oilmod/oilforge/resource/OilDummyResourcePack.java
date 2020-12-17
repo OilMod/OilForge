@@ -1,10 +1,11 @@
 package org.oilmod.oilforge.resource;
 
 import net.minecraft.block.Block;
+import net.minecraft.resources.ResourcePack;
 import net.minecraft.resources.ResourcePackInfo;
 import net.minecraft.resources.ResourcePackType;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.fml.packs.DelegatableResourcePack;
+import net.minecraftforge.fml.packs.DelegatingResourcePack;
 import net.minecraftforge.forgespi.locating.IModFile;
 import org.apache.commons.lang3.NotImplementedException;
 import org.apache.logging.log4j.LogManager;
@@ -22,14 +23,14 @@ import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-public class OilDummyResourcePack extends DelegatableResourcePack {
+public class OilDummyResourcePack extends ResourcePack {
     private ResourcePackInfo packInfo;
     private IModFile modFile = null;
     public static final Logger LOGGER = LogManager.getLogger();
 
     public OilDummyResourcePack()
     {
-        super(new File("dummy"));
+        super(new File("Dummy"));
     }
 
 
@@ -37,6 +38,11 @@ public class OilDummyResourcePack extends DelegatableResourcePack {
     public String getName()
     {
         return "Default";
+    }
+
+    @Override
+    public void close() {
+
     }
 
     @Override
@@ -66,9 +72,9 @@ public class OilDummyResourcePack extends DelegatableResourcePack {
     }
 
     @Override
-    public Collection<ResourceLocation> getAllResourceLocations(ResourcePackType type, String pathIn, int maxDepth, Predicate<String> filter)
-    {
-        LOGGER.debug("OilDummyResourcePack was requested all resource locations for {} {} {} {}", type, pathIn, maxDepth, filter);
+    public Collection<ResourceLocation> getAllResourceLocations(ResourcePackType type, String namespaceIn, String pathIn, int maxDepthIn, Predicate<String> filterIn) {
+
+        LOGGER.debug("OilDummyResourcePack was requested all resource locations for {} {} {} {}", type, pathIn, maxDepthIn, filterIn);
 
         if (pathIn.equals("loot_tables")) {
             return RealBlockRegistryHelper.INSTANCE.allRegistered.stream()
@@ -78,8 +84,8 @@ public class OilDummyResourcePack extends DelegatableResourcePack {
         } else {
             return Collections.emptySet();
         }
-
     }
+
 
     @Override
     public Set<String> getResourceNamespaces(ResourcePackType type)
@@ -87,6 +93,7 @@ public class OilDummyResourcePack extends DelegatableResourcePack {
         return OilMod.getAll().stream().filter(OilMod::isMod).map(OilMod::getInternalName).collect(Collectors.toSet());
     }
 
+    @Override
     public InputStream getResourceStream(ResourcePackType type, ResourceLocation location) throws IOException {
 
         LOGGER.debug("OilDummyResourcePack was requested {}", location);
@@ -97,6 +104,8 @@ public class OilDummyResourcePack extends DelegatableResourcePack {
         }
     }
 
+
+    @Override
     public boolean resourceExists(ResourcePackType type, ResourceLocation location) {
 
         LOGGER.debug("OilDummyResourcePack was requested to check if {} exist", location);
@@ -107,11 +116,6 @@ public class OilDummyResourcePack extends DelegatableResourcePack {
         }
     }
 
-    @Override
-    public void close() throws IOException
-    {
-
-    }
 
     <T extends ResourcePackInfo> void setPackInfo(final T packInfo) {
         this.packInfo = packInfo;

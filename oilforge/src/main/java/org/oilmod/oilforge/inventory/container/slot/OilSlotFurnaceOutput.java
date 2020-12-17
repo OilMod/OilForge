@@ -54,7 +54,7 @@ public class OilSlotFurnaceOutput extends FurnaceResultSlot {
 
         stack.onCrafting(this.player.world, this.player, this.getRemoveCount()); //todo we arent a subclass of AbstractFurnaceTileEntity so this does not work and need to be corrected
         if (!this.player.world.isRemote && this.inventory instanceof AbstractFurnaceTileEntity) {
-            ((AbstractFurnaceTileEntity)this.inventory).func_213995_d(this.player);
+            ((AbstractFurnaceTileEntity)this.inventory).unlockRecipes(this.player);
         }
 
 

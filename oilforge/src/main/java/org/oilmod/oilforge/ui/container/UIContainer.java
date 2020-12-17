@@ -9,6 +9,7 @@ import net.minecraft.inventory.container.RecipeBookContainer;
 import net.minecraft.inventory.container.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
+import net.minecraft.item.crafting.RecipeBookCategory;
 import net.minecraft.item.crafting.RecipeItemHelper;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.NonNullList;
@@ -320,10 +321,11 @@ public class UIContainer extends RecipeBookContainer<IInventory> implements IOil
     //<editor-fold desc="RecipeBookContainer" defaultstate="collapsed">
 
     @Override
-    public void func_201771_a(RecipeItemHelper p_201771_1_) {
+    public void fillStackedContents(RecipeItemHelper itemHelperIn) {
 
     }
 
+    @Override
     public void clear() {
 
     }
@@ -357,6 +359,11 @@ public class UIContainer extends RecipeBookContainer<IInventory> implements IOil
     @Override
     public List<RecipeBookCategories> getRecipeBookCategories() {
         return DistExecutor.runForDist(()->()-> ClientContainerHelper.getRecipeBookCategories((OilContainerType) getType()), ()-> Collections::emptyList);
+    }
+
+    @Override
+    public RecipeBookCategory func_241850_m() {
+        return RecipeBookCategory.CRAFTING;
     }
 
     //</editor-fold>

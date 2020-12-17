@@ -13,7 +13,7 @@ import java.util.List;
 
 public class OilModFile extends ModFile {
     public OilModFile(Path file, IModLocator locator) {
-        super(file, locator);
+        super(file, locator, OilModFileParser.INSTANCE);
     }
 
     private static final Field modFileInfoField;
@@ -30,7 +30,7 @@ public class OilModFile extends ModFile {
             accessTransformerField.setAccessible(true);
         } catch (NoSuchFieldException e) {
             LamdbaExceptionUtils.uncheck(() -> e);
-            throw new IllegalStateException("should have benn thrown by LamdbaExceptionUtils", e);
+            throw new IllegalStateException("should have been thrown by LamdbaExceptionUtils", e);
         }
     }
 

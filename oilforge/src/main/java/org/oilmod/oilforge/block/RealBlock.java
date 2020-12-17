@@ -8,36 +8,31 @@ import net.minecraft.block.material.PushReaction;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.fluid.*;
-import net.minecraft.inventory.InventoryHelper;
 import net.minecraft.item.BlockItemUseContext;
 import net.minecraft.state.BooleanProperty;
 import net.minecraft.state.IntegerProperty;
 import net.minecraft.state.StateContainer;
-import net.minecraft.state.properties.AttachFace;
 import net.minecraft.state.properties.BlockStateProperties;
 import net.minecraft.tags.FluidTags;
-import net.minecraft.tileentity.DispenserTileEntity;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.math.shapes.ISelectionContext;
 import net.minecraft.util.math.shapes.VoxelShape;
 import net.minecraft.world.IBlockReader;
-import net.minecraft.world.IEnviromentBlockReader;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
+import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.common.ToolType;
 import org.oilmod.api.blocks.OilBlock;
 import org.oilmod.api.blocks.type.IBlockComplexStateable;
 import org.oilmod.api.data.IData;
 import org.oilmod.api.inventory.InventoryData;
-import org.oilmod.api.inventory.ModInventoryObjectBase;
-import org.oilmod.api.stateable.IState;
 import org.oilmod.api.stateable.complex.IComplexState;
 import org.oilmod.api.stateable.complex.IInventoryState;
 import org.oilmod.api.util.InteractionResult;
@@ -46,7 +41,6 @@ import org.oilmod.oilforge.block.fluidloggable.IFluidLoggable;
 import org.oilmod.oilforge.block.tileentity.RealTileEntity;
 import org.oilmod.oilforge.block.tileentity.RealTileEntityType;
 import org.oilmod.oilforge.inventory.OilInventoryBase;
-import org.oilmod.oilforge.items.RealItemStack;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -69,7 +63,7 @@ public class RealBlock extends Block implements RealBlockImplHelper, IFluidLogga
         result.harvestLevel(block.getHarvestLevel());
         result.harvestTool((ToolType) block.getHarvestTool().getNMS());
         if (!block.isBlocksMovement()) result.doesNotBlockMovement();
-        result.lightValue(block.getLightSourceValue());
+        result.setLightLevel(value ->  block.getLightSourceValue());
         result.slipperiness(block.getSlipperiness());
         return result;
     }
@@ -84,11 +78,6 @@ public class RealBlock extends Block implements RealBlockImplHelper, IFluidLogga
         this.oilBlock = oilBlock;
         setRegistryName(((NMSKeyImpl) oilBlock.getOilKey().getNmsKey()).resourceLocation);
         setDefaultState(this.stateContainer.getBaseState().with(WATERLOGGED, false));
-    }
-
-    @Override
-    public ResourceLocation getLootTable() {
-        return super.getLootTable();
     }
 
     @Override
@@ -111,10 +100,10 @@ public class RealBlock extends Block implements RealBlockImplHelper, IFluidLogga
     }
 
     @Override
-    public boolean onBlockActivated(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand handIn, BlockRayTraceResult hit) { //todo enumState
+    public ActionResultType onBlockActivated(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand handIn, BlockRayTraceResult hit) { //todo enumState
         TileEntity tileEntity =  world.getTileEntity(pos);
-        Vec3d hitVec = hit.getHitVec();
-        return getOilBlock().onRightClickOnBlock(toOilState(state), toOilState(tileEntity), toOil(player), toOil(pos, world), handIn==Hand.OFF_HAND, toOil(hit.getFace()), (float)hitVec.x, (float)hitVec.y, (float)hitVec.z) == InteractionResult.SUCCESS;
+        Vector3d hitVec = hit.getHitVec();
+        return toForge(getOilBlock().onRightClickOnBlock(toOilState(state), toOilState(tileEntity), toOil(player), toOil(pos, world), handIn==Hand.OFF_HAND, toOil(hit.getFace()), (float)hitVec.x, (float)hitVec.y, (float)hitVec.z));
     }
 
     @Override
@@ -141,10 +130,10 @@ public class RealBlock extends Block implements RealBlockImplHelper, IFluidLogga
     //<editor-fold desc="Fluid Stuff" defaultstate="collapsed">
     public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
     public static final IntegerProperty LEVEL = BlockStateProperties.LEVEL_0_15;
-    private final List<IFluidState> fluidStates = new ObjectArrayList<>();
+    private final List<FluidState> fluidStates = new ObjectArrayList<>();
     private FlowingFluid lastFluid; //only for debug purposes
 
-    private List<IFluidState> getFluidStates() {
+    private List<FluidState> getFluidStates() {
         if (lastFluid != getFluid()) { //so that i can change that during debugging
             lastFluid = getFluid();
             fluidStates.clear();
@@ -168,11 +157,11 @@ public class RealBlock extends Block implements RealBlockImplHelper, IFluidLogga
 
     public BlockState updatePostPlacement(BlockState stateIn, Direction facing, BlockState facingState, IWorld worldIn, BlockPos currentPos, BlockPos facingPos) {
         if (stateIn.get(WATERLOGGED)) {
-            worldIn.getPendingFluidTicks().scheduleTick(currentPos, getFluid(), getFluid().getTickRate(worldIn));
-            IFluidState fluidState = getFluidState(stateIn);
-            if (!fluidState.isSource()) {
-                worldIn.getPendingBlockTicks().scheduleTick(currentPos, this, getFluid().getTickRate(worldIn));
+            if (stateIn.getFluidState().isSource() || facingState.getFluidState().isSource()) {
+                worldIn.getPendingFluidTicks().scheduleTick(currentPos, stateIn.getFluidState().getFluid(), this.getFluid().getTickRate(worldIn));
             }
+
+            return super.updatePostPlacement(stateIn, facing, facingState, worldIn, currentPos, facingPos);
         }
 
         return super.updatePostPlacement(stateIn, facing, facingState, worldIn, currentPos, facingPos);
@@ -183,52 +172,40 @@ public class RealBlock extends Block implements RealBlockImplHelper, IFluidLogga
     }
 
 
-    public IFluidState getFluidState(BlockState state) {
+    public FluidState getFluidState(BlockState state) {
         return state.get(WATERLOGGED) ?getFluidStates().get(Math.min(state.get(LEVEL), 8)) : super.getFluidState(state);
     }
 
     @Override
-    public void randomTick(BlockState state, World worldIn, BlockPos pos, Random random) {
+    public void randomTick(BlockState state, ServerWorld worldIn, BlockPos pos, Random random) {
         getFluidState(state).randomTick(worldIn, pos, random);
         super.randomTick(state, worldIn, pos, random);
     }
 
-    @Override
-    public void tick(BlockState state, World worldIn, BlockPos pos, Random random) {
-        IFluidState fluidState = getFluidState(state);
-        Fluid fluid = fluidState.getFluid();
-        if (fluid instanceof FlowingFluid && !fluidState.isSource()) {
-            IFluidState newFluidState = ((FlowingFluid) fluid).calculateCorrectFlowingState(worldIn, pos, state);
-            worldIn.setBlockState(pos, setFluidState(state, newFluidState), 3);
-        }
-        super.tick(state, worldIn, pos, random);
+
+    /**
+     * Returns whether or not this block is of a type that needs random ticking. Called for ref-counting purposes by
+     * ExtendedBlockStorage in order to broadly cull a chunk from the random chunk update list for efficiency's sake.
+     */
+    public boolean ticksRandomly(BlockState state) {
+        return state.getFluidState().ticksRandomly();
     }
 
-    public void onEntityCollision(BlockState state, World worldIn, BlockPos pos, Entity entityIn) {
-        IFluidState fluidState = getFluidState(state);
-        if (fluidState.getFluid().isIn(FluidTags.LAVA)) {
-            //todo cache this
-            VoxelShape voxelShape = makeCuboidShape(0,0,0,16, fluidState.getLevel()*2, 16);
-            for(AxisAlignedBB axisalignedbb : voxelShape.toBoundingBoxList()) {
-                if (axisalignedbb.offset(pos).intersects(entityIn.getBoundingBox())) {
-                    entityIn.setInLava(); //todo only do when in lava lol
-                    break;
-                }
-            }
-        }
-        super.onEntityCollision(state, worldIn, pos, entityIn);
-    }
+
+
+
 
     @Override
-    public int getLightValue(BlockState state, IEnviromentBlockReader world, BlockPos pos) {
-        IFluidState fluidState = getFluidState(state);
+    public int getLightValue(BlockState state, IBlockReader world, BlockPos pos) {
+        FluidState fluidState = getFluidState(state);
         return Math.max(fluidState.getBlockState().getLightValue(), super.getLightValue(state, world, pos));
     }
 
 
+
     public void onReplaced(BlockState state, World worldIn, BlockPos pos, BlockState newState, boolean isMoving) {
-        IFluidState newFluidState = newState.getFluidState();
-        IFluidState oldFluidState = state.getFluidState();
+        FluidState newFluidState = newState.getFluidState();
+        FluidState oldFluidState = state.getFluidState();
         boolean fluidFlag = false;
         if (newFluidState != oldFluidState && newState.getBlock() instanceof FlowingFluidBlock && canContainFluid(worldIn, pos, state, newFluidState.getFluid())) { //looks like we got replaced by a fluid, but actually we support this fluid so lets not do that
             fluidFlag = true;
@@ -260,7 +237,7 @@ public class RealBlock extends Block implements RealBlockImplHelper, IFluidLogga
         BlockState blockState = super.getStateForPlacement(context);
 
         BlockPos blockpos = context.getPos();
-        IFluidState ifluidstate = context.getWorld().getFluidState(context.getPos());
+        FluidState ifluidstate = context.getWorld().getFluidState(context.getPos());
         if (this.canContainFluid(context.getWorld(), blockpos, blockState, ifluidstate.getFluid())) {
             blockState = setFluidState(blockState, ifluidstate);
         }

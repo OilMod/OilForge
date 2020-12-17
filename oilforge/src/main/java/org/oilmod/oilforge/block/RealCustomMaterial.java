@@ -13,9 +13,8 @@ public class RealCustomMaterial extends MaterialWrapper {
         super(new Material(MaterialColor.ADOBE,
                 blockType.isLiquid(),
                 blockType.isSolid(),
-                blockType.isBuildable(), //check
+                blockType.isBuildable(),
                 blockType.isOpaque(),
-                blockType.isAlwaysDestroyable(),
                 blockType.isFlammable(),
                 blockType.isReplaceable(),
                 toForge(blockType.getPistonReaction())));

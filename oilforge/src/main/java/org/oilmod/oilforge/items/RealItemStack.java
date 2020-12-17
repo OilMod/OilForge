@@ -81,7 +81,7 @@ public class RealItemStack implements NMSItemStack, INBTSerializable<CompoundNBT
 
     @Override
     public String getRenameNMS() {
-        return itemStack.getDisplayName().getFormattedText();
+        return itemStack.getDisplayName().getUnformattedComponentText();
     }
 
     @Override

@@ -1,5 +1,6 @@
 package org.oilmod.oilforge.inventory.container.screen;
 
+import com.mojang.blaze3d.matrix.MatrixStack;
 import org.oilmod.api.UI.IUIElement;
 
 public abstract class OilWrapper<Element extends IUIElement> implements IRenderableEventListener {
@@ -12,7 +13,7 @@ public abstract class OilWrapper<Element extends IUIElement> implements IRendera
     protected int guiLeft;
     protected int guiTop;
     @Override
-    public void renderBackground(int guiLeft, int guiTop, int mouseLeft, int mouseTop, float timeDif){
+    public void renderBackground(MatrixStack ms, int guiLeft, int guiTop, int mouseLeft, int mouseTop, float timeDif){
         this.guiLeft = guiLeft;
         this.guiTop = guiTop;
     }

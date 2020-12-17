@@ -1,5 +1,6 @@
 package org.oilmod.oilforge.inventory.container.screen;
 
+import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.platform.GlStateManager;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import net.minecraft.client.gui.screen.inventory.ContainerScreen;
@@ -39,71 +40,71 @@ public class CustomChestScreen<T extends OilChestLikeContainer>extends Container
     private int columns;
 
 
-    public void render(int p_render_1_, int p_render_2_, float p_render_3_) {
-        this.renderBackground();
-        super.render(p_render_1_, p_render_2_, p_render_3_);
-        this.renderHoveredToolTip(p_render_1_, p_render_2_);
+    public void render(MatrixStack ms, int p_render_1_, int p_render_2_, float p_render_3_) {
+        this.renderBackground(ms);
+        super.render(ms, p_render_1_, p_render_2_, p_render_3_);
+        this.renderHoveredTooltip(ms, p_render_1_, p_render_2_);
     }
 
     /**
      * Draw the foreground layer for the GuiContainer (everything in front of the items)
      */
-    protected void drawGuiContainerForegroundLayer(int mouseLeft, int mouseTop) {
-        this.font.drawString(this.title.getFormattedText(), 8.0F, 6.0F, 4210752);
+    protected void drawGuiContainerForegroundLayer(MatrixStack ms, int mouseLeft, int mouseTop) {
+        this.font.func_243248_b(ms, this.title, 8.0F, 6.0F, 4210752);
 
         int xOff = (columns>9?(columns-9)*GuiSlotSize/2:0);
-        this.font.drawString(this.playerInventory.getDisplayName().getFormattedText(), 8.0F + xOff, (float)(this.ySize - 96 + 2), 4210752);
+        this.font.func_243248_b(ms, this.playerInventory.getDisplayName(), 8.0F + xOff, (float)(this.ySize - 96 + 2), 4210752);
     }
 
     private Set<DrawString> scheduled = new ObjectOpenHashSet<>();
 
     @Override
-    protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseLeft, int mouseTop) {
+    protected void drawGuiContainerBackgroundLayer(MatrixStack ms, float partialTicks, int mouseLeft, int mouseTop) {
         GlStateManager.color4f(1.0F, 1.0F, 1.0F, 1.0F);
         int originalI = (this.width - xSize) / 2;
         int originalJ = (this.height - this.ySize) / 2;
         int j = originalJ;
         int i = originalI;
         //draw top
-        j = drawInvSegment(i, j, 0, GuiOffTop, true);
+        j = drawInvSegment(ms, i, j, 0, GuiOffTop, true);
         int remainingRows = rows;
         while (remainingRows > 1) {
             int thisRound = Math.min(6, remainingRows-1);
 
-            new DrawString("Draw call rem=" + (remainingRows) + " tr=" + thisRound, 8.0F + i + 20, 6.0F + j, 0xFF0000, scheduled);
-            j = drawInvSegment(i, j, GuiOffTop, thisRound * GuiSlotSize, true);
+            new DrawString("Draw call rem=" + (remainingRows) + " tr=" + thisRound, 8.0F + i + 20, 6.0F + j, 0xFF0000, ms, scheduled);
+            j = drawInvSegment(ms, i, j, GuiOffTop, thisRound * GuiSlotSize, true);
             remainingRows -= thisRound;
         }
         //draw last inv row separately as we need to consider corners
         int yOff = 0;
         if (remainingRows == 1) {
             if (columns > 9) {
-                j = drawInvSegment(i, j, GuiOffTop, GuiSlotSize, true);
-                j = drawInvSegment(i, j, 126+5*18, GuiOffSide, true); //top height + player inf height - GuiOffSide
+                j = drawInvSegment(ms, i, j, GuiOffTop, GuiSlotSize, true);
+                j = drawInvSegment(ms, i, j, 126+5*18, GuiOffSide, true); //top height + player inf height - GuiOffSide
                 yOff = GuiOffSide;
             } else if (columns == 9) {
-                j = drawInvSegment(i, j, GuiOffTop, GuiSlotSize, true);
+                j = drawInvSegment(ms, i, j, GuiOffTop, GuiSlotSize, true);
             } else {
-                j = drawInvSegment(i, j, GuiOffTop, GuiSlotSize, true);
+                j = drawInvSegment(ms, i, j, GuiOffTop, GuiSlotSize, true);
             }
         }
 
         //draw last
-        //this.blit(i, j + (inventoryRows-remainingRows) * guiSlotSize + GuiOffTop, 0, 0, 176, guiSlotSize + GuiOffTop);
+        //this.blit(ms, i, j + (inventoryRows-remainingRows) * guiSlotSize + GuiOffTop, 0, 0, 176, guiSlotSize + GuiOffTop);
 
         //draw player
         int xOff = (columns>9?(columns-9)*GuiSlotSize/2:0);
         i = originalI + xOff;
         int cornerArt = 3;
-        i=  drawVerticalSegment(i, j , 0, 126 + yOff, cornerArt, 96 + yOff, chestBuffer);
-        i = drawVerticalSegment(i, j - yOff , cornerArt, 126, StdXSize - cornerArt*2, 96, chestBuffer);
-        i = drawVerticalSegment(i, j , StdXSize - cornerArt, 126 + yOff, cornerArt, 96 + yOff, chestBuffer);
+        i=  drawVerticalSegment(ms, i, j , 0, 126 + yOff, cornerArt, 96 + yOff, chestBuffer);
+        i = drawVerticalSegment(ms, i, j - yOff , cornerArt, 126, StdXSize - cornerArt*2, 96, chestBuffer);
+        i = drawVerticalSegment(ms, i, j , StdXSize - cornerArt, 126 + yOff, cornerArt, 96 + yOff, chestBuffer);
 
         i = originalI;
         j = originalJ;
 
         for (int k = 0; k < rows; k++) {
-            new DrawString(String.valueOf(k), 13.0F + i, 6.0F + j + (rows -k-1) * GuiSlotSize + GuiOffTop, 0x00FF00, scheduled);
+            new DrawString(String.valueOf(k), 13.0F + i, 6.0F + j + (rows -k-1) * GuiSlotSize + GuiOffTop, 0x00FF00, ms, scheduled);
         }
 
 
@@ -113,61 +114,63 @@ public class CustomChestScreen<T extends OilChestLikeContainer>extends Container
         scheduled.clear();
     }
 
-    private int drawInvSegment(int i, int j, int topOff, int height, boolean drawSides) {
+    private int drawInvSegment(MatrixStack ms, int i, int j, int topOff, int height, boolean drawSides) {
         int xOff = (columns<9?(9-columns)*GuiSlotSize/2:0);
 
-        if (drawSides) i = drawVerticalSegment(i, j, 0, topOff, GuiOffSide, height, chestBuffer);
-        if (xOff>0)i = drawVerticalSegment(i, j, 0, topOff, xOff, height, dispenserBuffer);
+        if (drawSides) i = drawVerticalSegment(ms, i, j, 0, topOff, GuiOffSide, height, chestBuffer);
+        if (xOff>0)i = drawVerticalSegment(ms, i, j, 0, topOff, xOff, height, dispenserBuffer);
 
         int remainingSlots = columns;
         while (remainingSlots > 0) {
             int thisRound = Math.min(9, remainingSlots);
             //new DrawString("Draw call rem=" + (remainingSlots) + " tr=" + thisRound, 8.0F + i + 20, 6.0F + j, 0xFF0000, scheduled);
-            i = drawVerticalSegment(i, j, GuiOffSide, topOff, thisRound * GuiSlotSize , height, chestBuffer);
+            i = drawVerticalSegment(ms, i, j, GuiOffSide, topOff, thisRound * GuiSlotSize , height, chestBuffer);
             remainingSlots -= thisRound;
         }
 
-        if (xOff>0)i = drawVerticalSegment(i, j, StdXSize - xOff, topOff, xOff, height, dispenserBuffer);
-        if (drawSides) i = drawVerticalSegment(i, j, StdXSize - GuiOffSide, topOff, GuiOffSide, height, chestBuffer);
+        if (xOff>0)i = drawVerticalSegment(ms, i, j, StdXSize - xOff, topOff, xOff, height, dispenserBuffer);
+        if (drawSides) i = drawVerticalSegment(ms, i, j, StdXSize - GuiOffSide, topOff, GuiOffSide, height, chestBuffer);
         return j + height;
     }
 
 
-    private int drawVerticalSegment(int i, int j, int leftOff, int topOff, int width, int height , DrawCallBuffer<?> buffer) {
-        buffer.stow(o -> o.blit(i, j , leftOff, topOff, width, height));
+    private int drawVerticalSegment(MatrixStack ms, int i, int j, int leftOff, int topOff, int width, int height , DrawCallBuffer<?> buffer) {
+        buffer.stow(o -> o.blit(ms, i, j , leftOff, topOff, width, height));
         return i + width;
     }
 
 
 
-    private int drawCorner(int i, int j, int unused, int height, boolean top, boolean left) {
+    private int drawCorner(MatrixStack ms, int i, int j, int unused, int height, boolean top, boolean left) {
         int leftOff = left?0: StdXSize - GuiOffSide;
         int topOff =  top?0:126-height;
 
-        this.blit(i, j , leftOff, topOff, GuiOffSide, height);
+        this.blit(ms, i, j , leftOff, topOff, GuiOffSide, height);
         return i + GuiOffSide;
     }
 
 
     class DrawString {
+        private final MatrixStack ms;
         private final String text;
         private final float x;
         private final float y;
         private final int color;
 
-        DrawString(String text, float x, float y, int color, Set<DrawString> scheduled) {
-            this(text, x, y, color);
+        DrawString(String text, float x, float y, int color, MatrixStack ms, Set<DrawString> scheduled) {
+            this(text, x, y, color, ms);
             scheduled.add(this);
         }
-        DrawString(String text, float x, float y, int color) {
+        DrawString(String text, float x, float y, int color, MatrixStack ms) {
             this.text = text;
             this.x = x;
             this.y = y;
             this.color = color;
+            this.ms = ms;
         }
 
         void draw() {
-            CustomChestScreen.this.font.drawString(text, x, y, color);
+            CustomChestScreen.this.font.drawString(ms, text, x, y, color);
         }
     }
 }

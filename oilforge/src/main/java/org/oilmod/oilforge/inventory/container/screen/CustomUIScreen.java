@@ -1,23 +1,19 @@
 package org.oilmod.oilforge.inventory.container.screen;
 
+import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.systems.RenderSystem;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import net.minecraft.client.gui.recipebook.IRecipeShownListener;
 import net.minecraft.client.gui.recipebook.RecipeBookGui;
 import net.minecraft.client.gui.screen.inventory.ContainerScreen;
 import net.minecraft.client.gui.widget.button.ImageButton;
-import net.minecraft.client.renderer.model.IBakedModel;
-import net.minecraft.client.renderer.model.ItemCameraTransforms;
-import net.minecraft.client.renderer.texture.AtlasTexture;
-import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.container.ClickType;
 import net.minecraft.inventory.container.Slot;
-import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.oilmod.api.UI.IItemElement;
@@ -27,7 +23,6 @@ import org.oilmod.api.UI.UI;
 import org.oilmod.oilforge.ui.container.UIContainer;
 import org.oilmod.oilforge.ui.container.slot.UISlot;
 
-import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Set;
 
@@ -97,41 +92,40 @@ public class CustomUIScreen<T extends UIContainer>extends ContainerScreen<T> imp
         })));
     }
 
+
     private float lastTimeCount;
-    public void render(int mouseLeft, int mouseTop, float last) {
-        this.renderBackground();
-        lastTimeCount = last;
-        super.render(mouseLeft, mouseTop, last);
+
+    @Override
+    public void render(MatrixStack ms, int mouseLeft, int mouseTop, float partialTicks) {
+        this.renderBackground(ms);
+        lastTimeCount = partialTicks;
+        super.render(ms, mouseLeft, mouseTop, partialTicks);
         for(IRenderable renderable: renderables) {
-            renderable.renderItemStacks(guiLeft, guiTop+GuiOffTop, mouseLeft, mouseTop, last);
+            renderable.renderItemStacks(ms, guiLeft, guiTop+GuiOffTop, mouseLeft, mouseTop, partialTicks);
         }
         for(IRenderable renderable: renderables) {
-            renderable.renderForeground(guiLeft, guiTop+GuiOffTop, mouseLeft, mouseTop, 1); //todo change to last
+            renderable.renderForeground(ms, guiLeft, guiTop+GuiOffTop, mouseLeft, mouseTop, 1); //todo change to last
         }
-        this.renderHoveredToolTip(mouseLeft, mouseTop);
+        this.renderHoveredTooltip(ms,  mouseLeft, mouseTop);
         for(IRenderable renderable: renderables) {
-            renderable.renderToolTips(guiLeft, guiTop+GuiOffTop, mouseLeft, mouseTop, last);
+            renderable.renderToolTips(ms, guiLeft, guiTop+GuiOffTop, mouseLeft, mouseTop, partialTicks);
         }
     }
 
-    @Override
-    public void drawSlot(Slot slotIn) {
 
-        super.drawSlot(slotIn);
+
+    @Override
+    public void moveItems(MatrixStack ms, Slot slotIn) {
+        super.moveItems(ms, slotIn);
         if (slotIn instanceof UISlot && ((UISlot) slotIn).isPreviewing()) {
             int i = slotIn.xPos;
             int j = slotIn.yPos;
-
-
-            GlStateManager.disableLighting();
-            GlStateManager.disableDepthTest();
-            GlStateManager.colorMask(true, true, true, false);
+            RenderSystem.disableDepthTest();
+            RenderSystem.colorMask(true, true, true, false);
             int slotColor = 0x668B8B8B;
-
-            this.fillGradient(i, j, i + 16, j + 16, slotColor, slotColor);
-            GlStateManager.colorMask(true, true, true, true);
-            GlStateManager.enableLighting();
-            GlStateManager.enableDepthTest();
+            this.fillGradient(ms, i, j, i + 16, j + 16, slotColor, slotColor);
+            RenderSystem.colorMask(true, true, true, true);
+            RenderSystem.enableDepthTest();
         }
 
 
@@ -143,35 +137,36 @@ public class CustomUIScreen<T extends UIContainer>extends ContainerScreen<T> imp
     /**
      * Draw the foreground layer for the GuiContainer (everything in front of the items)
      */
-    protected void drawGuiContainerForegroundLayer(int mouseLeft, int mouseTop) {
-        this.font.drawString(this.title.getFormattedText(), 8.0F, 6.0F, 4210752);
+    protected void drawGuiContainerForegroundLayer(MatrixStack ms, int mouseLeft, int mouseTop) {
+        this.font.func_243248_b(ms, this.title, 8.0F, 6.0F, 4210752);
 
 
         int xOff = container.getBottomXDiffHalf();
-        this.font.drawString(this.playerInventory.getDisplayName().getFormattedText(), 8.0F + xOff, (float)(this.ySize - 96 + 2), 4210752);
+        this.font.func_243248_b(ms, this.playerInventory.getDisplayName(), 8.0F + xOff, (float)(this.ySize - 96 + 2), 4210752);
 
 
     }
 
     private Set<DrawString> scheduled = new ObjectOpenHashSet<>();
 
+
     @Override
-    protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseLeft, int mouseTop) {
+    protected void drawGuiContainerBackgroundLayer(MatrixStack ms, float partialTicks, int mouseLeft, int mouseTop) {
         GlStateManager.color4f(1.0F, 1.0F, 1.0F, 1.0F);
         int left = guiLeft;
         int top = guiTop;
         //fill background
 
         //draw top
-        top = drawInvBorder(left, top, 0, GuiOffTop, true);
-        fillBackGround(left + GuiOffSide, top, Math.max(ui.getTopWidth(), xSize-2*GuiOffSide), ui.getTopHeight());
-        drawSides(left, top, ui.getTopWidth(), ui.getTopHeight());
+        top = drawInvBorder(ms, left, top, 0, GuiOffTop, true);
+        fillBackGround(ms, left + GuiOffSide, top, Math.max(ui.getTopWidth(), xSize-2*GuiOffSide), ui.getTopHeight());
+        drawSides(ms, left, top, ui.getTopWidth(), ui.getTopHeight());
 
         left = guiLeft + GuiOffSide + container.getTopXDiffHalf(); //no border drawn yet
         int elementCounter = 0;
         for (IItemElement el:ui.getItemElements()) {
-            drawInv(left + el.getLeft(), top + el.getTop(), el.getRows(), el.getColumns());
-            new DrawString(elementCounter++ + "", 6 + left + el.getLeft(), 6 + top + el.getTop(), 0x00FF00, scheduled);
+            drawInv(ms, left + el.getLeft(), top + el.getTop(), el.getRows(), el.getColumns());
+            new DrawString(elementCounter++ + "", 6 + left + el.getLeft(), 6 + top + el.getTop(), 0x00FF00, ms, scheduled);
         }
         left = guiLeft; //no border drawn yet
 
@@ -180,7 +175,7 @@ public class CustomUIScreen<T extends UIContainer>extends ContainerScreen<T> imp
 
         int yOff = 0;
         if (container.isBottomSmaller()) {
-            top = drawInvBorder(left, top, 126+5*18, GuiOffSide, true); //top height + player inf height - GuiOffSide
+            top = drawInvBorder(ms, left, top, 126+5*18, GuiOffSide, true); //top height + player inf height - GuiOffSide
             yOff = GuiOffSide;
         }
 
@@ -190,9 +185,9 @@ public class CustomUIScreen<T extends UIContainer>extends ContainerScreen<T> imp
         //draw player
         left = guiLeft + container.getBottomXDiffHalf();
         int cornerArt = 3;
-        left=  chestBuffer.drawVerticalSegment(left, top , 0, 126 + yOff, cornerArt, 96 + yOff);
-        left = chestBuffer.drawVerticalSegment(left, top - yOff , cornerArt, 126, StdXSize - cornerArt*2, 96);
-        left = chestBuffer.drawVerticalSegment(left, top , StdXSize - cornerArt, 126 + yOff, cornerArt, 96 + yOff);
+        left=  chestBuffer.drawVerticalSegment(ms, left, top , 0, 126 + yOff, cornerArt, 96 + yOff);
+        left = chestBuffer.drawVerticalSegment(ms, left, top - yOff , cornerArt, 126, StdXSize - cornerArt*2, 96);
+        left = chestBuffer.drawVerticalSegment(ms, left, top , StdXSize - cornerArt, 126 + yOff, cornerArt, 96 + yOff);
 
         left = guiLeft;
         top = guiTop;
@@ -214,12 +209,12 @@ public class CustomUIScreen<T extends UIContainer>extends ContainerScreen<T> imp
 
 
         for(IRenderable renderable: renderables) {
-            renderable.renderBackground(guiLeft + GuiOffSide + container.getTopXDiffHalf(), guiTop+GuiOffTop, mouseLeft, mouseTop, lastTimeCount);
+            renderable.renderBackground(ms, guiLeft + GuiOffSide + container.getTopXDiffHalf(), guiTop+GuiOffTop, mouseLeft, mouseTop, lastTimeCount);
         }
         container.updateSlotPos();
     }
 
-    private void fillBackGround(int left, int top, int width, int height) {
+    private void fillBackGround(MatrixStack ms, int left, int top, int width, int height) {
         int heightDone = 0;
         while (heightDone < height) {
             int thisRoundH = Math.min(3 * GuiSlotSize, height-heightDone);
@@ -227,67 +222,67 @@ public class CustomUIScreen<T extends UIContainer>extends ContainerScreen<T> imp
             int widthDone = 0;
             while (widthDone < width) {
                 int thisRoundW = Math.min(2 * GuiSlotSize, width-widthDone);
-                dispenserBuffer.drawVerticalSegment(left + widthDone, top + heightDone, GuiOffSide, GuiOffTop, thisRoundW, thisRoundH);
+                dispenserBuffer.drawVerticalSegment(ms, left + widthDone, top + heightDone, GuiOffSide, GuiOffTop, thisRoundW, thisRoundH);
                 widthDone += thisRoundW;
             }
             heightDone += thisRoundH;
         }
     }
 
-    private void drawSides(int left, int top, int width, int height) {
+    private void drawSides(MatrixStack ms, int left, int top, int width, int height) {
         int heightDone = 0;
 
         while (heightDone < height) {
             int thisRoundH = Math.min(6 * GuiSlotSize, height-heightDone);
 
-            chestBuffer.drawVerticalSegment(left                     , top + heightDone, 0                 , GuiOffTop, GuiOffSide, thisRoundH);
-            chestBuffer.drawVerticalSegment(left + xSize-GuiOffSide, top + heightDone, StdXSize - GuiOffSide, GuiOffTop, GuiOffSide, thisRoundH);
+            chestBuffer.drawVerticalSegment(ms, left                     , top + heightDone, 0                 , GuiOffTop, GuiOffSide, thisRoundH);
+            chestBuffer.drawVerticalSegment(ms, left + xSize-GuiOffSide, top + heightDone, StdXSize - GuiOffSide, GuiOffTop, GuiOffSide, thisRoundH);
 
             heightDone += thisRoundH;
         }
     }
 
-    private void drawInv(int left, int top, int rows, int columns) {
+    private void drawInv(MatrixStack ms, int left, int top, int rows, int columns) {
         int j = top;
 
         int remainingRows = rows;
         while (remainingRows > 0) {
             int thisRound = Math.min(6, remainingRows);
-            j = drawInvSegment(left, j, GuiOffTop, thisRound * GuiSlotSize, columns, false);
+            j = drawInvSegment(ms, left, j, GuiOffTop, thisRound * GuiSlotSize, columns, false);
             remainingRows -= thisRound;
         }
     }
 
 
-    private int drawInvBorder(int i, int j, int topOff, int height, boolean drawSides) {
-        return drawInvSegment(i, j, topOff, height, (xSize-GuiOffSide*2)/GuiSlotSize, drawSides);
+    private int drawInvBorder(MatrixStack ms, int i, int j, int topOff, int height, boolean drawSides) {
+        return drawInvSegment(ms, i, j, topOff, height, (xSize-GuiOffSide*2)/GuiSlotSize, drawSides);
     }
 
-    private int drawInvSegment(int i, int j, int topOff, int height, int columns, boolean drawSides) {
+    private int drawInvSegment(MatrixStack ms, int i, int j, int topOff, int height, int columns, boolean drawSides) {
         int xOff = container.getTopXDiffHalf();
 
-        if (drawSides) i = chestBuffer.drawVerticalSegment(i, j, 0, topOff, GuiOffSide, height);
+        if (drawSides) i = chestBuffer.drawVerticalSegment(ms, i, j, 0, topOff, GuiOffSide, height);
         //if (xOff>0)i = drawVerticalSegment(i, j, 0, topOff, xOff, height, dispenserBuffer);
 
         int remainingSlots = columns;
         while (remainingSlots > 0) {
             int thisRound = Math.min(9, remainingSlots);
             //new DrawString("Draw call rem=" + (remainingSlots) + " tr=" + thisRound, 8.0F + i + 20, 6.0F + j, 0xFF0000, scheduled);
-            i = chestBuffer.drawVerticalSegment(i, j, GuiOffSide, topOff, thisRound * GuiSlotSize , height);
+            i = chestBuffer.drawVerticalSegment(ms, i, j, GuiOffSide, topOff, thisRound * GuiSlotSize , height);
             remainingSlots -= thisRound;
         }
 
         //if (xOff>0)i = drawVerticalSegment(i, j, StdXSize - xOff, topOff, xOff, height, dispenserBuffer);
-        if (drawSides) i = chestBuffer.drawVerticalSegment(i, j, StdXSize - GuiOffSide, topOff, GuiOffSide, height);
+        if (drawSides) i = chestBuffer.drawVerticalSegment(ms, i, j, StdXSize - GuiOffSide, topOff, GuiOffSide, height);
         return j + height;
     }
 
 
-    private int drawCorner(int i, int j, int unused, int height, boolean top, boolean left) {
+    private int drawCorner(MatrixStack ms, int i, int j, int unused, int height, boolean top, boolean left) {
         int leftOff = left?0: StdXSize - GuiOffSide;
         int topOff =  top?0:126-height;
 
-        this.blit(i, j , leftOff, topOff, GuiOffSide, height);
+        this.blit(ms, i, j , leftOff, topOff, GuiOffSide, height);
         return i + GuiOffSide;
     }
 
@@ -303,34 +298,35 @@ public class CustomUIScreen<T extends UIContainer>extends ContainerScreen<T> imp
 
 
     class DrawString {
+        private final MatrixStack ms;
         private final String text;
         private final float x;
         private final float y;
         private final int color;
 
-        DrawString(String text, float x, float y, int color, Set<DrawString> scheduled) {
-            this(text, x, y, color);
+        DrawString(String text, float x, float y, int color, MatrixStack ms, Set<DrawString> scheduled) {
+            this(text, x, y, color, ms);
             scheduled.add(this);
         }
-        DrawString(String text, float x, float y, int color) {
+        DrawString(String text, float x, float y, int color, MatrixStack ms) {
             this.text = text;
             this.x = x;
             this.y = y;
             this.color = color;
+            this.ms = ms;
         }
 
         void draw() {
-            CustomUIScreen.this.font.drawString(text, x, y, color);
+            CustomUIScreen.this.font.drawString(ms, text, x, y, color);
         }
     }
 
     @Override
-    public void removed() {
-        super.removed();
-
-
+    public void onClose() {
+        this.recipeBookGui.removed();
         //in case we have a text box
         this.minecraft.keyboardListener.enableRepeatEvents(false);
+        super.onClose();
     }
 
 

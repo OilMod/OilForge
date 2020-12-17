@@ -1,5 +1,6 @@
 package org.oilmod.oilforge.inventory.container.screen;
 
+import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.client.gui.IGuiEventListener;
 import net.minecraft.client.gui.recipebook.RecipeBookGui;
 import net.minecraft.inventory.container.ClickType;
@@ -26,24 +27,24 @@ public class RecipeBookRenderable implements IRenderable {
     }
 
     @Override
-    public void renderBackground(int guiLeft, int guiTop, int mouseLeft, int mouseTop, float timeDif) {
+    public void renderBackground(MatrixStack ms, int guiLeft, int guiTop, int mouseLeft, int mouseTop, float timeDif) {
         if (!this.recipeBook.isVisible() || !screen.displayCompact()) {
-            this.recipeBook.render(mouseLeft, mouseTop, timeDif);
+            this.recipeBook.render(ms, mouseLeft, mouseTop, timeDif);
         }
     }
 
     @Override
-    public void renderForeground(int guiLeft, int guiTop, int mouseLeft, int mouseTop, float timeDif) {
+    public void renderForeground(MatrixStack ms, int guiLeft, int guiTop, int mouseLeft, int mouseTop, float timeDif) {
         if (this.recipeBook.isVisible() && screen.displayCompact()) {
-            this.recipeBook.render(mouseLeft, mouseTop, timeDif);
+            this.recipeBook.render(ms, mouseLeft, mouseTop, timeDif);
         } else {
-            this.recipeBook.renderGhostRecipe(guiLeft, guiTop, false, timeDif); //false -> result slot should not be rendered bigger
+            this.recipeBook.func_230477_a_(ms, guiLeft, guiTop, false, timeDif); //false -> result slot should not be rendered bigger
         }
     }
 
     @Override
-    public void renderToolTips(int guiLeft, int guiTop, int mouseLeft, int mouseTop, float timeDif) {
-        this.recipeBook.renderTooltip(guiLeft, guiTop, mouseLeft, mouseTop);
+    public void renderToolTips(MatrixStack ms, int guiLeft, int guiTop, int mouseLeft, int mouseTop, float timeDif) {
+        this.recipeBook.func_238924_c_(ms, guiLeft, guiTop, mouseLeft, mouseTop);
     }
 
 

@@ -79,7 +79,7 @@ public class OilModLocator extends AbstractJarFileLocator {
                 .sorted(Comparator.comparing(path-> StringUtils.toLowerCase(path.getFileName().toString())))
                 .filter(p->StringUtils.toLowerCase(p.getFileName().toString()).endsWith(SUFFIX))
                 .filter(p->uncheck(()->Files.exists(FileSystems.newFileSystem(p, getClass().getClassLoader()).getPath("META-INF/OilModLoaderId"))))
-                .map(p->new ModFile(p, this))
+                .map(p->new OilModFile(p, this))
                 .peek(f->modJars.compute(f, (mf, fs)->createFileSystem(mf)))
                 .forEach(result::add);
         return result;

@@ -20,7 +20,7 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.World;
 import net.minecraftforge.items.IItemHandler;
 import org.oilmod.api.blocks.BlockType;
@@ -154,11 +154,11 @@ public final class Util {
         return new WorldFR(w);
     }
 
-    public static LocationRep toOil(Vec3d vec, World w) {
+    public static LocationRep toOil(Vector3d vec, World w) {
         return LocFactoryImpl.getInstance().createLocation(vec.x, vec.y, vec.z, toOil(w));
     }
 
-    public static VectorRep toOil(Vec3d vec) {
+    public static VectorRep toOil(Vector3d vec) {
         return LocFactoryImpl.getInstance().createVector(vec.x, vec.y, vec.z);
     }
 
@@ -166,7 +166,7 @@ public final class Util {
         return LocFactoryImpl.getInstance().createBlockLocation(pos.getX(), pos.getY(), pos.getZ(), toOil(w));
     }
 
-    public static LocationEntityRep toOil(Vec3d vec, double yaw, double pitch,  World w) {
+    public static LocationEntityRep toOil(Vector3d vec, double yaw, double pitch,  World w) {
         return LocFactoryImpl.getInstance().createEntityLocation(vec.x, vec.y, vec.z, yaw, pitch, toOil(w));
     }
 

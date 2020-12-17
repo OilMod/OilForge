@@ -1,5 +1,6 @@
 package org.oilmod.oilforge.inventory.container.slot;
 
+import com.mojang.datafixers.util.Pair;
 import net.minecraft.client.renderer.texture.AtlasTexture;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.entity.player.PlayerEntity;
@@ -62,13 +63,6 @@ public class OilSlotWrapper extends Slot {
     }
 
     @Override
-    @OnlyIn(Dist.CLIENT)
-    @Nullable
-    public String getSlotTexture() {
-        return wrapped.getSlotTexture();
-    }
-
-    @Override
     public ItemStack decrStackSize(int amount) {
         return wrapped.decrStackSize(amount);
     }
@@ -84,28 +78,10 @@ public class OilSlotWrapper extends Slot {
         return wrapped.isEnabled();
     }
 
-    @Override
-    @OnlyIn(Dist.CLIENT)
-    public ResourceLocation getBackgroundLocation() {
-        return wrapped.getBackgroundLocation();
-    }
-
-    @Override
-    @OnlyIn(Dist.CLIENT)
-    public void setBackgroundLocation(ResourceLocation texture) {
-        wrapped.setBackgroundLocation(texture);
-    }
-
-    @Override
-    public void setBackgroundName(@Nullable String name) {
-        wrapped.setBackgroundName(name);
-    }
-
-    @Override
-    @OnlyIn(Dist.CLIENT)
     @Nullable
-    public TextureAtlasSprite getBackgroundSprite() {
-        return wrapped.getBackgroundSprite();
+    @Override
+    public Pair<ResourceLocation, ResourceLocation> getBackground() {
+        return wrapped.getBackground();
     }
 
     @Override

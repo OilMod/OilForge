@@ -5,10 +5,13 @@ import net.minecraftforge.fml.loading.moddiscovery.ModInfo;
 import net.minecraftforge.forgespi.language.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.oilmod.oilforge.modloading.hacks.OilModFileInfoHelper;
 
+import java.lang.invoke.MethodHandle;
+import java.lang.invoke.MethodHandles;
+import java.lang.invoke.MethodType;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Consumer;
@@ -18,7 +21,6 @@ import java.util.stream.Collectors;
 
 import static net.minecraftforge.fml.Logging.LOADING;
 import static net.minecraftforge.fml.Logging.SCAN;
-import static org.oilmod.oilforge.modloading.hacks.OilModFileInfoHelper.getClasspath;
 
 public class OilModLanguageProvider implements IModLanguageProvider {
     //TODO: get inspired by FMLJavaModLanguageProvider
@@ -37,7 +39,7 @@ public class OilModLanguageProvider implements IModLanguageProvider {
     @Override
     public Consumer<ModFileScanData> getFileVisitor() {
         return scanResult -> {
-            scanResult.getIModInfoData().forEach(modFileInfo -> LOGGER.debug("found modFileInfo: {}", modFileInfo));
+            scanResult.getIModInfoData().forEach(modFileInfo -> LOGGER.debug(SCAN, "found modFileInfo: {}", modFileInfo));
             //Original, broken due to forge not allowing other implementations of IModFileInfo
             /*final Map<String, OilLoader> modTargetMap = scanResult.getIModInfoData().stream().filter(fileInfo -> fileInfo instanceof OilModFileInfo)
                     .map(fileInfo -> (OilModFileInfo)fileInfo)
@@ -47,9 +49,9 @@ public class OilModLanguageProvider implements IModLanguageProvider {
                     .collect(Collectors.toMap(OilLoader::getModId, Function.identity(), (a, b)->a));*/
             final Map<String, OilLoader> modTargetMap = scanResult.getIModInfoData().stream()
                     .flatMap(fileInfo -> fileInfo.getMods().stream())
-                    .filter(OilModFileInfoHelper::isOilModInfo)
-                    .peek(modInfo -> LOGGER.debug(SCAN, "Found oilmod-classpath {} with id {}", getClasspath(modInfo)::toString, modInfo::getModId))
-                    .map(modInfo -> new OilLoader(getClasspath(modInfo), modInfo.getModId()))
+                    .peek(oilmod -> LOGGER.debug(SCAN, "Found oilmod: {}", oilmod::getModId))
+                    .peek(modInfo -> LOGGER.debug(SCAN, "Found oilmod-classpath {} with id {}", () -> OilModLanguageProvider.getClasspath(modInfo), modInfo::getModId))
+                    .map(modInfo -> new OilLoader(OilModLanguageProvider.getClasspath(modInfo), modInfo.getModId()))
                     .collect(Collectors.toMap(OilLoader::getModId, Function.identity(), (a, b)->a));
 
             /*Optional<IModFileInfo> apiImplOptional = scanResult.getIModInfoData().stream()
@@ -67,6 +69,24 @@ public class OilModLanguageProvider implements IModLanguageProvider {
 
             scanResult.addLanguageLoader(modTargetMap);
         };
+    }
+
+    private static MethodHandle method;
+    private static String getClasspath(IModInfo modInfo) {
+        if (method == null) {
+            MethodHandles.Lookup publicLookup = MethodHandles.publicLookup();
+            MethodType mt = MethodType.methodType(String.class);
+            try {
+                method = publicLookup.findVirtual(modInfo.getClass(), "getClasspath", mt);
+            } catch (NoSuchMethodException | IllegalAccessException e) {
+                throw new IllegalStateException(e);
+            }
+        }
+        try {
+            return (String) method.invoke(modInfo);
+        } catch (Throwable throwable) {
+            throw new IllegalStateException(throwable);
+        }
     }
 
     @Override

@@ -1,7 +1,7 @@
 package org.oilmod.oilforge.rep.entity;
 
 import net.minecraft.entity.Entity;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.vector.Vector3d;
 import org.apache.commons.lang3.NotImplementedException;
 import org.oilmod.api.rep.entity.EntityRep;
 import org.oilmod.api.rep.stdimpl.world.LocFactoryImpl;
@@ -28,7 +28,7 @@ public class EntityFR implements EntityRep {
 
     @Override
     public LocationEntityRep getLocationRep() {
-        return toOil(forge.getPositionVector(), forge.rotationYaw, forge.rotationPitch, forge.world);
+        return toOil(forge.getPositionVec(), forge.rotationYaw, forge.rotationPitch, forge.world);
     }
 
     @Override
@@ -39,13 +39,13 @@ public class EntityFR implements EntityRep {
 
     @Override
     public VectorRep getVelocityRep() {
-        Vec3d v = forge.getMotion();
+        Vector3d v = forge.getMotion();
         return LocFactoryImpl.getInstance().createVector(v.x, v.y, v.z);
     }
 
     @Override
     public boolean isOnGround() {
-        return forge.onGround;
+        return forge.isOnGround();
     }
 
     @Override

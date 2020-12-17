@@ -78,21 +78,21 @@ public class NBTDataList<Type> implements DataList<Type> {
         }
         switch (type) {
             case Byte:
-                return new ByteNBT((Byte) obj);
+                return ByteNBT.valueOf((Byte) obj);
             case Short:
-                return new ShortNBT((Short) obj);
+                return ShortNBT.valueOf((Short) obj);
             case Int:
-                return new IntNBT((Integer) obj);
+                return IntNBT.valueOf((Integer) obj);
             case Long:
-                return new LongNBT((Long) obj);
+                return LongNBT.valueOf((Long) obj);
             case Float:
-                return new FloatNBT((Float) obj);
+                return FloatNBT.valueOf((Float) obj);
             case Double:
-                return new DoubleNBT((Double) obj);
+                return DoubleNBT.valueOf((Double) obj);
             case ByteArray:
                 return new ByteArrayNBT((byte[]) obj);
             case String:
-                return new StringNBT((String) obj);
+                return StringNBT.valueOf((String) obj);
             case List:
                 return ((NBTDataList) obj).getListNBT();
             case Subsection:
