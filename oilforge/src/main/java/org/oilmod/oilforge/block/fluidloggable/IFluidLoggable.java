@@ -57,8 +57,9 @@ public interface IFluidLoggable extends IBucketPickupHandler, ILiquidContainer, 
             }
             return state.with(BlockStateProperties.WATERLOGGED, true);
         }
-
     }
+
+
 
     default Fluid pickupFluid(IWorld worldIn, BlockPos pos, BlockState state) {
         FluidState fluidState = getFluidState(state);
