@@ -90,7 +90,7 @@ public class RealBlock extends Block implements RealBlockImplHelper, IFluidLogga
     @Override
     public VoxelShape getShape(BlockState p_220053_1_, IBlockReader p_220053_2_, BlockPos p_220053_3_, ISelectionContext p_220053_4_) {
         BlockState state = getVanillaFakeBlock();
-        return state.getBlock().getShape(state, p_220053_2_, p_220053_3_, p_220053_4_);
+        return state.getShape(p_220053_2_, p_220053_3_, p_220053_4_);
     }
 
     @Override
