@@ -114,14 +114,14 @@ public class TestMod1 extends OilMod {
 
         recipe = new RecipeBuilder()
                 .shapedPattern(TestIngredientCategory, ' ', Transformation.ReflectionHorizontal)
-                .row("MMM")
-                .row("CCC")
-                .row("IO ")
-                .ingre('M', mix)
-                .ingre('C', cons)
-                .ingre('I', iron)
-                .ingre('O', oak)
-                .ok()
+                    .row("MMM")
+                    .row("CCC")
+                    .row("IO ")
+                    .ingre('M', mix)
+                    .ingre('C', cons)
+                    .ingre('I', iron)
+                    .ingre('O', oak)
+                    .ok()
                 .results(TestResultCategory,
                         (s, c) -> kabanItem.get().createItemStack(1)).build();
         TestCraftingManager.add(recipe);
