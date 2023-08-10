@@ -86,7 +86,7 @@ public class OilForgeMod
         FMLJavaModLoadingContext.get().getModEventBus().addGenericListener(ContainerType.class, this::registerContainerType);
         //FMLJavaModLoadingContext.get().getModEventBus().addGenericListener(ItemStack.class, this::attackCapabilities); //i love how this is called attackCapabilities and not attachCapabilities
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::commonSetup);
-        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::createRegistries);
+        FMLJavaModLoadingContext.get().getModEventBus().addListener(EventPriority.HIGHEST,  this::freezeMods);
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::modelBakeEvent);
         //FMLJavaModLoadingContext.get().getModEventBus().addListener(this::lootTableLoadEvent);
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::clientSetupEvent);
@@ -129,7 +129,8 @@ public class OilForgeMod
 
 
 
-    public void createRegistries(RegistryEvent.NewRegistry event) {
+    //abuse newregistry event at highest to finish mod creation phase
+    public void freezeMods(RegistryEvent.NewRegistry event) {
         ((RealModHelper)RealModHelper.getInstance()).freeze(); //wooo i love this --- not
     }
 
